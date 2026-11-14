@@ -203,39 +203,9 @@ export default function App() {
             </button>
           </nav>
 
-          {/* Action CTAs */}
-          <div className="flex items-center space-x-2 shrink-0">
-            {activeView === 'overview' ? (
-              <div className="flex items-center gap-2">
-                <button 
-                  type="button" 
-                  onClick={scrollToAstroCare}
-                  className="hidden sm:inline-flex items-center justify-center text-xs font-semibold text-white bg-blue-900/60 hover:bg-blue-800/80 border border-blue-400/25 px-3 py-1.5 rounded-lg transition-all shadow-md active:scale-95 cursor-pointer"
-                >
-                  <Radio className="w-3.5 h-3.5 mr-1 text-[#FDE047]" />
-                  <span>AstroCare</span>
-                </button>
-                <button 
-                  type="button" 
-                  onClick={scrollToRoadmap}
-                  className="hidden md:inline-flex items-center justify-center text-xs font-semibold text-[#06132B] bg-gradient-to-r from-amber-400 to-[#F5B82E] hover:from-amber-300 hover:to-amber-500 px-3 py-1.5 rounded-lg transition-all shadow-md active:scale-95 cursor-pointer"
-                >
-                  <Gamepad2 className="w-3.5 h-3.5 mr-1" />
-                  <span>Roadmap</span>
-                </button>
-                <button 
-                  type="button" 
-                  onClick={() => {
-                    setActiveView('behavioral');
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  }}
-                  className="hidden lg:inline-flex items-center justify-center text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-500 px-3 py-1.5 rounded-lg transition-all shadow-md active:scale-95 cursor-pointer"
-                >
-                  <HeartPulse className="w-3.5 h-3.5 mr-1" />
-                  <span>Health Check</span>
-                </button>
-              </div>
-            ) : (
+          {/* Action CTA: Return button only when in dedicated view mode */}
+          {activeView !== 'overview' && (
+            <div className="flex items-center space-x-2 shrink-0">
               <button 
                 type="button" 
                 onClick={() => {
@@ -247,8 +217,8 @@ export default function App() {
                 <ArrowLeft className="w-3.5 h-3.5 mr-1" />
                 <span>Return to Overview</span>
               </button>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </header>
 
