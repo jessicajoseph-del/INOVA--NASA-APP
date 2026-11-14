@@ -268,9 +268,26 @@ export default function RoadmapGame({ onBack, isEmbedded = false }: RoadmapGameP
   };
 
   const scrollToStage = (stageIndex: number) => {
-    const container = mapViewportRef.current;
     const pos = geometry.taskPositions[stageIndex];
-    if (!container || !pos) return;
+    if (!pos) return;
+
+    if (isEmbedded) {
+      const mapCanvas = mapViewportRef.current;
+      if (mapCanvas) {
+        const mapRect = mapCanvas.getBoundingClientRect();
+        const ratio = pos.y / geometry.viewBoxHeight;
+        const targetScrollY =
+          window.scrollY + mapRect.top + ratio * mapCanvas.offsetHeight - window.innerHeight * 0.4;
+        window.scrollTo({
+          top: Math.max(0, targetScrollY),
+          behavior: 'smooth',
+        });
+      }
+      return;
+    }
+
+    const container = mapViewportRef.current;
+    if (!container) return;
     if (container.scrollHeight > container.clientHeight + 20) {
       const ratio = pos.y / geometry.viewBoxHeight;
       const targetTop = ratio * container.scrollHeight - container.clientHeight * 0.45;
@@ -282,12 +299,26 @@ export default function RoadmapGame({ onBack, isEmbedded = false }: RoadmapGameP
   };
 
   const scrollToSummit = () => {
+    if (isEmbedded) {
+      const summit = document.getElementById('milestone-summit');
+      if (summit) {
+        summit.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+    }
     const container = mapViewportRef.current;
     if (!container) return;
     container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
   };
 
   const scrollToBase = () => {
+    if (isEmbedded) {
+      const base = document.getElementById('map-canvas');
+      if (base) {
+        base.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+      }
+    }
     const container = mapViewportRef.current;
     if (!container) return;
     container.scrollTo({ top: 0, behavior: 'smooth' });
@@ -302,7 +333,7 @@ export default function RoadmapGame({ onBack, isEmbedded = false }: RoadmapGameP
   };
 
   return (
-    <div className={isEmbedded ? "w-full flex flex-col bg-[#06132B] text-[#F7F3E9] rounded-2xl border border-sky-400/20 shadow-2xl overflow-hidden" : "min-h-screen flex flex-col bg-[#06132B] text-[#F7F3E9]"}>
+    <div className={isEmbedded ? "w-full flex flex-col bg-[#06132B] text-[#F7F3E9] rounded-2xl border border-sky-400/20 shadow-2xl" : "min-h-screen flex flex-col bg-[#06132B] text-[#F7F3E9]"}>
       <ConfettiBurst triggerKey={confettiTrigger} reducedMotion={reducedMotion} />
       {/* 3-Zone Playful Game Top Bar */}
       <header className={`${isEmbedded ? 'relative' : 'sticky top-0'} z-30 flex items-center justify-between gap-4 sm:gap-8 px-4 sm:px-6 h-16 border-b border-sky-300/15 bg-[#06132B]/94 backdrop-blur-md`}>
@@ -371,14 +402,14 @@ export default function RoadmapGame({ onBack, isEmbedded = false }: RoadmapGameP
       </header>
 
       {/* Main 2-Column Game Viewport */}
-      <div className="flex-1 flex flex-col lg:flex-row min-h-0">
+      <div className="flex-1 flex flex-col lg:flex-row min-h-0 items-start">
         {/* Ink-Blue Winding Fiber-Optic Game Map */}
         <main
           id="map-canvas"
           ref={mapViewportRef}
           className={`relative flex-1 ink-canvas-bg ${
             isEmbedded
-              ? 'h-[720px] sm:h-[780px] lg:h-[840px] overflow-y-auto'
+              ? 'w-full'
               : 'lg:h-[calc(100vh-4rem)] lg:overflow-y-auto'
           } px-2 sm:px-6 lg:px-10 py-6 sm:py-10`}
         >
@@ -470,9 +501,9 @@ export default function RoadmapGame({ onBack, isEmbedded = false }: RoadmapGameP
         <div
           className={`${
             isEmbedded
-              ? 'h-[500px] lg:h-[840px] overflow-y-auto border-t lg:border-t-0 lg:border-l border-sky-300/15'
-              : 'lg:h-[calc(100vh-4rem)] lg:overflow-y-auto'
-          } shrink-0`}
+              ? 'w-full lg:w-[380px] shrink-0 border-t lg:border-t-0 lg:border-l border-sky-300/15 lg:sticky lg:top-20 self-start max-h-[calc(100vh-6rem)] lg:overflow-y-auto'
+              : 'lg:h-[calc(100vh-4rem)] lg:overflow-y-auto shrink-0'
+          }`}
         >
           <TaskInspectorRail
             tasks={tasks}
