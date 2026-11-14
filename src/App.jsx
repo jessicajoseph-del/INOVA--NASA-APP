@@ -17,12 +17,14 @@ import {
   ArrowLeft,
   HeartPulse,
   Brain,
-  ClipboardCheck
+  ClipboardCheck,
+  Radio
 } from 'lucide-react';
 import TrendAnalytics from './components/TrendAnalytics';
 import LogoMarquee from './components/LogoMarquee';
 import RoadmapGame from './roadmap/RoadmapGame';
 import BehavioralHealthPage from './behavioral/BehavioralHealthPage';
+import AstroCareDashboard from './components/AstroCareDashboard';
 
 /**
  * ============================================================================
@@ -82,7 +84,7 @@ export const TOPIC_DATA = {
 };
 
 export default function App() {
-  // Navigation State: 'overview' | 'roadmap' | 'behavioral'
+  // Navigation State: 'overview' | 'astrocare' | 'roadmap' | 'behavioral'
   const [activeView, setActiveView] = useState('overview');
 
   const scrollToRoadmap = () => {
@@ -93,6 +95,17 @@ export default function App() {
       }, 100);
     } else {
       document.getElementById('roadmap-section')?.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const scrollToAstroCare = () => {
+    if (activeView !== 'overview') {
+      setActiveView('overview');
+      setTimeout(() => {
+        document.getElementById('astrocare-section')?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    } else {
+      document.getElementById('astrocare-section')?.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
@@ -141,7 +154,22 @@ export default function App() {
               <span>Telemetry & Trends</span>
             </button>
 
-            {/* Tab 2: Roadmap Game (Smooth scrolls on single page) */}
+            {/* Tab 2: AstroCare ISS Telemetry */}
+            <button
+              type="button"
+              onClick={scrollToAstroCare}
+              className={`inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap ${
+                activeView === 'astrocare'
+                  ? 'bg-gradient-to-r from-amber-400 to-[#F5B82E] text-slate-950 shadow-md shadow-amber-400/20 font-bold'
+                  : 'text-slate-400 hover:text-[#FDE047] hover:bg-white/5'
+              }`}
+            >
+              <Radio className="w-3.5 h-3.5 text-amber-400" />
+              <span>ISS AstroCare</span>
+              <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse hidden sm:inline-block" />
+            </button>
+
+            {/* Tab 3: Roadmap Game (Smooth scrolls on single page) */}
             <button
               type="button"
               onClick={scrollToRoadmap}
@@ -156,7 +184,7 @@ export default function App() {
               <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse hidden sm:inline-block" />
             </button>
 
-            {/* Tab 3: Behavioral Health */}
+            {/* Tab 4: Behavioral Health */}
             <button
               type="button"
               onClick={() => {
@@ -181,8 +209,16 @@ export default function App() {
               <div className="flex items-center gap-2">
                 <button 
                   type="button" 
+                  onClick={scrollToAstroCare}
+                  className="hidden sm:inline-flex items-center justify-center text-xs font-semibold text-white bg-blue-900/60 hover:bg-blue-800/80 border border-blue-400/25 px-3 py-1.5 rounded-lg transition-all shadow-md active:scale-95 cursor-pointer"
+                >
+                  <Radio className="w-3.5 h-3.5 mr-1 text-[#FDE047]" />
+                  <span>AstroCare</span>
+                </button>
+                <button 
+                  type="button" 
                   onClick={scrollToRoadmap}
-                  className="hidden sm:inline-flex items-center justify-center text-xs font-semibold text-[#06132B] bg-gradient-to-r from-amber-400 to-[#F5B82E] hover:from-amber-300 hover:to-amber-500 px-3 py-1.5 rounded-lg transition-all shadow-md active:scale-95 cursor-pointer"
+                  className="hidden md:inline-flex items-center justify-center text-xs font-semibold text-[#06132B] bg-gradient-to-r from-amber-400 to-[#F5B82E] hover:from-amber-300 hover:to-amber-500 px-3 py-1.5 rounded-lg transition-all shadow-md active:scale-95 cursor-pointer"
                 >
                   <Gamepad2 className="w-3.5 h-3.5 mr-1" />
                   <span>Roadmap</span>
@@ -193,7 +229,7 @@ export default function App() {
                     setActiveView('behavioral');
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                   }}
-                  className="hidden md:inline-flex items-center justify-center text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-500 px-3 py-1.5 rounded-lg transition-all shadow-md active:scale-95 cursor-pointer"
+                  className="hidden lg:inline-flex items-center justify-center text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-500 px-3 py-1.5 rounded-lg transition-all shadow-md active:scale-95 cursor-pointer"
                 >
                   <HeartPulse className="w-3.5 h-3.5 mr-1" />
                   <span>Health Check</span>
@@ -301,6 +337,11 @@ export default function App() {
           {/* Middle Section: Interactive Trend Comparison Charts */}
           <TrendAnalytics />
 
+          {/* ASTROCARE ISS MISSION TELEMETRY MONITOR (INK BLUE + OAT YELLOW THEME) */}
+          <section id="astrocare-section" className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full my-8 relative z-10">
+            <AstroCareDashboard isEmbedded={true} />
+          </section>
+
           {/* Quick Feature Portal: Astronaut Behavioral Health & CrewMind */}
           <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full my-6">
             <div className="rounded-2xl bg-gradient-to-br from-teal-950/90 via-slate-900/90 to-blue-950/90 border border-emerald-400/30 p-6 sm:p-7 backdrop-blur-md shadow-2xl flex flex-col sm:flex-row items-center justify-between gap-6 relative overflow-hidden group">
@@ -379,6 +420,13 @@ export default function App() {
             <RoadmapGame isEmbedded={true} />
           </section>
 
+        </main>
+      )}
+
+      {/* ASTROCARE ISS MONITOR VIEW (FULLSCREEN STANDALONE MODE) */}
+      {activeView === 'astrocare' && (
+        <main className="flex-1 w-full relative z-10">
+          <AstroCareDashboard onBack={() => setActiveView('overview')} />
         </main>
       )}
 
