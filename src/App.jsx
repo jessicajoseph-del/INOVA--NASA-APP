@@ -27,10 +27,8 @@ import BehavioralHealthPage from './behavioral/BehavioralHealthPage';
 import AstroCareDashboard from './components/AstroCareDashboard';
 
 /**
- * ============================================================================
  * TOPIC & EXECUTIVE KPI DATA CONFIGURATION:
  * Customize the title, mission description, and top-line KPI values below.
- * ============================================================================
  */
 export const TOPIC_DATA = {
   eyebrow: 'TRUSTED AI GOVERNANCE & MISSION TELEMETRY // TREND ANALYSIS',
@@ -116,9 +114,7 @@ export default function App() {
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#1E293B0a_1px,transparent_1px),linear-gradient(to_bottom,#1E293B0a_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none" />
 
-      {/* ====================================================================
-          1. HEADER / NAVIGATION BAR WITH MULTI-PAGE SWITCHER
-          ==================================================================== */}
+      {/* 1. HEADER / NAVIGATION BAR WITH MULTI-PAGE SWITCHER */}
       <header className="border-b border-blue-900/40 bg-[#060D21]/80 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
           <div className="flex items-center space-x-3 shrink-0">
@@ -222,9 +218,7 @@ export default function App() {
         </div>
       </header>
 
-      {/* ====================================================================
-          2. DYNAMIC PAGE CONTENT: OVERVIEW, ROADMAP GAME, OR BEHAVIORAL HEALTH
-          ==================================================================== */}
+      {/* 2. DYNAMIC PAGE CONTENT: OVERVIEW, ROADMAP GAME, OR BEHAVIORAL HEALTH */}
       {activeView === 'overview' && (
         <main className="flex-1 w-full relative z-10">
           
@@ -346,16 +340,12 @@ export default function App() {
             </div>
           </section>
 
-          {/* ==================================================================
-              3. ANIMATION RIBBON: WSO2-STYLE INFINITE LOGO MARQUEE (INTACT)
-              ================================================================== */}
+          {/* 3. ANIMATION RIBBON: WSO2-STYLE INFINITE LOGO MARQUEE (INTACT) */}
           <section className="w-full my-6 relative z-10">
             <LogoMarquee />
           </section>
 
-          {/* ==================================================================
-              4. INTERACTIVE ROAD MAP GAME: DIRECTLY AFTER THE ANIMATION RIBBON
-              ================================================================== */}
+          {/* 4. INTERACTIVE ROAD MAP GAME: DIRECTLY AFTER THE ANIMATION RIBBON */}
           <section id="roadmap-section" className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full my-10 relative z-10">
             <div className="mb-6 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
               <div>
@@ -414,9 +404,7 @@ export default function App() {
         </main>
       )}
 
-      {/* ====================================================================
-          5. BOTTOM CREDITS / STATUS BAR
-          ==================================================================== */}
+      {/* 5. BOTTOM CREDITS / STATUS BAR */}
       <footer className="w-full mt-auto relative z-10 border-t border-blue-900/30 bg-[#040816]/70 py-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-2">
           <p>© {new Date().getFullYear()} INOVA Aerospace & Digital Sovereignty. All telemetry verified.</p>

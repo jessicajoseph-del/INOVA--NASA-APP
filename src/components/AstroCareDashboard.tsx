@@ -515,9 +515,7 @@ export default function AstroCareDashboard({
         </div>
       )}
 
-      {/* ====================================================================
-          1. DASHBOARD TOP HEADER & MISSION MET IDENTIFIER
-          ==================================================================== */}
+      {/* 1. DASHBOARD TOP HEADER & MISSION MET IDENTIFIER */}
       <header className="sticky top-0 z-30 px-4 sm:px-6 py-3.5 bg-[#07112E]/95 border-b border-blue-400/15 backdrop-blur-md">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-3">
           <div className="flex items-center gap-3">
@@ -580,9 +578,7 @@ export default function AstroCareDashboard({
         </div>
       </header>
 
-      {/* ====================================================================
-          2. TIMELINE SCRUBBER & SUBJECT CONTROLS BANNER
-          ==================================================================== */}
+      {/* 2. TIMELINE SCRUBBER & SUBJECT CONTROLS BANNER */}
       <main className="max-w-7xl mx-auto p-4 sm:p-6 space-y-6 w-full">
         <div className="bg-[#0B1736]/90 border border-blue-400/20 rounded-2xl p-4 sm:p-5 backdrop-blur-md shadow-xl flex flex-col lg:flex-row items-center justify-between gap-5 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-80 h-40 bg-amber-400/5 rounded-full blur-3xl pointer-events-none" />
@@ -655,9 +651,7 @@ export default function AstroCareDashboard({
           </div>
         </div>
 
-        {/* ====================================================================
-            3. 4 CORE VITALS CARDS (INK BLUE + OAT YELLOW ACCENTS)
-            ==================================================================== */}
+        {/* 3. 4 CORE VITALS CARDS (INK BLUE + OAT YELLOW ACCENTS) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           
           {/* Heart Rate Card */}
@@ -745,9 +739,7 @@ export default function AstroCareDashboard({
 
         </div>
 
-        {/* ====================================================================
-            4. CHARTS & WELLBEING GAUGES DUAL COLUMN GRID
-            ==================================================================== */}
+        {/* 4. CHARTS & WELLBEING GAUGES DUAL COLUMN GRID */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
           {/* Multi-Metric Trend Chart (Spans 2 columns) */}
@@ -1099,9 +1091,7 @@ export default function AstroCareDashboard({
         </div>
       </main>
 
-      {/* ====================================================================
-          5. QUICK-LOG EXERCISE SESSION MODAL DIALOG
-          ==================================================================== */}
+      {/* 5. QUICK-LOG EXERCISE SESSION MODAL DIALOG */}
       {isLogModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-[#0B152C] border border-[#FACC15]/40 rounded-2xl w-full max-w-md p-6 shadow-2xl relative text-left">

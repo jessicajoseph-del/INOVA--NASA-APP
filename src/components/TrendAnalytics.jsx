@@ -15,10 +15,8 @@ import {
 import { TrendingUp, ArrowUpRight, ArrowDownRight, Activity, BarChart3, Calendar, Layers, ShieldCheck } from 'lucide-react';
 
 /**
- * ============================================================================
  * TREND & COMPARISON DATASET (EASILY CUSTOMIZABLE):
  * Modify these series values or map your API data directly here.
- * ============================================================================
  */
 export const TREND_DATA = {
   '7d': [
@@ -139,9 +137,7 @@ export default function TrendAnalytics() {
         {/* Two Side-by-Side Responsive Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           
-          {/* ================================================================
-              CHART 1: MULTI-SERIES TREND (BASELINE VS. OBSERVED)
-              ================================================================ */}
+          {/* CHART 1: MULTI-SERIES TREND (BASELINE VS. OBSERVED) */}
           <div className="bg-[#0B1736]/80 border border-blue-400/15 backdrop-blur-md rounded-2xl p-6 shadow-2xl relative overflow-hidden flex flex-col justify-between">
             {/* Ambient subtle glow */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none" />
@@ -252,9 +248,7 @@ export default function TrendAnalytics() {
             </div>
           </div>
 
-          {/* ================================================================
-              CHART 2: COMPARATIVE BAR CHART (PREVIOUS VS. CURRENT CYCLE)
-              ================================================================ */}
+          {/* CHART 2: COMPARATIVE BAR CHART (PREVIOUS VS. CURRENT CYCLE) */}
           <div className="bg-[#0B1736]/80 border border-blue-400/15 backdrop-blur-md rounded-2xl p-6 shadow-2xl relative overflow-hidden flex flex-col justify-between">
             {/* Ambient subtle glow */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-orange-500/5 rounded-full blur-3xl pointer-events-none" />

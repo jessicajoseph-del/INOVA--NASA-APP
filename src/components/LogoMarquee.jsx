@@ -1,7 +1,6 @@
 import React from 'react';
 
 /**
- * ============================================================================
  * LOGOS CONFIGURATION ARRAY:
  * Each entry currently points to the placeholder image "/hum.jpeg" located
  * in the public/ folder (accessible directly at the root URL).
@@ -10,7 +9,6 @@ import React from 'react';
  * 1. Place your company/partner logo files (SVG or PNG) in public/logos/
  * 2. Update the 'src' string below (e.g., src: "/logos/partner1.svg")
  * 3. Update the 'alt' and 'name' attributes accordingly.
- * ============================================================================
  */
 export const LOGOS = [
   {
