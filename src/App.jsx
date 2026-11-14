@@ -1,13 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ArrowRight, Layers, Sparkles, CheckCircle2, ShieldCheck, Globe2, Cpu, Terminal } from 'lucide-react';
 import LogoMarquee from './components/LogoMarquee';
+import AuraDashboard from './pages/AuraDashboard';
 
 export default function App() {
+  // Toggle between 'landing' (teammate's page) and 'dashboard' (your 3D ISS dashboard)
+  const [activeView, setActiveView] = useState('landing');
+
+  if (activeView === 'dashboard') {
+    return <AuraDashboard onBackToHome={() => setActiveView('landing')} />;
+  }
+
   return (
     <div className="min-h-screen flex flex-col justify-between bg-white text-slate-900 selection:bg-[#FF7300] selection:text-white font-sans">
-      {/* ====================================================================
-          1. HEADER / NAVIGATION BAR
-          ==================================================================== */}
+      {/* 1. HEADER / NAVIGATION BAR */}
       <header className="border-b border-slate-100 bg-white/80 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center space-x-3">
@@ -40,22 +46,20 @@ export default function App() {
             </button>
             <button 
               type="button" 
+              onClick={() => setActiveView('dashboard')}
               className="inline-flex items-center justify-center text-sm font-semibold text-white bg-[#0F172A] hover:bg-[#1E293B] px-4 py-2 rounded-lg transition-all shadow-sm active:scale-95 cursor-pointer"
             >
-              <span>Get Started</span>
+              <span>Launch AURA 3D</span>
               <ArrowRight className="w-4 h-4 ml-1.5" />
             </button>
           </div>
         </div>
       </header>
 
-      {/* ====================================================================
-          2. MAIN WORKSPACE / HERO (OCCUPIES UPPER VIEWPORT)
-          ==================================================================== */}
+      {/* 2. MAIN WORKSPACE / HERO */}
       <main className="flex-1 flex flex-col justify-center px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full py-12 md:py-16">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
           
-          {/* Left Column: Headline, Value Proposition & CTA */}
           <div className="lg:col-span-7 space-y-6 text-left">
             <div className="inline-flex items-center space-x-2 px-3 py-1.5 rounded-full bg-slate-50 border border-slate-200/80 text-xs font-medium text-slate-700">
               <span className="flex h-2 w-2 rounded-full bg-[#FF7300] animate-pulse"></span>
@@ -76,9 +80,10 @@ export default function App() {
             <div className="flex flex-wrap items-center gap-4 pt-2">
               <button 
                 type="button" 
+                onClick={() => setActiveView('dashboard')}
                 className="inline-flex items-center justify-center px-6 py-3.5 rounded-xl text-base font-semibold text-white bg-[#FF7300] hover:bg-[#e66800] transition-all shadow-lg shadow-orange-500/25 active:scale-98 cursor-pointer"
               >
-                <span>Start Free Trial</span>
+                <span>Open ISS Telemetry Dashboard</span>
                 <ArrowRight className="w-4 h-4 ml-2" />
               </button>
               <button 
@@ -162,9 +167,7 @@ export default function App() {
         </div>
       </main>
 
-      {/* ====================================================================
-          3. LOGO MARQUEE SECTION (ANCHORED AT BOTTOM OF THE PAGE)
-          ==================================================================== */}
+      {/* 3. LOGO MARQUEE SECTION */}
       <footer className="w-full mt-auto">
         <LogoMarquee />
 
