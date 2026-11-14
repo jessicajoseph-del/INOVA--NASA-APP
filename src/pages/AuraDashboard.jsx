@@ -83,7 +83,7 @@ function ARSceneRotator({ globalRotationRef, children }) {
     return <group ref={groupRef}>{children}</group>;
 }
 
-export default function AuraDashboard() {
+export default function AuraDashboard({ onBackToHome }) {
     // Local State replaces Inertia backend props
     const [isCritical, setIsCritical] = useState(false);
 
