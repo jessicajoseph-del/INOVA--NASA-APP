@@ -1,48 +1,122 @@
 import React from 'react';
-import { ArrowRight, Layers, Sparkles, CheckCircle2, ShieldCheck, Globe2, Cpu, Terminal } from 'lucide-react';
+import { 
+  ArrowRight, 
+  Layers, 
+  Sparkles, 
+  TrendingUp, 
+  ArrowUpRight, 
+  ArrowDownRight, 
+  ShieldCheck, 
+  Cpu, 
+  CheckCircle2, 
+  Activity, 
+  Gauge, 
+  ExternalLink 
+} from 'lucide-react';
+import TrendAnalytics from './components/TrendAnalytics';
 import LogoMarquee from './components/LogoMarquee';
+
+/**
+ * ============================================================================
+ * TOPIC & EXECUTIVE KPI DATA CONFIGURATION:
+ * Customize the title, mission description, and top-line KPI values below.
+ * ============================================================================
+ */
+export const TOPIC_DATA = {
+  eyebrow: 'TRUSTED AI GOVERNANCE & MISSION TELEMETRY // TREND ANALYSIS',
+  title: 'Comparative Mission Telemetry & Sovereignty Benchmarks',
+  subtitle:
+    'Real-time comparative evaluation of telemetry stream throughput, multi-regional latency variance, and autonomous policy compliance across operational cycles.',
+  kpis: [
+    {
+      id: 'kpi-1',
+      title: 'Telemetry Throughput',
+      metricLabel: 'Observed vs. Baseline',
+      currentValue: '142.8 GB/s',
+      baselineValue: '124.0 GB/s',
+      delta: '+15.2%',
+      isPositive: true,
+      deltaLabel: 'vs. baseline',
+      icon: Activity,
+      accentColor: 'text-[#FF7300]',
+      badgeColor: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+      description: 'Peak streaming telemetry rate across multi-constellation relays',
+    },
+    {
+      id: 'kpi-2',
+      title: 'Latency Variance Delta',
+      metricLabel: 'Consensus Roundtrip',
+      currentValue: '0.68 ms',
+      baselineValue: '0.95 ms',
+      delta: '-28.4%',
+      isPositive: true, // Lower latency is positive
+      deltaLabel: 'reduction',
+      icon: Gauge,
+      accentColor: 'text-cyan-400',
+      badgeColor: 'bg-cyan-500/10 text-cyan-300 border-cyan-500/20',
+      description: 'p99 distributed microgateway consensus roundtrip latency',
+    },
+    {
+      id: 'kpi-3',
+      title: 'Compliance & Stability Index',
+      metricLabel: 'Policy Enforcement',
+      currentValue: '99.98%',
+      baselineValue: '99.60%',
+      delta: '+0.38%',
+      isPositive: true,
+      deltaLabel: 'stability gain',
+      icon: ShieldCheck,
+      accentColor: 'text-emerald-400',
+      badgeColor: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+      description: 'Zero-trust cryptographic verification & data residency adherence',
+    },
+  ],
+};
 
 export default function App() {
   return (
-    <div className="min-h-screen flex flex-col justify-between bg-white text-slate-900 selection:bg-[#FF7300] selection:text-white font-sans">
+    <div className="min-h-screen flex flex-col justify-between bg-[#060D21] bg-[radial-gradient(ellipse_at_top,_#0F214D_0%,_#060D21_70%)] text-slate-100 selection:bg-[#FF7300] selection:text-white font-sans relative overflow-x-hidden">
+      
+      {/* Background Ambient Grid & Glow Effects */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#1E293B0a_1px,transparent_1px),linear-gradient(to_bottom,#1E293B0a_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none" />
+
       {/* ====================================================================
           1. HEADER / NAVIGATION BAR
           ==================================================================== */}
-      <header className="border-b border-slate-100 bg-white/80 backdrop-blur-md sticky top-0 z-50">
+      <header className="border-b border-blue-900/40 bg-[#060D21]/80 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#FF7300] to-orange-400 flex items-center justify-center text-white shadow-md shadow-orange-500/20">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#FF7300] to-orange-400 flex items-center justify-center text-white shadow-lg shadow-orange-500/20">
               <Layers className="w-5 h-5" />
             </div>
             <div>
-              <span className="font-extrabold text-xl tracking-tight text-[#0F172A]">
+              <span className="font-extrabold text-xl tracking-tight text-white">
                 INOVA<span className="text-[#FF7300]">.</span>
               </span>
-              <span className="ml-2 text-xs font-semibold px-2 py-0.5 rounded-full bg-orange-50 text-[#FF7300] border border-orange-200/60 hidden sm:inline-block">
-                Enterprise Cloud
+              <span className="ml-2 text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-950/80 text-cyan-300 border border-cyan-500/30 hidden sm:inline-block">
+                Mission Telemetry
               </span>
             </div>
           </div>
 
-          <nav className="hidden md:flex items-center space-x-8 text-sm font-medium text-slate-600">
-            <a href="#platform" className="hover:text-[#FF7300] transition-colors">Platform</a>
-            <a href="#solutions" className="hover:text-[#FF7300] transition-colors">Solutions</a>
-            <a href="#architecture" className="hover:text-[#FF7300] transition-colors">Architecture</a>
-            <a href="#developers" className="hover:text-[#FF7300] transition-colors">Developers</a>
+          <nav className="hidden md:flex items-center space-x-8 text-sm font-medium text-slate-300">
+            <a href="#overview" className="text-white hover:text-cyan-400 transition-colors">Overview</a>
+            <a href="#trends" className="hover:text-cyan-400 transition-colors">Trend Comparison</a>
+            <a href="#benchmarks" className="hover:text-cyan-400 transition-colors">Cohort Benchmarks</a>
+            <a href="#governance" className="hover:text-cyan-400 transition-colors">Sovereignty</a>
           </nav>
 
           <div className="flex items-center space-x-3">
+            <div className="hidden sm:flex items-center space-x-2 text-xs font-mono text-emerald-400 bg-emerald-950/40 px-3 py-1.5 rounded-full border border-emerald-500/30">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span>Constellation Active</span>
+            </div>
             <button 
               type="button" 
-              className="hidden sm:inline-flex text-sm font-semibold text-slate-700 hover:text-slate-950 px-3.5 py-2 transition-colors cursor-pointer"
+              className="inline-flex items-center justify-center text-sm font-semibold text-white bg-gradient-to-r from-[#FF7300] to-orange-500 hover:from-orange-600 hover:to-[#FF7300] px-4 py-2 rounded-lg transition-all shadow-md shadow-orange-500/20 active:scale-95 cursor-pointer"
             >
-              Sign In
-            </button>
-            <button 
-              type="button" 
-              className="inline-flex items-center justify-center text-sm font-semibold text-white bg-[#0F172A] hover:bg-[#1E293B] px-4 py-2 rounded-lg transition-all shadow-sm active:scale-95 cursor-pointer"
-            >
-              <span>Get Started</span>
+              <span>Export Telemetry</span>
               <ArrowRight className="w-4 h-4 ml-1.5" />
             </button>
           </div>
@@ -50,135 +124,116 @@ export default function App() {
       </header>
 
       {/* ====================================================================
-          2. MAIN WORKSPACE / HERO (OCCUPIES UPPER VIEWPORT)
+          2. TOP SECTION: TOPIC HEADER & SUMMARY KPI STRIP
           ==================================================================== */}
-      <main className="flex-1 flex flex-col justify-center px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full py-12 md:py-16">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-          
-          {/* Left Column: Headline, Value Proposition & CTA */}
-          <div className="lg:col-span-7 space-y-6 text-left">
-            <div className="inline-flex items-center space-x-2 px-3 py-1.5 rounded-full bg-slate-50 border border-slate-200/80 text-xs font-medium text-slate-700">
-              <span className="flex h-2 w-2 rounded-full bg-[#FF7300] animate-pulse"></span>
-              <span>Open, flexible & secure enterprise integration</span>
-              <Sparkles className="w-3.5 h-3.5 text-orange-500" />
+      <main className="flex-1 w-full relative z-10">
+        
+        {/* Executive Topic Header */}
+        <section className="pt-10 md:pt-14 pb-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+          <div className="max-w-4xl space-y-4 text-left">
+            
+            {/* Eyebrow Badge */}
+            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full border border-cyan-400/30 bg-cyan-400/10 text-cyan-300 font-mono text-xs uppercase tracking-wider shadow-sm shadow-cyan-950/50">
+              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping"></span>
+              <span>{TOPIC_DATA.eyebrow}</span>
             </div>
 
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-[#0F172A] leading-[1.12]">
-              Architecting resilient systems with <span className="text-[#FF7300]">complete autonomy</span>.
+            {/* Main Topic Title */}
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white leading-[1.15]">
+              {TOPIC_DATA.title}
             </h1>
 
-            <p className="text-lg md:text-xl text-slate-600 max-w-2xl font-normal leading-relaxed">
-              Connect mission-critical data, orchestrate enterprise APIs, and maintain 
-              strict data governance across hybrid and sovereign clouds with zero vendor lock-in.
+            {/* Subtitle */}
+            <p className="text-base sm:text-lg text-slate-300 font-normal leading-relaxed max-w-3xl">
+              {TOPIC_DATA.subtitle}
             </p>
-
-            {/* CTA Button Group */}
-            <div className="flex flex-wrap items-center gap-4 pt-2">
-              <button 
-                type="button" 
-                className="inline-flex items-center justify-center px-6 py-3.5 rounded-xl text-base font-semibold text-white bg-[#FF7300] hover:bg-[#e66800] transition-all shadow-lg shadow-orange-500/25 active:scale-98 cursor-pointer"
-              >
-                <span>Start Free Trial</span>
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </button>
-              <button 
-                type="button" 
-                className="inline-flex items-center justify-center px-6 py-3.5 rounded-xl text-base font-semibold text-slate-800 bg-slate-100 hover:bg-slate-200 transition-all active:scale-98 cursor-pointer"
-              >
-                <span>Schedule Architecture Review</span>
-              </button>
-            </div>
-
-            {/* Quick Metrics */}
-            <div className="pt-4 grid grid-cols-3 gap-6 border-t border-slate-100 max-w-xl">
-              <div>
-                <p className="text-2xl font-bold text-[#0F172A]">99.999%</p>
-                <p className="text-xs text-slate-500 font-medium">Uptime Guarantee</p>
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-[#0F172A]">60B+</p>
-                <p className="text-xs text-slate-500 font-medium">Daily API Calls</p>
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-[#0F172A]">100%</p>
-                <p className="text-xs text-slate-500 font-medium">Sovereign Compliant</p>
-              </div>
-            </div>
           </div>
 
-          {/* Right Column: Interactive Minimalist Workspace Card */}
-          <div className="lg:col-span-5">
-            <div className="relative rounded-2xl bg-gradient-to-b from-slate-900 to-slate-950 p-6 text-white shadow-2xl border border-slate-800">
-              <div className="flex items-center justify-between pb-4 border-b border-slate-800/80 mb-4">
-                <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 rounded-full bg-rose-500/80"></div>
-                  <div className="w-3 h-3 rounded-full bg-amber-500/80"></div>
-                  <div className="w-3 h-3 rounded-full bg-emerald-500/80"></div>
-                  <span className="text-xs font-mono text-slate-400 ml-2">inova-runtime ~ cluster-ready</span>
-                </div>
-                <div className="flex items-center text-xs font-mono text-[#FF7300] bg-orange-950/40 px-2 py-0.5 rounded border border-orange-900/50">
-                  v4.3.0-prod
-                </div>
-              </div>
+          {/* 3 Compact Comparison KPI Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-8">
+            {TOPIC_DATA.kpis.map((kpi) => {
+              const IconComponent = kpi.icon;
+              return (
+                <div
+                  key={kpi.id}
+                  className="bg-[#0B1736]/80 border border-blue-400/15 backdrop-blur-md rounded-2xl p-5 shadow-xl hover:border-cyan-400/30 hover:shadow-cyan-950/40 transition-all duration-300 flex flex-col justify-between group"
+                >
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <span className="text-xs font-mono uppercase tracking-wider text-slate-400 block">
+                        {kpi.title}
+                      </span>
+                      <div className="flex items-baseline gap-2 mt-2">
+                        <span className="text-2xl sm:text-3xl font-extrabold font-mono text-white tracking-tight">
+                          {kpi.currentValue}
+                        </span>
+                      </div>
+                    </div>
 
-              <div className="font-mono text-xs space-y-2 text-slate-300">
-                <p className="text-slate-500">// Sovereign microgateway orchestration</p>
-                <p><span className="text-[#FF7300]">import</span> &#123; createSecureMesh &#125; <span className="text-[#FF7300]">from</span> <span className="text-emerald-400">'@inova/sovereign'</span>;</p>
-                <div className="p-3 my-3 rounded-lg bg-slate-900/90 border border-slate-800 space-y-1.5">
-                  <div className="flex items-center text-emerald-400 space-x-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
-                    <span>Multi-region data isolation: Active</span>
+                    <div className="p-2.5 rounded-xl bg-blue-950/70 border border-blue-800/40 text-cyan-300 group-hover:scale-110 transition-transform">
+                      <IconComponent className="w-5 h-5" />
+                    </div>
                   </div>
-                  <div className="flex items-center text-emerald-400 space-x-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
-                    <span>Zero-trust mTLS proxy: Enforced</span>
-                  </div>
-                  <div className="flex items-center text-cyan-400 space-x-2">
-                    <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
-                    <span>Latency overhead: &lt; 0.8ms p99</span>
-                  </div>
-                </div>
-                <p className="text-slate-400"><span className="text-purple-400">const</span> mesh = <span className="text-sky-400">createSecureMesh</span>(&#123; policy: <span className="text-emerald-400">'strict-local'</span> &#125;);</p>
-                <p className="text-slate-400"><span className="text-purple-400">await</span> mesh.<span className="text-sky-400">deploy</span>(&#123; target: <span className="text-amber-400">'eu-central-sovereign'</span> &#125;);</p>
-              </div>
 
-              <div className="grid grid-cols-3 gap-2 pt-5 mt-5 border-t border-slate-800 text-center">
-                <div className="p-2 rounded bg-slate-900/50">
-                  <Globe2 className="w-4 h-4 mx-auto text-[#FF7300] mb-1" />
-                  <span className="text-[10px] text-slate-400 uppercase tracking-wider block">Federation</span>
+                  {/* Baseline & Delta Comparison Row */}
+                  <div className="mt-4 pt-3.5 border-t border-blue-900/40 flex items-center justify-between text-xs">
+                    <div className="text-slate-400">
+                      <span>Baseline: </span>
+                      <span className="font-mono font-semibold text-slate-200">
+                        {kpi.baselineValue}
+                      </span>
+                    </div>
+
+                    <span
+                      className={`inline-flex items-center gap-1 font-mono font-bold px-2 py-0.5 rounded-md border text-[11px] ${kpi.badgeColor}`}
+                    >
+                      {kpi.isPositive ? (
+                        <ArrowUpRight className="w-3.5 h-3.5" />
+                      ) : (
+                        <ArrowDownRight className="w-3.5 h-3.5" />
+                      )}
+                      <span>{kpi.delta}</span>
+                    </span>
+                  </div>
+
+                  <p className="text-[11px] text-slate-400 mt-2 leading-tight">
+                    {kpi.description}
+                  </p>
                 </div>
-                <div className="p-2 rounded bg-slate-900/50">
-                  <Cpu className="w-4 h-4 mx-auto text-[#FF7300] mb-1" />
-                  <span className="text-[10px] text-slate-400 uppercase tracking-wider block">Low Latency</span>
-                </div>
-                <div className="p-2 rounded bg-slate-900/50">
-                  <Terminal className="w-4 h-4 mx-auto text-[#FF7300] mb-1" />
-                  <span className="text-[10px] text-slate-400 uppercase tracking-wider block">GitOps Ready</span>
-                </div>
-              </div>
-            </div>
+              );
+            })}
           </div>
+        </section>
 
-        </div>
+        {/* ====================================================================
+            3. MIDDLE SECTION: INTERACTIVE TREND COMPARISON CHARTS
+            ==================================================================== */}
+        <TrendAnalytics />
+
       </main>
 
       {/* ====================================================================
-          3. LOGO MARQUEE SECTION (ANCHORED AT BOTTOM OF THE PAGE)
+          4. BOTTOM SECTION: WSO2-STYLE INFINITE LOGO MARQUEE (INTACT)
           ==================================================================== */}
-      <footer className="w-full mt-auto">
+      <footer className="w-full mt-auto relative z-10">
         <LogoMarquee />
 
-        <div className="border-t border-slate-100 bg-slate-50/60 py-4">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-2">
-            <p>© {new Date().getFullYear()} INOVA Technologies. All rights reserved.</p>
+        {/* Minimal Bottom Baseline / Credits Bar */}
+        <div className="border-t border-blue-900/30 bg-[#040816]/70 py-4">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-2">
+            <p>© {new Date().getFullYear()} INOVA Aerospace & Digital Sovereignty. All telemetry verified.</p>
             <div className="flex items-center space-x-6">
-              <a href="#privacy" className="hover:text-slate-800 transition-colors">Privacy Policy</a>
-              <a href="#terms" className="hover:text-slate-800 transition-colors">Terms of Service</a>
-              <a href="#security" className="hover:text-slate-800 transition-colors">Security</a>
+              <a href="#privacy" className="hover:text-cyan-300 transition-colors">Security Policy</a>
+              <a href="#terms" className="hover:text-cyan-300 transition-colors">Mission Protocol</a>
+              <a href="#status" className="hover:text-cyan-300 transition-colors flex items-center gap-1.5">
+                <span>Relay Mesh Active</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+              </a>
             </div>
           </div>
         </div>
       </footer>
+
     </div>
   );
 }
