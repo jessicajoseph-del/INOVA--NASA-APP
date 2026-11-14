@@ -265,3 +265,48 @@
     animation: none !important;
   }
 }
+
+
+/* ============================================================================
+   ASTRONAUT BEHAVIORAL HEALTH SLIDER STYLES
+   ============================================================================ */
+input[type="range"].lumina-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 8px;
+  border-radius: 9999px;
+  background: #e5d8b6;
+  outline: none;
+  cursor: pointer;
+}
+
+input[type="range"].lumina-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 9999px;
+  background: #173054;
+  border: 3px solid #fcf9f0;
+  box-shadow: 0 2px 8px rgba(11, 23, 42, 0.28);
+  transition: transform 150ms cubic-bezier(0.16, 1, 0.3, 1), background-color 150ms ease;
+}
+
+input[type="range"].lumina-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+  background: #145252;
+}
+
+input[type="range"].lumina-slider:focus-visible::-webkit-slider-thumb {
+  box-shadow: 0 0 0 4px rgba(23, 48, 84, 0.25);
+}
+
+input[type="range"].lumina-slider::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 9999px;
+  background: #173054;
+  border: 3px solid #fcf9f0;
+  box-shadow: 0 2px 8px rgba(11, 23, 42, 0.28);
+  transition: transform 150ms cubic-bezier(0.16, 1, 0.3, 1), background-color 150ms ease;
+}

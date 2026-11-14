@@ -1,0 +1,6 @@
+{
+  "name": "Lumina Path — Astronaut Behavioural Check",
+  "description": "Self-contained astronaut behavioural assessment featuring baseline personality profiling, 2-minute daily mood and load checks, A-B-C pattern tracking, and automated Part C mission readiness reports.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

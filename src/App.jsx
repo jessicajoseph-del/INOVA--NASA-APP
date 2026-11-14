@@ -14,11 +14,15 @@ import {
   ExternalLink,
   Gamepad2,
   Compass,
-  ArrowLeft
+  ArrowLeft,
+  HeartPulse,
+  Brain,
+  ClipboardCheck
 } from 'lucide-react';
 import TrendAnalytics from './components/TrendAnalytics';
 import LogoMarquee from './components/LogoMarquee';
 import RoadmapGame from './roadmap/RoadmapGame';
+import BehavioralHealthPage from './behavioral/BehavioralHealthPage';
 
 /**
  * ============================================================================
@@ -78,7 +82,7 @@ export const TOPIC_DATA = {
 };
 
 export default function App() {
-  // Navigation State: 'overview' (Telemetry & Trends) or 'roadmap' (Lumina Path Game)
+  // Navigation State: 'overview' | 'roadmap' | 'behavioral'
   const [activeView, setActiveView] = useState('overview');
 
   return (
@@ -92,8 +96,8 @@ export default function App() {
           1. HEADER / NAVIGATION BAR WITH MULTI-PAGE SWITCHER
           ==================================================================== */}
       <header className="border-b border-blue-900/40 bg-[#060D21]/80 backdrop-blur-md sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center space-x-3">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+          <div className="flex items-center space-x-3 shrink-0">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#FF7300] to-orange-400 flex items-center justify-center text-white shadow-lg shadow-orange-500/20">
               <Layers className="w-5 h-5" />
             </div>
@@ -101,21 +105,22 @@ export default function App() {
               <span className="font-extrabold text-xl tracking-tight text-white">
                 INOVA<span className="text-[#FF7300]">.</span>
               </span>
-              <span className="ml-2 text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-950/80 text-cyan-300 border border-cyan-500/30 hidden sm:inline-block">
+              <span className="ml-2 text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-950/80 text-cyan-300 border border-cyan-500/30 hidden lg:inline-block">
                 Mission Telemetry
               </span>
             </div>
           </div>
 
           {/* Primary View Switcher Navigation Tabs */}
-          <nav className="flex items-center p-1 rounded-xl bg-blue-950/60 border border-blue-800/40 backdrop-blur-md">
+          <nav className="flex items-center p-1 rounded-xl bg-blue-950/60 border border-blue-800/40 backdrop-blur-md overflow-x-auto">
+            {/* Tab 1: Overview */}
             <button
               type="button"
               onClick={() => {
                 setActiveView('overview');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
-              className={`inline-flex items-center gap-2 px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
+              className={`inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap ${
                 activeView === 'overview'
                   ? 'bg-gradient-to-r from-[#FF7300] to-orange-500 text-white shadow-md shadow-orange-500/20'
                   : 'text-slate-400 hover:text-white hover:bg-white/5'
@@ -124,38 +129,71 @@ export default function App() {
               <Activity className="w-3.5 h-3.5" />
               <span>Telemetry & Trends</span>
             </button>
+
+            {/* Tab 2: Roadmap Game */}
             <button
               type="button"
               onClick={() => {
                 setActiveView('roadmap');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
-              className={`inline-flex items-center gap-2 px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
+              className={`inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap ${
                 activeView === 'roadmap'
                   ? 'bg-gradient-to-r from-amber-400 to-[#F5B82E] text-slate-950 shadow-md shadow-amber-400/20 font-bold'
                   : 'text-slate-400 hover:text-white hover:bg-white/5'
               }`}
             >
               <Gamepad2 className="w-3.5 h-3.5" />
-              <span>Lumina Roadmap Quest</span>
+              <span>Roadmap Quest</span>
               <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-ping hidden sm:inline-block" />
+            </button>
+
+            {/* Tab 3: Behavioral Health */}
+            <button
+              type="button"
+              onClick={() => {
+                setActiveView('behavioral');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className={`inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap ${
+                activeView === 'behavioral'
+                  ? 'bg-gradient-to-r from-emerald-400 to-teal-500 text-slate-950 shadow-md shadow-emerald-400/20 font-bold'
+                  : 'text-slate-400 hover:text-white hover:bg-white/5'
+              }`}
+            >
+              <HeartPulse className="w-3.5 h-3.5" />
+              <span>Behavioral Health</span>
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse hidden sm:inline-block" />
             </button>
           </nav>
 
           {/* Action CTAs */}
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-2 shrink-0">
             {activeView === 'overview' ? (
-              <button 
-                type="button" 
-                onClick={() => {
-                  setActiveView('roadmap');
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
-                className="hidden sm:inline-flex items-center justify-center text-xs font-semibold text-[#06132B] bg-gradient-to-r from-amber-400 to-[#F5B82E] hover:from-amber-300 hover:to-amber-500 px-3.5 py-2 rounded-lg transition-all shadow-md active:scale-95 cursor-pointer"
-              >
-                <span>Launch Roadmap Game</span>
-                <ArrowRight className="w-3.5 h-3.5 ml-1" />
-              </button>
+              <div className="flex items-center gap-2">
+                <button 
+                  type="button" 
+                  onClick={() => {
+                    setActiveView('roadmap');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className="hidden sm:inline-flex items-center justify-center text-xs font-semibold text-[#06132B] bg-gradient-to-r from-amber-400 to-[#F5B82E] hover:from-amber-300 hover:to-amber-500 px-3 py-1.5 rounded-lg transition-all shadow-md active:scale-95 cursor-pointer"
+                >
+                  <Gamepad2 className="w-3.5 h-3.5 mr-1" />
+                  <span>Roadmap</span>
+                </button>
+                <button 
+                  type="button" 
+                  onClick={() => {
+                    setActiveView('behavioral');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className="hidden md:inline-flex items-center justify-center text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-500 px-3 py-1.5 rounded-lg transition-all shadow-md active:scale-95 cursor-pointer"
+                >
+                  <HeartPulse className="w-3.5 h-3.5 mr-1" />
+                  <span>Health Check</span>
+                </button>
+              </div>
             ) : (
               <button 
                 type="button" 
@@ -174,9 +212,9 @@ export default function App() {
       </header>
 
       {/* ====================================================================
-          2. DYNAMIC PAGE CONTENT: OVERVIEW OR ROADMAP GAME
+          2. DYNAMIC PAGE CONTENT: OVERVIEW, ROADMAP GAME, OR BEHAVIORAL HEALTH
           ==================================================================== */}
-      {activeView === 'overview' ? (
+      {activeView === 'overview' && (
         <main className="flex-1 w-full relative z-10">
           
           {/* Executive Topic Header */}
@@ -258,43 +296,91 @@ export default function App() {
           {/* Middle Section: Interactive Trend Comparison Charts */}
           <TrendAnalytics />
 
-          {/* Next Page Interactive Roadmap Game Banner */}
+          {/* Two Side-by-Side Interactive Feature Portals */}
           <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full my-8">
-            <div className="rounded-2xl bg-gradient-to-r from-blue-950/90 via-indigo-950/80 to-slate-900/90 border border-cyan-400/30 p-6 sm:p-8 backdrop-blur-md shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden group">
-              <div className="absolute top-0 right-0 w-80 h-80 bg-amber-400/10 rounded-full blur-3xl pointer-events-none group-hover:bg-amber-400/20 transition-all duration-700" />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               
-              <div className="space-y-2.5 text-left relative z-10 max-w-xl">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400/10 border border-amber-400/30 text-amber-300 font-mono text-xs uppercase tracking-wider">
-                  <Compass className="w-3.5 h-3.5" />
-                  <span>Next Page: Interactive Circuit</span>
+              {/* Feature 1: Lumina Quest Roadmap Game */}
+              <div className="rounded-2xl bg-gradient-to-br from-blue-950/90 via-indigo-950/80 to-slate-900/90 border border-cyan-400/30 p-6 sm:p-7 backdrop-blur-md shadow-2xl flex flex-col justify-between relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-amber-400/10 rounded-full blur-3xl pointer-events-none group-hover:bg-amber-400/20 transition-all duration-700" />
+                
+                <div className="space-y-3 text-left relative z-10">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400/10 border border-amber-400/30 text-amber-300 font-mono text-xs uppercase tracking-wider">
+                    <Compass className="w-3.5 h-3.5" />
+                    <span>Interactive Starlight Circuit</span>
+                  </div>
+                  <h3 className="text-2xl font-extrabold text-white tracking-tight">
+                    Lumina Quest Roadmap
+                  </h3>
+                  <p className="text-sm text-slate-300 leading-relaxed">
+                    Navigate the fiber-optic roadmap path. Complete orbital challenge nodes, trigger shooting current surges, collect achievement stars, and reach the Grand Trophy Vault.
+                  </p>
                 </div>
-                <h3 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-                  Lumina Quest: Starlight Circuit Roadmap
-                </h3>
-                <p className="text-sm text-slate-300 leading-relaxed">
-                  Navigate the interactive fiber-optic roadmap path. Complete orbital challenge nodes, trigger shooting current surges, collect achievement stars, and reach the Grand Trophy Vault.
-                </p>
+
+                <div className="pt-5 mt-4 border-t border-blue-900/40 relative z-10">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setActiveView('roadmap');
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-bold text-xs bg-gradient-to-r from-amber-400 to-[#F5B82E] text-[#06132B] shadow-lg shadow-amber-500/20 hover:scale-[1.02] active:scale-95 transition-all cursor-pointer whitespace-nowrap"
+                  >
+                    <span>Launch Roadmap Game</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
 
-              <button
-                type="button"
-                onClick={() => {
-                  setActiveView('roadmap');
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
-                className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl font-bold text-sm bg-gradient-to-r from-amber-400 to-[#F5B82E] text-[#06132B] shadow-lg shadow-amber-500/20 hover:scale-105 active:scale-95 transition-all cursor-pointer whitespace-nowrap relative z-10 shrink-0"
-              >
-                <span>Play Roadmap Game</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
+              {/* Feature 2: Astronaut Behavioral Health & CrewMind */}
+              <div className="rounded-2xl bg-gradient-to-br from-teal-950/90 via-slate-900/90 to-blue-950/90 border border-emerald-400/30 p-6 sm:p-7 backdrop-blur-md shadow-2xl flex flex-col justify-between relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-400/10 rounded-full blur-3xl pointer-events-none group-hover:bg-emerald-400/20 transition-all duration-700" />
+                
+                <div className="space-y-3 text-left relative z-10">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-400/10 border border-emerald-400/30 text-emerald-300 font-mono text-xs uppercase tracking-wider">
+                    <HeartPulse className="w-3.5 h-3.5" />
+                    <span>Astronaut Health Assessment</span>
+                  </div>
+                  <h3 className="text-2xl font-extrabold text-white tracking-tight">
+                    CrewMind Behavioral Check
+                  </h3>
+                  <p className="text-sm text-slate-300 leading-relaxed">
+                    Comprehensive astronaut behavioral health suite: Part A personality baseline, daily mood & sleep logs (Part B), Part C readiness scoring, and Psychomotor Vigilance (PVT) testing.
+                  </p>
+                </div>
+
+                <div className="pt-5 mt-4 border-t border-blue-900/40 relative z-10">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setActiveView('behavioral');
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-bold text-xs bg-gradient-to-r from-emerald-400 to-teal-500 text-[#06132B] shadow-lg shadow-emerald-500/20 hover:scale-[1.02] active:scale-95 transition-all cursor-pointer whitespace-nowrap"
+                  >
+                    <span>Open Behavioral Health Check</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+
             </div>
           </section>
 
         </main>
-      ) : (
-        /* ROADMAP GAME VIEW */
+      )}
+
+      {/* ROADMAP GAME VIEW */}
+      {activeView === 'roadmap' && (
         <main className="flex-1 w-full relative z-10">
           <RoadmapGame onBack={() => setActiveView('overview')} />
+        </main>
+      )}
+
+      {/* BEHAVIORAL HEALTH VIEW */}
+      {activeView === 'behavioral' && (
+        <main className="flex-1 w-full relative z-10">
+          <BehavioralHealthPage onBack={() => setActiveView('overview')} />
         </main>
       )}
 
