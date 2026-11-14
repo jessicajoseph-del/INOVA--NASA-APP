@@ -33,11 +33,10 @@ function PhotorealisticISS() {
     const { scene } = useGLTF('/models/ISS_light.glb');
     return <primitive object={scene.clone()} scale={[0.5, 0.5, 0.5]} position={[0, -2, 0]} />;
 }
-
 function RealisticEarth() {
     const earthRef = useRef();
 
-    // High-detail Low-Earth-Orbit Blue Horizon & Cloud Shader
+    // High-detail Low-Earth-Orbit Darker Blue Horizon Shader
     const earthMaterial = useMemo(() => {
         return new THREE.ShaderMaterial({
             uniforms: {
@@ -95,15 +94,17 @@ function RealisticEarth() {
                     float continent = fbm(dir * 3.4);
                     float fineDetail = fbm(dir * 18.0);
 
-                    vec3 abyssBlue = vec3(0.01, 0.08, 0.28);
-                    vec3 orbitalBlue = vec3(0.03, 0.24, 0.56);
-                    vec3 coastalTeal = vec3(0.08, 0.46, 0.76);
+                    // Darker, deeper oceanic blues
+                    vec3 abyssBlue = vec3(0.0, 0.04, 0.18);
+                    vec3 orbitalBlue = vec3(0.01, 0.14, 0.38);
+                    vec3 coastalTeal = vec3(0.04, 0.32, 0.58);
 
                     float oceanGrad = smoothstep(0.25, 0.55, continent + fineDetail * 0.08);
                     vec3 oceanColor = mix(abyssBlue, orbitalBlue, oceanGrad);
                     oceanColor = mix(oceanColor, coastalTeal, smoothstep(0.49, 0.54, continent));
 
-                    vec3 landColor = mix(vec3(0.06, 0.22, 0.24), vec3(0.16, 0.30, 0.25), fineDetail);
+                    // Darker landmasses
+                    vec3 landColor = mix(vec3(0.04, 0.14, 0.16), vec3(0.10, 0.20, 0.18), fineDetail);
                     float landMask = smoothstep(0.54, 0.57, continent);
                     vec3 surface = mix(oceanColor, landColor, landMask);
 
@@ -117,18 +118,21 @@ function RealisticEarth() {
                     float clouds = smoothstep(0.50, 0.72, cloudBase) * 0.85 + smoothstep(0.62, 0.82, cloudWisps) * 0.35;
                     clouds = clamp(clouds, 0.0, 1.0);
 
-                    vec3 cloudTint = mix(vec3(0.76, 0.88, 1.0), vec3(1.0, 1.0, 1.0), smoothstep(0.3, 0.9, clouds));
-                    surface = mix(surface, cloudTint, clouds * 0.88);
+                    // Dimmed clouds to prevent blowouts
+                    vec3 cloudTint = mix(vec3(0.60, 0.75, 0.90), vec3(0.85, 0.90, 0.95), smoothstep(0.3, 0.9, clouds));
+                    surface = mix(surface, cloudTint, clouds * 0.75);
 
+                    // Reduced ambient lighting multiplier
                     float ndotl = dot(vWorldNormal, sunDirection);
-                    float light = 0.22 + 0.88 * smoothstep(-0.25, 0.75, ndotl);
+                    float light = 0.10 + 0.75 * smoothstep(-0.25, 0.75, ndotl);
 
                     float viewAngle = 1.0 - max(dot(vNormal, vec3(0.0, 0.0, 1.0)), 0.0);
                     float innerHaze = pow(viewAngle, 2.6);
                     float brightLimb = pow(viewAngle, 5.2);
 
-                    vec3 atmosphereColor = mix(vec3(0.12, 0.48, 0.95), vec3(0.58, 0.86, 1.0), brightLimb);
-                    vec3 finalColor = surface * light + atmosphereColor * (innerHaze * 0.55 + brightLimb * 0.95) * (0.4 + 0.6 * smoothstep(-0.3, 0.6, ndotl));
+                    // Darker atmospheric scatter
+                    vec3 atmosphereColor = mix(vec3(0.08, 0.35, 0.75), vec3(0.45, 0.75, 0.95), brightLimb);
+                    vec3 finalColor = surface * light + atmosphereColor * (innerHaze * 0.45 + brightLimb * 0.80) * (0.3 + 0.7 * smoothstep(-0.3, 0.6, ndotl));
 
                     gl_FragColor = vec4(finalColor, 1.0);
                 }
@@ -136,6 +140,7 @@ function RealisticEarth() {
         });
     }, []);
 
+    // Outer Atmospheric Glow Halo 
     const haloMaterial = useMemo(() => {
         return new THREE.ShaderMaterial({
             uniforms: {
@@ -161,8 +166,9 @@ function RealisticEarth() {
                     float viewDot = dot(vNormal, vPositionNormal);
                     float fresnel = pow(clamp(1.0 + viewDot, 0.0, 1.0), 4.2);
                     float sunSide = smoothstep(-0.3, 0.7, dot(vWorldNormal, sunDirection));
-                    vec3 glow = mix(vec3(0.08, 0.42, 0.95), vec3(0.65, 0.90, 1.0), fresnel);
-                    gl_FragColor = vec4(glow, fresnel * (0.35 + 0.65 * sunSide) * 0.9);
+                    // Darker glow gradient
+                    vec3 glow = mix(vec3(0.05, 0.30, 0.80), vec3(0.40, 0.70, 0.95), fresnel);
+                    gl_FragColor = vec4(glow, fresnel * (0.25 + 0.55 * sunSide) * 0.85);
                 }
             `,
             side: THREE.BackSide,
@@ -189,7 +195,6 @@ function RealisticEarth() {
         </group>
     );
 }
-
 function HolographicZone({ position, rotation = [0, 0, 0], size, name, isCritical, shielding, isSelected, onClick }) {
     const isSafe = isCritical && shielding >= 0.70;
     let zoneColor = "#94a3b8";
@@ -282,6 +287,22 @@ export default function AuraDashboard({ onBackToHome }) {
     const [doseHistory, setDoseHistory] = useState([24.2, 25.6, 23.9, 26.1, 24.8, 25.9, 24.1, 26.4, 25.0, 25.8, 24.6, 25.4]);
     const [biometrics, setBiometrics] = useState({ hr: 74, dose: '25.1', stress: 'NOMINAL' });
     const [dosimeterConnected, setDosimeterConnected] = useState(true);
+
+    // Space Time (UTC) State
+    const [utcTime, setUtcTime] = useState('00:00:00 UTC');
+
+    useEffect(() => {
+        const updateTime = () => {
+            const now = new Date();
+            const hh = String(now.getUTCHours()).padStart(2, '0');
+            const mm = String(now.getUTCMinutes()).padStart(2, '0');
+            const ss = String(now.getUTCSeconds()).padStart(2, '0');
+            setUtcTime(`${hh}:${mm}:${ss} UTC`);
+        };
+        updateTime();
+        const timer = setInterval(updateTime, 1000);
+        return () => clearInterval(timer);
+    }, []);
 
     // 4-Tier Protection Profile (Dark Glassmorphic HUD Colors)
     const getModuleProtection = (shielding) => {
@@ -435,14 +456,14 @@ export default function AuraDashboard({ onBackToHome }) {
         <div className="h-[100vh] w-[100vw] bg-[#040914] text-slate-100 flex flex-col font-sans overflow-hidden">
             {arEnabled && <HandTracker onHandUpdate={handleHandUpdate} />}
 
-            {/* TOP HEADER (Ivory & ECLSS Telemetry Matrix) */}
             <header className="shrink-0 px-6 py-3.5 border-b border-stone-200/80 bg-[#FFFFF0] flex flex-col gap-3.5 relative z-20">
+                {/* Top Row: Brand Left, Visor/Mode Center, Back & User Avatar Right */}
                 <div className="flex flex-wrap justify-between items-center w-full gap-4">
                     {/* Left: Brand Title & Mission Subtitle */}
                     <div className="flex flex-col">
                         <div className="flex items-center gap-2.5">
                             <h1 className="text-lg sm:text-xl font-extrabold tracking-wider text-slate-900 leading-none">
-                                AURA <span className="text-slate-400 font-light">/</span> EDGE_COMPUTE
+                                INOVA <span className="text-slate-400 font-light">/</span> EDGE_COMPUTE
                             </h1>
                             <span
                                 className={`text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1.5 ${
@@ -518,9 +539,61 @@ export default function AuraDashboard({ onBackToHome }) {
                     </div>
                 </div>
 
+                {/* MIDDLE ROW: Orbital Telemetry, UTC Space Clock, & Mission Duration Progress */}
+                <div className="flex flex-wrap items-center justify-between w-full bg-white rounded-2xl px-6 py-2.5 text-xs font-mono border border-stone-200/90 shadow-[0_2px_10px_rgba(15,23,42,0.03)]">
+                    {/* Left: Live Orbital Telemetry */}
+                    <div className="flex items-center gap-6">
+                        <span className="flex items-center gap-1.5 text-slate-500 font-sans font-bold uppercase tracking-wider text-[10px]">
+                            <svg className="w-3.5 h-3.5 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                <circle cx="12" cy="12" r="10"/>
+                                <circle cx="12" cy="12" r="2"/>
+                                <line x1="12" y1="2" x2="12" y2="4"/>
+                                <line x1="12" y1="20" x2="12" y2="22"/>
+                                <line x1="2" y1="12" x2="4" y2="12"/>
+                                <line x1="20" y1="12" x2="22" y2="12"/>
+                            </svg>
+                            Orbital Track
+                        </span>
+                        <div className="h-4 w-[1px] bg-slate-200"></div>
+                        {issPosition ? (
+                            <div className="flex items-center gap-5 text-slate-800 tabular-nums">
+                                <div><span className="text-slate-400">LAT</span> <strong className="text-blue-700">{issPosition.lat}°</strong></div>
+                                <div><span className="text-slate-400">LNG</span> <strong className="text-blue-700">{issPosition.lng}°</strong></div>
+                                <div><span className="text-slate-400">ALT</span> <strong className="text-blue-700">{issPosition.alt} km</strong></div>
+                                <div><span className="text-slate-400">VEL</span> <strong className="text-blue-700">{issPosition.vel} km/h</strong></div>
+                            </div>
+                        ) : (
+                            <span className="text-amber-500 font-bold animate-pulse">SYNCING ORBIT...</span>
+                        )}
+                    </div>
+
+                    {/* Right: UTC Time & Capsule Progress Bar */}
+                    <div className="flex items-center gap-6">
+                        <div className="flex items-center gap-2 tabular-nums">
+                            <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="10" />
+                                <path d="M12 6v6l4 2" />
+                            </svg>
+                            <span className="font-extrabold text-slate-700 tracking-wide text-sm">{utcTime}</span>
+                        </div>
+
+                        <div className="h-4 w-[1px] bg-slate-200"></div>
+
+                        <div className="flex items-center gap-3">
+                            <span className="text-[10px] font-sans font-bold text-slate-500 uppercase tracking-widest">
+                                Expedition 72
+                            </span>
+                            <div className="w-32 h-2.5 bg-slate-100 rounded-full overflow-hidden border border-slate-200/80 shadow-inner">
+                                <div className="h-full bg-blue-500 rounded-full" style={{ width: '68%' }}></div>
+                            </div>
+                            <span className="font-bold text-blue-700 tabular-nums">68%</span>
+                        </div>
+                    </div>
+                </div>
+
                 {/* Bottom Row: Full-Width Clean White ECLSS Atmosphere Matrix */}
                 <div
-                    className={`w-full bg-white rounded-2xl px-6 py-3 text-xs font-mono text-slate-800 tabular-nums border-2 transition-colors ${
+                    className={`w-full bg-white rounded-2xl px-6 py-3 text-s font-mono text-slate-800 tabular-nums border-2 transition-colors ${
                         isAtmosphereDanger
                             ? 'border-red-500 ring-2 ring-red-500/20 shadow-[0_2px_12px_rgba(239,68,68,0.12)]'
                             : 'border-emerald-500 shadow-[0_2px_10px_rgba(16,185,129,0.08)]'
@@ -659,8 +732,14 @@ export default function AuraDashboard({ onBackToHome }) {
                             <meshBasicMaterial color="#fef08a" />
                         </Sphere>
 
-                        <ambientLight intensity={0.85} />
-                        <directionalLight position={[40, 20, -30]} intensity={1.6} color="#ffffff" />
+                       {/* 1. Boosted ambient light to lift harsh shadows on the ISS */}
+                        <ambientLight intensity={2.0} />
+                        
+                        {/* 2. Stronger primary "Sun" light for bright white highlights on the modules */}
+                        <directionalLight position={[40, 20, -30]} intensity={3.5} color="#ffffff" />
+                        
+                        {/* 3. New Earth-bounce fill light from below to illuminate the dark underside in blue/cyan */}
+                        <directionalLight position={[0, -30, 20]} intensity={2.0} color="#38bdf8" />
 
                         {isCritical ? (
                             <Sparkles count={2500} scale={[60, 60, 60]} size={12} speed={6} opacity={0.5} color="#fbbf24" noise={1} />

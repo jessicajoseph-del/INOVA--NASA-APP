@@ -53,10 +53,10 @@ export const LOGOS = [
 
 export default function LogoMarquee() {
   return (
-    <section className="w-full py-12 bg-white border-t border-slate-100">
+    <section className="w-full py-12 bg-transparent border-t border-blue-900/40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Heading */}
-        <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900 text-center mb-10">
+        {/* Section Heading - Clean White for Ink Blue Theme */}
+        <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white text-center mb-10">
           Relied on for <span className="text-[#FF7300]">digital sovereignty</span>
         </h2>
 

@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================================================
+   WSO2-STYLE INFINITE LOGO MARQUEE ANIMATION
+   ============================================================================ */
 @keyframes marquee {
   0% {
     transform: translateX(0%);
@@ -15,4 +18,295 @@
   display: flex;
   width: max-content;
   animation: marquee 28s linear infinite;
+}
+
+/* ============================================================================
+   LUMINA ROADMAP GAME ANIMATIONS & STYLES
+   ============================================================================ */
+/* Deep playful Ink-Blue starlight & atmospheric map backdrop */
+.ink-canvas-bg {
+  background-color: #06132b;
+  background-image:
+    radial-gradient(circle at 20% 15%, rgba(56, 189, 248, 0.14) 0%, transparent 42%),
+    radial-gradient(circle at 82% 35%, rgba(250, 204, 21, 0.08) 0%, transparent 38%),
+    radial-gradient(ellipse 85% 65% at 50% 60%, rgba(16, 46, 107, 0.55) 0%, transparent 72%),
+    radial-gradient(rgba(247, 243, 233, 0.14) 1px, transparent 1px),
+    radial-gradient(rgba(125, 211, 252, 0.16) 1.2px, transparent 1.2px);
+  background-size: 100% 100%, 100% 100%, 100% 100%, 64px 64px, 96px 96px;
+  background-position: 0 0, 0 0, 0 0, 0 0, 32px 44px;
+}
+
+/* Completed card sculptural oat.png background with bright luminous sheen */
+.oat-completed-surface {
+  background-image:
+    linear-gradient(155deg, rgba(255, 253, 246, 0.56) 0%, rgba(247, 240, 224, 0.34) 55%, rgba(236, 224, 198, 0.45) 100%),
+    url('/assets/aistudio/oat_594d4ab6.png');
+  background-size: cover;
+  background-position: center;
+}
+
+/* High-speed strong fiber-optic road current animations */
+@keyframes fiberStreamFast {
+  0% {
+    stroke-dashoffset: 248;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes fiberStreamTurbo {
+  0% {
+    stroke-dashoffset: 240;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes fiberStreamGoldFast {
+  0% {
+    stroke-dashoffset: 272;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes fiberOatFlow {
+  0% {
+    stroke-dashoffset: 180;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes goldAuraPulse {
+  0%, 100% {
+    opacity: 0.72;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.028);
+  }
+}
+
+@keyframes goldSheenSweep {
+  0% {
+    transform: translateX(-150%) skewX(-22deg);
+    opacity: 0;
+  }
+  18% {
+    opacity: 0.75;
+  }
+  44% {
+    transform: translateX(260%) skewX(-22deg);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(260%) skewX(-22deg);
+    opacity: 0;
+  }
+}
+
+@keyframes unlockPop {
+  0% {
+    transform: scale(0.92);
+    opacity: 0.7;
+  }
+  45% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes markerBob {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.animate-fiber-turbo {
+  animation: fiberStreamTurbo 0.58s linear infinite;
+}
+
+.animate-fiber-fast {
+  animation: fiberStreamFast 0.85s linear infinite;
+}
+
+.animate-fiber-gold-fast {
+  animation: fiberStreamGoldFast 0.75s linear infinite;
+}
+
+.animate-fiber-oat-flow {
+  animation: fiberOatFlow 1.4s linear infinite;
+}
+
+.animate-gold-aura {
+  animation: goldAuraPulse 2.4s ease-in-out infinite;
+}
+
+.animate-gold-sheen {
+  animation: goldSheenSweep 3.4s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+
+.animate-unlock-pop {
+  animation: unlockPop 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-marker-bob {
+  animation: markerBob 1.9s ease-in-out infinite;
+}
+
+/* Astronaut walk out of Grand Trophy Vault to the left & disappear with confetti */
+@keyframes astroWalkLeftAndFade {
+  0% {
+    transform: translateX(16px) scale(0.75);
+    opacity: 0;
+  }
+  12% {
+    transform: translateX(-14px) scale(1);
+    opacity: 1;
+  }
+  76% {
+    transform: translateX(clamp(-175px, -15vw, -64px)) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(clamp(-215px, -19vw, -84px)) scale(0.84);
+    opacity: 0;
+  }
+}
+
+@keyframes astroStepBob {
+  0%, 100% {
+    transform: translateY(0px) rotate(-2deg);
+  }
+  50% {
+    transform: translateY(-4px) rotate(2deg);
+  }
+}
+
+@keyframes astroSwingForward {
+  0%, 100% {
+    transform: rotate(-24deg);
+  }
+  50% {
+    transform: rotate(24deg);
+  }
+}
+
+@keyframes astroSwingBackward {
+  0%, 100% {
+    transform: rotate(24deg);
+  }
+  50% {
+    transform: rotate(-24deg);
+  }
+}
+
+@keyframes astroTrailSpark {
+  0% {
+    transform: translate(0px, 0px) scale(0.5);
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.95;
+  }
+  100% {
+    transform: translate(22px, -18px) scale(1.1);
+    opacity: 0;
+  }
+}
+
+.animate-astro-walk {
+  animation: astroWalkLeftAndFade 3.4s cubic-bezier(0.22, 0.72, 0.28, 1) forwards;
+}
+
+.animate-astro-bob {
+  animation: astroStepBob 0.36s ease-in-out infinite;
+}
+
+.animate-astro-limb-a {
+  animation: astroSwingForward 0.36s ease-in-out infinite;
+}
+
+.animate-astro-limb-b {
+  animation: astroSwingBackward 0.36s ease-in-out infinite;
+}
+
+.animate-astro-spark {
+  animation: astroTrailSpark 0.75s ease-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fiber-turbo,
+  .animate-fiber-fast,
+  .animate-fiber-gold-fast,
+  .animate-fiber-oat-flow,
+  .animate-gold-aura,
+  .animate-gold-sheen,
+  .animate-unlock-pop,
+  .animate-marker-bob,
+  .animate-astro-walk,
+  .animate-astro-bob,
+  .animate-astro-limb-a,
+  .animate-astro-limb-b,
+  .animate-astro-spark {
+    animation: none !important;
+  }
+}
+
+
+/* ============================================================================
+   ASTRONAUT BEHAVIORAL HEALTH SLIDER STYLES
+   ============================================================================ */
+input[type="range"].lumina-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 8px;
+  border-radius: 9999px;
+  background: #e5d8b6;
+  outline: none;
+  cursor: pointer;
+}
+
+input[type="range"].lumina-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 9999px;
+  background: #173054;
+  border: 3px solid #fcf9f0;
+  box-shadow: 0 2px 8px rgba(11, 23, 42, 0.28);
+  transition: transform 150ms cubic-bezier(0.16, 1, 0.3, 1), background-color 150ms ease;
+}
+
+input[type="range"].lumina-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+  background: #145252;
+}
+
+input[type="range"].lumina-slider:focus-visible::-webkit-slider-thumb {
+  box-shadow: 0 0 0 4px rgba(23, 48, 84, 0.25);
+}
+
+input[type="range"].lumina-slider::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 9999px;
+  background: #173054;
+  border: 3px solid #fcf9f0;
+  box-shadow: 0 2px 8px rgba(11, 23, 42, 0.28);
+  transition: transform 150ms cubic-bezier(0.16, 1, 0.3, 1), background-color 150ms ease;
 }

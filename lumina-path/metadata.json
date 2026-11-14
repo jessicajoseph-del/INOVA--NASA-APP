@@ -1,0 +1,8 @@
+{
+  "name": "Lumina Path",
+  "description": "An interactive ink-blue winding task progression map with gold-highlighted unlocked milestones, direct on-map progress controls, and animated fiber-optic currents.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
