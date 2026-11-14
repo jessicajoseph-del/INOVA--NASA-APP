@@ -2,14 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer utilities {
-  /* WSO2-style edge fade-out gradient mask */
-  .mask-marquee {
-    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
-    mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
-  }
-}
-
 @keyframes marquee {
   0% {
     transform: translateX(0%);
@@ -24,4 +16,3 @@
   width: max-content;
   animation: marquee 28s linear infinite;
 }
-
