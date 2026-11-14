@@ -18,13 +18,15 @@ import {
   HeartPulse,
   Brain,
   ClipboardCheck,
-  Radio
+  Radio,
+  Box
 } from 'lucide-react';
 import TrendAnalytics from './components/TrendAnalytics';
 import LogoMarquee from './components/LogoMarquee';
 import RoadmapGame from './roadmap/RoadmapGame';
 import BehavioralHealthPage from './behavioral/BehavioralHealthPage';
 import AstroCareDashboard from './components/AstroCareDashboard';
+import AuraDashboard from './pages/AuraDashboard';
 
 /**
  * TOPIC & EXECUTIVE KPI DATA CONFIGURATION:
@@ -82,7 +84,7 @@ export const TOPIC_DATA = {
 };
 
 export default function App() {
-  // Navigation State: 'overview' | 'astrocare' | 'roadmap' | 'behavioral'
+  // Navigation State: 'overview' | 'astrocare' | 'roadmap' | 'behavioral' | 'aura'
   const [activeView, setActiveView] = useState('overview');
 
   const scrollToRoadmap = () => {
@@ -150,7 +152,25 @@ export default function App() {
               <span>Telemetry & Trends</span>
             </button>
 
-            {/* Tab 2: AstroCare ISS Telemetry */}
+            {/* Tab 2: AURA 3D ISS Model */}
+            <button
+              type="button"
+              onClick={() => {
+                setActiveView('aura');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className={`inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap ${
+                activeView === 'aura'
+                  ? 'bg-gradient-to-r from-purple-500 to-indigo-600 text-white shadow-md shadow-purple-500/20 font-bold'
+                  : 'text-slate-400 hover:text-purple-300 hover:bg-white/5'
+              }`}
+            >
+              <Box className="w-3.5 h-3.5 text-purple-400" />
+              <span>AURA 3D ISS</span>
+              <span className="h-1.5 w-1.5 rounded-full bg-purple-400 animate-pulse hidden sm:inline-block" />
+            </button>
+
+            {/* Tab 3: AstroCare ISS Telemetry */}
             <button
               type="button"
               onClick={scrollToAstroCare}
@@ -165,7 +185,7 @@ export default function App() {
               <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse hidden sm:inline-block" />
             </button>
 
-            {/* Tab 3: Roadmap Game (Smooth scrolls on single page) */}
+            {/* Tab 4: Roadmap Game (Smooth scrolls on single page) */}
             <button
               type="button"
               onClick={scrollToRoadmap}
@@ -180,7 +200,7 @@ export default function App() {
               <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse hidden sm:inline-block" />
             </button>
 
-            {/* Tab 4: Behavioral Health */}
+            {/* Tab 5: Behavioral Health */}
             <button
               type="button"
               onClick={() => {
@@ -253,23 +273,20 @@ export default function App() {
                     className="bg-[#0B1736]/80 border border-blue-400/15 backdrop-blur-md rounded-2xl p-5 shadow-xl hover:border-cyan-400/30 hover:shadow-cyan-950/40 transition-all duration-300 flex flex-col justify-between group"
                   >
                     <div className="flex items-start justify-between">
-                      <div>
-                        <span className="text-xs font-mono uppercase tracking-wider text-slate-400 block">
+                      <div className="space-y-1">
+                        <span className="text-xs font-mono text-slate-400 tracking-wider uppercase font-semibold">
                           {kpi.title}
                         </span>
-                        <div className="flex items-baseline gap-2 mt-2">
-                          <span className="text-2xl sm:text-3xl font-extrabold font-mono text-white tracking-tight">
-                            {kpi.currentValue}
-                          </span>
+                        <div className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+                          {kpi.currentValue}
                         </div>
                       </div>
-
-                      <div className="p-2.5 rounded-xl bg-blue-950/70 border border-blue-800/40 text-cyan-300 group-hover:scale-110 transition-transform">
+                      <div className="p-2.5 rounded-xl bg-blue-900/30 border border-blue-400/10 text-slate-300 group-hover:text-cyan-400 group-hover:border-cyan-400/20 transition-colors">
                         <IconComponent className="w-5 h-5" />
                       </div>
                     </div>
 
-                    <div className="mt-4 pt-3.5 border-t border-blue-900/40 flex items-center justify-between text-xs">
+                    <div className="mt-4 pt-3 border-t border-blue-900/30 flex items-center justify-between text-xs">
                       <div className="text-slate-400">
                         <span>Baseline: </span>
                         <span className="font-mono font-semibold text-slate-200">
@@ -306,37 +323,74 @@ export default function App() {
             <AstroCareDashboard isEmbedded={true} />
           </section>
 
-          {/* Quick Feature Portal: Astronaut Behavioral Health & CrewMind */}
-          <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full my-6">
-            <div className="rounded-2xl bg-gradient-to-br from-teal-950/90 via-slate-900/90 to-blue-950/90 border border-emerald-400/30 p-6 sm:p-7 backdrop-blur-md shadow-2xl flex flex-col sm:flex-row items-center justify-between gap-6 relative overflow-hidden group">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-400/10 rounded-full blur-3xl pointer-events-none group-hover:bg-emerald-400/20 transition-all duration-700" />
-              
-              <div className="space-y-2 text-left relative z-10 max-w-2xl">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-400/10 border border-emerald-400/30 text-emerald-300 font-mono text-xs uppercase tracking-wider">
-                  <HeartPulse className="w-3.5 h-3.5" />
-                  <span>Astronaut Health Assessment</span>
+          {/* Two Side-by-Side Interactive Feature Portals: AURA 3D ISS & Behavioral Health */}
+          <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full my-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+              {/* Feature 1: AURA 3D ISS Interactive Twin */}
+              <div className="rounded-2xl bg-gradient-to-br from-indigo-950/90 via-slate-900/90 to-blue-950/90 border border-purple-400/30 p-6 sm:p-7 backdrop-blur-md shadow-2xl flex flex-col justify-between relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl pointer-events-none group-hover:bg-purple-500/20 transition-all duration-700" />
+                
+                <div className="space-y-3 text-left relative z-10">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-400/10 border border-purple-400/30 text-purple-300 font-mono text-xs uppercase tracking-wider">
+                    <Box className="w-3.5 h-3.5" />
+                    <span>Three.js 3D Interactive ISS</span>
+                  </div>
+                  <h3 className="text-2xl font-extrabold text-white tracking-tight">
+                    AURA 3D Digital Twin & ECLSS
+                  </h3>
+                  <p className="text-sm text-slate-300 leading-relaxed">
+                    Explore the photorealistic 3D International Space Station model. Inspect pressurized modules, live NASA ECLSS atmosphere telemetry, radiation shielding bunkers, and AR hand gesture controls.
+                  </p>
                 </div>
-                <h3 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
-                  CrewMind Astronaut Behavioral Health Check
-                </h3>
-                <p className="text-sm text-slate-300 leading-relaxed">
-                  Comprehensive assessment suite: Part A personality baseline, daily mood & sleep logs (Part B), Part C readiness scoring, and Psychomotor Vigilance (PVT) testing.
-                </p>
+
+                <div className="pt-5 mt-4 border-t border-blue-900/40 relative z-10">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setActiveView('aura');
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-bold text-xs bg-gradient-to-r from-purple-500 to-indigo-600 text-white shadow-lg shadow-purple-500/20 hover:scale-[1.02] active:scale-95 transition-all cursor-pointer whitespace-nowrap"
+                  >
+                    <span>Launch 3D ISS Digital Twin</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
 
-              <div className="relative z-10 shrink-0">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setActiveView('behavioral');
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  }}
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-bold text-xs bg-gradient-to-r from-emerald-400 to-teal-500 text-[#06132B] shadow-lg shadow-emerald-500/20 hover:scale-[1.02] active:scale-95 transition-all cursor-pointer whitespace-nowrap"
-                >
-                  <span>Open Behavioral Health Check</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
+              {/* Feature 2: Astronaut Behavioral Health & CrewMind */}
+              <div className="rounded-2xl bg-gradient-to-br from-teal-950/90 via-slate-900/90 to-blue-950/90 border border-emerald-400/30 p-6 sm:p-7 backdrop-blur-md shadow-2xl flex flex-col justify-between relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-400/10 rounded-full blur-3xl pointer-events-none group-hover:bg-emerald-400/20 transition-all duration-700" />
+                
+                <div className="space-y-3 text-left relative z-10">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-400/10 border border-emerald-400/30 text-emerald-300 font-mono text-xs uppercase tracking-wider">
+                    <HeartPulse className="w-3.5 h-3.5" />
+                    <span>Astronaut Health Assessment</span>
+                  </div>
+                  <h3 className="text-2xl font-extrabold text-white tracking-tight">
+                    CrewMind Astronaut Behavioral Check
+                  </h3>
+                  <p className="text-sm text-slate-300 leading-relaxed">
+                    Comprehensive astronaut assessment suite: Part A personality baseline, daily mood & sleep logs (Part B), Part C readiness scoring, and Psychomotor Vigilance (PVT) testing.
+                  </p>
+                </div>
+
+                <div className="pt-5 mt-4 border-t border-blue-900/40 relative z-10">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setActiveView('behavioral');
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-bold text-xs bg-gradient-to-r from-emerald-400 to-teal-500 text-[#06132B] shadow-lg shadow-emerald-500/20 hover:scale-[1.02] active:scale-95 transition-all cursor-pointer whitespace-nowrap"
+                  >
+                    <span>Open Behavioral Health Check</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
+
             </div>
           </section>
 
@@ -380,6 +434,13 @@ export default function App() {
             <RoadmapGame isEmbedded={true} />
           </section>
 
+        </main>
+      )}
+
+      {/* AURA 3D ISS DASHBOARD VIEW */}
+      {activeView === 'aura' && (
+        <main className="flex-1 w-full relative z-10">
+          <AuraDashboard onBackToHome={() => setActiveView('overview')} />
         </main>
       )}
 
