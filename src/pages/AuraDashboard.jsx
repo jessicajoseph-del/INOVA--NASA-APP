@@ -2,8 +2,7 @@ import React, { useRef, Suspense, useState, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Text, useGLTF, Stars, Sphere, Sparkles } from '@react-three/drei';
 import { useNasaIssTelemetry } from '../hooks/useNasaIssTelemetry';
-// Uncomment below once you copy HandTracker.jsx into src/components/
-// import HandTracker from '../components/HandTracker';
+import HandTracker from '../components/HandTracker';
 
 const ISS_MODULES = [
     { id: "zvezda", name: "Zvezda (Aft)", position: [8, -1, 0], size: [2.5, 2.5, 8, 32], shielding: 0.78, baseDose: 6.0 },
@@ -94,6 +93,7 @@ export default function AuraDashboard({ onBackToHome }) {
     const [cursor, setCursor] = useState({ x: 0, y: 0, isPinching: false, active: false });
 
     const globalRotation = useRef(0);
+    const speIntensity = useRef(0);
     const lastPinch = useRef({ x: 0, y: 0, active: false });
     const lastClickTime = useRef(0);
 
@@ -106,6 +106,7 @@ export default function AuraDashboard({ onBackToHome }) {
     const [evaStatus, setEvaStatus] = useState('NO_EVA');
     const [doseHistory, setDoseHistory] = useState([8.1, 8.2, 8.0, 8.1, 8.3, 8.1]);
     const [biometrics, setBiometrics] = useState({ hr: 72, dose: '8.1', stress: 'NOMINAL' });
+    const [dosimeterConnected, setDosimeterConnected] = useState(true);
 
     const getModuleProtection = (shielding) => {
         const pct = Math.round(shielding * 100);
@@ -192,25 +193,42 @@ export default function AuraDashboard({ onBackToHome }) {
     const protection = getModuleProtection(selectedModule.shielding);
 
     // Dynamic Biometrics & Rolling Dose-Rate Trend with Sensor Noise
+    // Dynamic Biometrics & Rolling Dose-Rate Trend (Integrated SPE Simulation)
     useEffect(() => {
-        const speIntensity = isCritical ? 3.5 : 0;
-        const speEffect = speIntensity * (1 - selectedModule.shielding) * 6.5;
-        const baseDose = selectedModule.baseDose + speEffect;
-        const noisyDose = baseDose * (1 + (Math.random() - 0.5) * 0.10);
-        const currentDose = Number(noisyDose.toFixed(1));
+        const interval = setInterval(() => {
+            // 1. Ramp intensity up or down based on Flare state
+            if (isCritical) {
+                speIntensity.current = Math.min(speIntensity.current + 0.08, 3.5);
+            } else {
+                speIntensity.current = Math.max(speIntensity.current - 0.18, 0);
+            }
 
-        setDoseHistory((prev) => [...prev.slice(-9), currentDose]);
+            // 2. Calculate SPE effect for the currently selected module
+            const speEffect = speIntensity.current * (1 - selectedModule.shielding) * 6.5;
+            
+            // 3. Add 15% sensor noise
+            const rawAbsorbed = selectedModule.baseDose + speEffect;
+            const noisyAbsorbed = rawAbsorbed * (1 + (Math.random() - 0.5) * 0.15);
 
-        if (isCritical) {
+            // 4. Apply Quality Factor (3.1 for space radiation/protons)
+            const qualityFactor = 3.1;
+            const doseEquivalentRate = noisyAbsorbed * qualityFactor;
+            const finalDose = Number(doseEquivalentRate.toFixed(1));
+
+            // 5. Update graph history (keep last 10 points)
+            setDoseHistory((prev) => [...prev.slice(-9), finalDose]);
+
+            // 6. Update HUD UI
             setBiometrics({
-                hr: protection.hr,
-                dose: currentDose.toFixed(1),
-                stress: protection.stress
+                hr: isCritical ? protection.hr : (72 + Math.floor(Math.random() * 4)),
+                dose: finalDose.toFixed(1),
+                stress: isCritical ? protection.stress : 'NOMINAL'
             });
-        } else {
-            setBiometrics({ hr: 72, dose: currentDose.toFixed(1), stress: 'NOMINAL' });
-        }
-    }, [isCritical, selectedModule, protection.hr, protection.stress, issPosition]);
+
+        }, 1000); // 1-second simulation tick
+
+        return () => clearInterval(interval);
+    }, [isCritical, selectedModule, protection]);
 
     // Fetch Live ISS Coordinates
     useEffect(() => {
@@ -266,7 +284,7 @@ export default function AuraDashboard({ onBackToHome }) {
 
     return (
         <div className="h-[100vh] w-[100vw] bg-slate-950 text-slate-100 flex flex-col font-sans overflow-hidden">
-            {/* {arEnabled && <HandTracker onHandUpdate={handleHandUpdate} />} */}
+            {arEnabled && <HandTracker onHandUpdate={handleHandUpdate} />}
 
            <header className="shrink-0 px-5 py-3 border-b border-slate-800 bg-slate-950/95 flex flex-wrap xl:flex-nowrap justify-between items-center gap-4 relative z-10">
                 {/* Left: Brand & AR Toggle */}
@@ -461,7 +479,7 @@ export default function AuraDashboard({ onBackToHome }) {
                     </div>
                 </div>
 
-                {/* RIGHT: Telemetry & Crew Guidance Sidebar */}
+               {/* RIGHT: Telemetry & Crew Guidance Sidebar */}
                 <div
                     style={{ width: '400px', maxWidth: '400px', minWidth: '400px', flexShrink: 0 }}
                     className="h-full border-l border-slate-800 bg-slate-950 p-5 flex flex-col gap-5 overflow-y-auto overflow-x-hidden"
@@ -475,20 +493,35 @@ export default function AuraDashboard({ onBackToHome }) {
 
                     {/* Astronaut Biometrics & Stress-Relief Guidance */}
                     <div className="bg-slate-900 rounded border border-slate-800 p-4 shadow-inner w-full">
-                        <div className="flex justify-between items-end mb-3 border-b border-slate-800 pb-2 gap-2">
-                            <h3 className="text-sm font-bold uppercase tracking-wider text-slate-500">Astronaut Biometrics</h3>
-                            <span className="text-xs text-cyan-500 font-mono text-right shrink-0">
+                        <div className="flex justify-between items-start mb-3 border-b border-slate-800 pb-2 gap-2">
+                            <div className="flex flex-col gap-1.5">
+                                <h3 className="text-sm font-bold uppercase tracking-wider text-slate-500">Astronaut Biometrics</h3>
+                                {/* Personal Dosimeter Connection Status */}
+                                <button 
+                                    onClick={() => setDosimeterConnected(!dosimeterConnected)}
+                                    className={`text-[9px] font-mono px-2 py-0.5 rounded border uppercase text-left w-max transition-colors ${
+                                        dosimeterConnected 
+                                            ? 'bg-green-950/60 border-green-500/50 text-green-400' 
+                                            : 'bg-red-950/80 border-red-500 text-red-200 animate-pulse shadow-[0_0_10px_rgba(239,68,68,0.4)]'
+                                    }`}
+                                >
+                                    {dosimeterConnected ? '● DOSIMETER CONNECTED' : '▲ DOSIMETER DISCONNECTED'}
+                                </button>
+                            </div>
+                            <span className="text-xs text-cyan-500 font-mono text-right shrink-0 mt-0.5">
                                 LOC: {selectedModule.name}<br />
                                 SHIELDING: {Math.round(selectedModule.shielding * 100)}%
                             </span>
                         </div>
+                        
                         <div className="grid grid-cols-2 gap-3">
                             <div className={`p-3 rounded border ${isCritical ? protection.boxClass : 'bg-slate-950 border-slate-800'}`}>
                                 <p className="text-xs text-slate-400">Cumulative Dose</p>
                                 <p className={`text-xl font-mono font-bold ${
+                                    !dosimeterConnected ? 'text-slate-600' :
                                     isCritical ? `${protection.valueClass} ${protection.tier !== 'SAFE' ? 'animate-pulse' : ''}` : 'text-cyan-400'
                                 }`}>
-                                    {biometrics.dose} <span className="text-sm">mSv</span>
+                                    {!dosimeterConnected ? 'ERR_LINK' : biometrics.dose} <span className="text-sm">mSv</span>
                                 </p>
                             </div>
                             <div className={`p-3 rounded border ${isCritical ? protection.boxClass : 'bg-slate-950 border-slate-800'}`}>
@@ -531,7 +564,7 @@ export default function AuraDashboard({ onBackToHome }) {
                             <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">Absorbed Dose-Rate Trend</h3>
                             <span className="text-xs font-mono text-cyan-400">{biometrics.dose} mSv/h</span>
                         </div>
-                        <svg viewBox="0 0 200 45" className="w-full h-12 overflow-visible">
+                       <svg viewBox="0 0 200 45" className="w-full h-12 overflow-visible">
                             <polyline
                                 fill="none"
                                 stroke={isCritical ? '#f59e0b' : '#22d3ee'}
@@ -541,7 +574,8 @@ export default function AuraDashboard({ onBackToHome }) {
                                 points={doseHistory
                                     .map((val, idx) => {
                                         const x = (idx / Math.max(doseHistory.length - 1, 1)) * 200;
-                                        const y = 42 - Math.min(Math.max(((val - 5) / 25) * 38, 2), 40);
+                                        // Adjusted scaling for higher doseEquivalentRate (0 to 120 range)
+                                        const y = 42 - Math.min(Math.max((val / 120) * 38, 2), 40);
                                         return `${x},${y}`;
                                     })
                                     .join(' ')}
