@@ -28,9 +28,10 @@ function loadInitialTasks(): TaskNode[] {
 
 interface RoadmapGameProps {
   onBack?: () => void;
+  isEmbedded?: boolean;
 }
 
-export default function RoadmapGame({ onBack }: RoadmapGameProps = {}) {
+export default function RoadmapGame({ onBack, isEmbedded = false }: RoadmapGameProps = {}) {
   const [tasks, setTasks] = useState<TaskNode[]>(loadInitialTasks);
   const [selectedTaskId, setSelectedTaskId] = useState<string>(() => {
     const initial = loadInitialTasks();
@@ -301,24 +302,13 @@ export default function RoadmapGame({ onBack }: RoadmapGameProps = {}) {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#06132B] text-[#F7F3E9]">
+    <div className={isEmbedded ? "w-full flex flex-col bg-[#06132B] text-[#F7F3E9] rounded-2xl border border-sky-400/20 shadow-2xl overflow-hidden" : "min-h-screen flex flex-col bg-[#06132B] text-[#F7F3E9]"}>
       <ConfettiBurst triggerKey={confettiTrigger} reducedMotion={reducedMotion} />
       {/* 3-Zone Playful Game Top Bar */}
-      <header className="sticky top-0 z-30 flex items-center justify-between gap-4 sm:gap-8 px-4 sm:px-6 h-16 border-b border-sky-300/15 bg-[#06132B]/94 backdrop-blur-md">
-        {/* Zone 1: Game Wordmark */}
-        <a
-          href="#map-canvas"
-          onClick={(e) => {
-            e.preventDefault();
-            handleJumpToCurrent();
-          }}
-          className="font-display text-lg sm:text-xl font-extrabold tracking-tight text-[#F7F3E9] whitespace-nowrap shrink-0"
-        >
-          Lumina Quest
-        </a>
-        {/* Zone 1: Game Wordmark & Return Navigation */}
+      <header className={`${isEmbedded ? 'relative' : 'sticky top-0'} z-30 flex items-center justify-between gap-4 sm:gap-8 px-4 sm:px-6 h-16 border-b border-sky-300/15 bg-[#06132B]/94 backdrop-blur-md`}>
+        {/* Zone 1: Game Wordmark & Optional Standalone Return Navigation */}
         <div className="flex items-center gap-3 shrink-0">
-          {onBack && (
+          {!isEmbedded && onBack && (
             <button
               type="button"
               onClick={onBack}
@@ -334,9 +324,10 @@ export default function RoadmapGame({ onBack }: RoadmapGameProps = {}) {
               e.preventDefault();
               handleJumpToCurrent();
             }}
-            className="font-display text-lg sm:text-xl font-extrabold tracking-tight text-[#F7F3E9] whitespace-nowrap shrink-0 hover:text-[#FDE047] transition-colors"
+            className="font-display text-lg sm:text-xl font-extrabold tracking-tight text-[#F7F3E9] whitespace-nowrap shrink-0 hover:text-[#FDE047] transition-colors flex items-center gap-2"
           >
-            Lumina Quest
+            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+            <span>Lumina Quest Roadmap</span>
           </a>
         </div>
 
@@ -372,7 +363,7 @@ export default function RoadmapGame({ onBack }: RoadmapGameProps = {}) {
           <button
             type="button"
             onClick={handleJumpToCurrent}
-            className="rounded-[5px] bg-[#F5B82E] hover:bg-[#FACC15] border border-[#D97706] border-b-[3px] border-b-[#B45309] px-4 py-1.5 text-xs font-extrabold text-[#06132B] transition-all active:translate-y-[1px] whitespace-nowrap shrink-0 cursor-pointer"
+            className="rounded-[5px] bg-[#F5B82E] hover:bg-[#FACC15] border border-[#D97706] border-b-[3px] border-b-[#B45309] px-4 py-1.5 text-xs font-extrabold text-[#06132B] transition-all active:translate-y-[1px] whitespace-nowrap shrink-0 cursor-pointer shadow-sm hover:shadow-amber-500/30"
           >
             Jump to Active
           </button>
@@ -385,7 +376,11 @@ export default function RoadmapGame({ onBack }: RoadmapGameProps = {}) {
         <main
           id="map-canvas"
           ref={mapViewportRef}
-          className="relative flex-1 ink-canvas-bg lg:h-[calc(100vh-4rem)] lg:overflow-y-auto px-2 sm:px-6 lg:px-10 py-6 sm:py-10"
+          className={`relative flex-1 ink-canvas-bg ${
+            isEmbedded
+              ? 'h-[720px] sm:h-[780px] lg:h-[840px] overflow-y-auto'
+              : 'lg:h-[calc(100vh-4rem)] lg:overflow-y-auto'
+          } px-2 sm:px-6 lg:px-10 py-6 sm:py-10`}
         >
           {/* Playful Header Banner */}
           <div className="mx-auto max-w-[900px] mb-5 flex flex-wrap items-center justify-between gap-3 px-2">
@@ -472,7 +467,13 @@ export default function RoadmapGame({ onBack }: RoadmapGameProps = {}) {
         </main>
 
         {/* Oat Ivory Companion Game Quest Panel */}
-        <div className="lg:h-[calc(100vh-4rem)] lg:overflow-y-auto shrink-0">
+        <div
+          className={`${
+            isEmbedded
+              ? 'h-[500px] lg:h-[840px] overflow-y-auto border-t lg:border-t-0 lg:border-l border-sky-300/15'
+              : 'lg:h-[calc(100vh-4rem)] lg:overflow-y-auto'
+          } shrink-0`}
+        >
           <TaskInspectorRail
             tasks={tasks}
             selectedTask={selectedTask}

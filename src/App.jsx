@@ -85,6 +85,17 @@ export default function App() {
   // Navigation State: 'overview' | 'roadmap' | 'behavioral'
   const [activeView, setActiveView] = useState('overview');
 
+  const scrollToRoadmap = () => {
+    if (activeView !== 'overview') {
+      setActiveView('overview');
+      setTimeout(() => {
+        document.getElementById('roadmap-section')?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    } else {
+      document.getElementById('roadmap-section')?.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col justify-between bg-[#060D21] bg-[radial-gradient(ellipse_at_top,_#0F214D_0%,_#060D21_70%)] text-slate-100 selection:bg-[#FF7300] selection:text-white font-sans relative overflow-x-hidden">
       
@@ -130,22 +141,19 @@ export default function App() {
               <span>Telemetry & Trends</span>
             </button>
 
-            {/* Tab 2: Roadmap Game */}
+            {/* Tab 2: Roadmap Game (Smooth scrolls on single page) */}
             <button
               type="button"
-              onClick={() => {
-                setActiveView('roadmap');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
+              onClick={scrollToRoadmap}
               className={`inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap ${
                 activeView === 'roadmap'
                   ? 'bg-gradient-to-r from-amber-400 to-[#F5B82E] text-slate-950 shadow-md shadow-amber-400/20 font-bold'
                   : 'text-slate-400 hover:text-white hover:bg-white/5'
               }`}
             >
-              <Gamepad2 className="w-3.5 h-3.5" />
-              <span>Roadmap Quest</span>
-              <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-ping hidden sm:inline-block" />
+              <Gamepad2 className="w-3.5 h-3.5 text-amber-400" />
+              <span>Roadmap Game</span>
+              <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse hidden sm:inline-block" />
             </button>
 
             {/* Tab 3: Behavioral Health */}
@@ -173,10 +181,7 @@ export default function App() {
               <div className="flex items-center gap-2">
                 <button 
                   type="button" 
-                  onClick={() => {
-                    setActiveView('roadmap');
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  }}
+                  onClick={scrollToRoadmap}
                   className="hidden sm:inline-flex items-center justify-center text-xs font-semibold text-[#06132B] bg-gradient-to-r from-amber-400 to-[#F5B82E] hover:from-amber-300 hover:to-amber-500 px-3 py-1.5 rounded-lg transition-all shadow-md active:scale-95 cursor-pointer"
                 >
                   <Gamepad2 className="w-3.5 h-3.5 mr-1" />
@@ -296,81 +301,88 @@ export default function App() {
           {/* Middle Section: Interactive Trend Comparison Charts */}
           <TrendAnalytics />
 
-          {/* Two Side-by-Side Interactive Feature Portals */}
-          <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full my-8">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Quick Feature Portal: Astronaut Behavioral Health & CrewMind */}
+          <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full my-6">
+            <div className="rounded-2xl bg-gradient-to-br from-teal-950/90 via-slate-900/90 to-blue-950/90 border border-emerald-400/30 p-6 sm:p-7 backdrop-blur-md shadow-2xl flex flex-col sm:flex-row items-center justify-between gap-6 relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-400/10 rounded-full blur-3xl pointer-events-none group-hover:bg-emerald-400/20 transition-all duration-700" />
               
-              {/* Feature 1: Lumina Quest Roadmap Game */}
-              <div className="rounded-2xl bg-gradient-to-br from-blue-950/90 via-indigo-950/80 to-slate-900/90 border border-cyan-400/30 p-6 sm:p-7 backdrop-blur-md shadow-2xl flex flex-col justify-between relative overflow-hidden group">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-amber-400/10 rounded-full blur-3xl pointer-events-none group-hover:bg-amber-400/20 transition-all duration-700" />
-                
-                <div className="space-y-3 text-left relative z-10">
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400/10 border border-amber-400/30 text-amber-300 font-mono text-xs uppercase tracking-wider">
-                    <Compass className="w-3.5 h-3.5" />
-                    <span>Interactive Starlight Circuit</span>
-                  </div>
-                  <h3 className="text-2xl font-extrabold text-white tracking-tight">
-                    Lumina Quest Roadmap
-                  </h3>
-                  <p className="text-sm text-slate-300 leading-relaxed">
-                    Navigate the fiber-optic roadmap path. Complete orbital challenge nodes, trigger shooting current surges, collect achievement stars, and reach the Grand Trophy Vault.
-                  </p>
+              <div className="space-y-2 text-left relative z-10 max-w-2xl">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-400/10 border border-emerald-400/30 text-emerald-300 font-mono text-xs uppercase tracking-wider">
+                  <HeartPulse className="w-3.5 h-3.5" />
+                  <span>Astronaut Health Assessment</span>
                 </div>
-
-                <div className="pt-5 mt-4 border-t border-blue-900/40 relative z-10">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setActiveView('roadmap');
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }}
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-bold text-xs bg-gradient-to-r from-amber-400 to-[#F5B82E] text-[#06132B] shadow-lg shadow-amber-500/20 hover:scale-[1.02] active:scale-95 transition-all cursor-pointer whitespace-nowrap"
-                  >
-                    <span>Launch Roadmap Game</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
-                </div>
+                <h3 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
+                  CrewMind Astronaut Behavioral Health Check
+                </h3>
+                <p className="text-sm text-slate-300 leading-relaxed">
+                  Comprehensive assessment suite: Part A personality baseline, daily mood & sleep logs (Part B), Part C readiness scoring, and Psychomotor Vigilance (PVT) testing.
+                </p>
               </div>
 
-              {/* Feature 2: Astronaut Behavioral Health & CrewMind */}
-              <div className="rounded-2xl bg-gradient-to-br from-teal-950/90 via-slate-900/90 to-blue-950/90 border border-emerald-400/30 p-6 sm:p-7 backdrop-blur-md shadow-2xl flex flex-col justify-between relative overflow-hidden group">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-400/10 rounded-full blur-3xl pointer-events-none group-hover:bg-emerald-400/20 transition-all duration-700" />
-                
-                <div className="space-y-3 text-left relative z-10">
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-400/10 border border-emerald-400/30 text-emerald-300 font-mono text-xs uppercase tracking-wider">
-                    <HeartPulse className="w-3.5 h-3.5" />
-                    <span>Astronaut Health Assessment</span>
-                  </div>
-                  <h3 className="text-2xl font-extrabold text-white tracking-tight">
-                    CrewMind Behavioral Check
-                  </h3>
-                  <p className="text-sm text-slate-300 leading-relaxed">
-                    Comprehensive astronaut behavioral health suite: Part A personality baseline, daily mood & sleep logs (Part B), Part C readiness scoring, and Psychomotor Vigilance (PVT) testing.
-                  </p>
-                </div>
-
-                <div className="pt-5 mt-4 border-t border-blue-900/40 relative z-10">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setActiveView('behavioral');
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }}
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-bold text-xs bg-gradient-to-r from-emerald-400 to-teal-500 text-[#06132B] shadow-lg shadow-emerald-500/20 hover:scale-[1.02] active:scale-95 transition-all cursor-pointer whitespace-nowrap"
-                  >
-                    <span>Open Behavioral Health Check</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
-                </div>
+              <div className="relative z-10 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveView('behavioral');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-bold text-xs bg-gradient-to-r from-emerald-400 to-teal-500 text-[#06132B] shadow-lg shadow-emerald-500/20 hover:scale-[1.02] active:scale-95 transition-all cursor-pointer whitespace-nowrap"
+                >
+                  <span>Open Behavioral Health Check</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
               </div>
-
             </div>
+          </section>
+
+          {/* ==================================================================
+              3. ANIMATION RIBBON: WSO2-STYLE INFINITE LOGO MARQUEE (INTACT)
+              ================================================================== */}
+          <section className="w-full my-6 relative z-10">
+            <LogoMarquee />
+          </section>
+
+          {/* ==================================================================
+              4. INTERACTIVE ROAD MAP GAME: DIRECTLY AFTER THE ANIMATION RIBBON
+              ================================================================== */}
+          <section id="roadmap-section" className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full my-10 relative z-10">
+            <div className="mb-6 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+              <div>
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-amber-400/30 bg-amber-400/10 text-amber-300 font-mono text-xs uppercase tracking-wider mb-2">
+                  <Compass className="w-3.5 h-3.5" />
+                  <span>Interactive Mission Circuit</span>
+                </div>
+                <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+                  Lumina Path — Interactive Road Map Game
+                </h2>
+                <p className="text-sm text-slate-300 mt-1 max-w-2xl leading-relaxed">
+                  Start at the unlocked stage and mark progress directly on the circuit to trigger shooting fiber currents downward. Complete all mission checkpoints to unlock the Grand Trophy Vault!
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveView('roadmap');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-blue-900/40 hover:bg-blue-800/60 border border-blue-400/25 text-xs font-semibold text-cyan-300 transition-all cursor-pointer shadow-md active:scale-95"
+                  title="Expand to Fullscreen View"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                  <span>Fullscreen Game Mode</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Embedded Road Map Game Container */}
+            <RoadmapGame isEmbedded={true} />
           </section>
 
         </main>
       )}
 
-      {/* ROADMAP GAME VIEW */}
+      {/* ROADMAP GAME VIEW (FULLSCREEN STANDALONE MODE) */}
       {activeView === 'roadmap' && (
         <main className="flex-1 w-full relative z-10">
           <RoadmapGame onBack={() => setActiveView('overview')} />
@@ -385,23 +397,18 @@ export default function App() {
       )}
 
       {/* ====================================================================
-          3. BOTTOM SECTION: WSO2-STYLE INFINITE LOGO MARQUEE (INTACT)
+          5. BOTTOM CREDITS / STATUS BAR
           ==================================================================== */}
-      <footer className="w-full mt-auto relative z-10">
-        <LogoMarquee />
-
-        {/* Minimal Bottom Baseline / Credits Bar */}
-        <div className="border-t border-blue-900/30 bg-[#040816]/70 py-4">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-2">
-            <p>© {new Date().getFullYear()} INOVA Aerospace & Digital Sovereignty. All telemetry verified.</p>
-            <div className="flex items-center space-x-6">
-              <a href="#privacy" className="hover:text-cyan-300 transition-colors">Security Policy</a>
-              <a href="#terms" className="hover:text-cyan-300 transition-colors">Mission Protocol</a>
-              <a href="#status" className="hover:text-cyan-300 transition-colors flex items-center gap-1.5">
-                <span>Relay Mesh Active</span>
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-              </a>
-            </div>
+      <footer className="w-full mt-auto relative z-10 border-t border-blue-900/30 bg-[#040816]/70 py-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-2">
+          <p>© {new Date().getFullYear()} INOVA Aerospace & Digital Sovereignty. All telemetry verified.</p>
+          <div className="flex items-center space-x-6">
+            <a href="#privacy" className="hover:text-cyan-300 transition-colors">Security Policy</a>
+            <a href="#terms" className="hover:text-cyan-300 transition-colors">Mission Protocol</a>
+            <a href="#status" className="hover:text-cyan-300 transition-colors flex items-center gap-1.5">
+              <span>Relay Mesh Active</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+            </a>
           </div>
         </div>
       </footer>
