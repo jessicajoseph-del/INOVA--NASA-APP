@@ -1,15 +1,89 @@
 import React, { useState } from 'react';
-import { ArrowRight, Layers, Sparkles, CheckCircle2, ShieldCheck, Globe2, Cpu, Terminal } from 'lucide-react';
+import { 
+  ArrowRight, 
+  Layers, 
+  Sparkles, 
+  TrendingUp, 
+  ArrowUpRight, 
+  ArrowDownRight, 
+  ShieldCheck, 
+  Cpu, 
+  CheckCircle2, 
+  Activity, 
+  Gauge, 
+  ExternalLink,
+  Gamepad2,
+  Compass,
+  ArrowLeft,
+  HeartPulse,
+  Brain,
+  ClipboardCheck
+} from 'lucide-react';
+import TrendAnalytics from './components/TrendAnalytics';
 import LogoMarquee from './components/LogoMarquee';
-import AuraDashboard from './pages/AuraDashboard';
+import RoadmapGame from './roadmap/RoadmapGame';
+import BehavioralHealthPage from './behavioral/BehavioralHealthPage';
+
+/**
+ * ============================================================================
+ * TOPIC & EXECUTIVE KPI DATA CONFIGURATION:
+ * Customize the title, mission description, and top-line KPI values below.
+ * ============================================================================
+ */
+export const TOPIC_DATA = {
+  eyebrow: 'TRUSTED AI GOVERNANCE & MISSION TELEMETRY // TREND ANALYSIS',
+  title: 'Comparative Mission Telemetry & Sovereignty Benchmarks',
+  subtitle:
+    'Real-time comparative evaluation of telemetry stream throughput, multi-regional latency variance, and autonomous policy compliance across operational cycles.',
+  kpis: [
+    {
+      id: 'kpi-1',
+      title: 'Telemetry Throughput',
+      metricLabel: 'Observed vs. Baseline',
+      currentValue: '142.8 GB/s',
+      baselineValue: '124.0 GB/s',
+      delta: '+15.2%',
+      isPositive: true,
+      deltaLabel: 'vs. baseline',
+      icon: Activity,
+      accentColor: 'text-[#FF7300]',
+      badgeColor: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+      description: 'Peak streaming telemetry rate across multi-constellation relays',
+    },
+    {
+      id: 'kpi-2',
+      title: 'Latency Variance Delta',
+      metricLabel: 'Consensus Roundtrip',
+      currentValue: '0.68 ms',
+      baselineValue: '0.95 ms',
+      delta: '-28.4%',
+      isPositive: true,
+      deltaLabel: 'reduction',
+      icon: Gauge,
+      accentColor: 'text-cyan-400',
+      badgeColor: 'bg-cyan-500/10 text-cyan-300 border-cyan-500/20',
+      description: 'p99 distributed microgateway consensus roundtrip latency',
+    },
+    {
+      id: 'kpi-3',
+      title: 'Compliance & Stability Index',
+      metricLabel: 'Policy Enforcement',
+      currentValue: '99.98%',
+      baselineValue: '99.60%',
+      delta: '+0.38%',
+      isPositive: true,
+      deltaLabel: 'stability gain',
+      icon: ShieldCheck,
+      accentColor: 'text-emerald-400',
+      badgeColor: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+      description: 'Zero-trust cryptographic verification & data residency adherence',
+    },
+  ],
+};
 
 export default function App() {
-  // Toggle between 'landing' (teammate's page) and 'dashboard' (your 3D ISS dashboard)
-  const [activeView, setActiveView] = useState('landing');
-
-  if (activeView === 'dashboard') {
-    return <AuraDashboard onBackToHome={() => setActiveView('landing')} />;
-  }
+  // Navigation State: 'overview' | 'roadmap' | 'behavioral'
+  const [activeView, setActiveView] = useState('overview');
 
   return (
     <div className="min-h-screen flex flex-col justify-between bg-white text-slate-900 selection:bg-[#FF7300] selection:text-white font-sans">
@@ -30,28 +104,102 @@ export default function App() {
             </div>
           </div>
 
-          <nav className="hidden md:flex items-center space-x-8 text-sm font-medium text-slate-600">
-            <a href="#platform" className="hover:text-[#FF7300] transition-colors">Platform</a>
-            <a href="#solutions" className="hover:text-[#FF7300] transition-colors">Solutions</a>
-            <a href="#architecture" className="hover:text-[#FF7300] transition-colors">Architecture</a>
-            <a href="#developers" className="hover:text-[#FF7300] transition-colors">Developers</a>
+          {/* Primary View Switcher Navigation Tabs */}
+          <nav className="flex items-center p-1 rounded-xl bg-blue-950/60 border border-blue-800/40 backdrop-blur-md overflow-x-auto">
+            {/* Tab 1: Overview */}
+            <button
+              type="button"
+              onClick={() => {
+                setActiveView('overview');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className={`inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap ${
+                activeView === 'overview'
+                  ? 'bg-gradient-to-r from-[#FF7300] to-orange-500 text-white shadow-md shadow-orange-500/20'
+                  : 'text-slate-400 hover:text-white hover:bg-white/5'
+              }`}
+            >
+              <Activity className="w-3.5 h-3.5" />
+              <span>Telemetry & Trends</span>
+            </button>
+
+            {/* Tab 2: Roadmap Game */}
+            <button
+              type="button"
+              onClick={() => {
+                setActiveView('roadmap');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className={`inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap ${
+                activeView === 'roadmap'
+                  ? 'bg-gradient-to-r from-amber-400 to-[#F5B82E] text-slate-950 shadow-md shadow-amber-400/20 font-bold'
+                  : 'text-slate-400 hover:text-white hover:bg-white/5'
+              }`}
+            >
+              <Gamepad2 className="w-3.5 h-3.5" />
+              <span>Roadmap Quest</span>
+              <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-ping hidden sm:inline-block" />
+            </button>
+
+            {/* Tab 3: Behavioral Health */}
+            <button
+              type="button"
+              onClick={() => {
+                setActiveView('behavioral');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className={`inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap ${
+                activeView === 'behavioral'
+                  ? 'bg-gradient-to-r from-emerald-400 to-teal-500 text-slate-950 shadow-md shadow-emerald-400/20 font-bold'
+                  : 'text-slate-400 hover:text-white hover:bg-white/5'
+              }`}
+            >
+              <HeartPulse className="w-3.5 h-3.5" />
+              <span>Behavioral Health</span>
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse hidden sm:inline-block" />
+            </button>
           </nav>
 
-          <div className="flex items-center space-x-3">
-            <button 
-              type="button" 
-              className="hidden sm:inline-flex text-sm font-semibold text-slate-700 hover:text-slate-950 px-3.5 py-2 transition-colors cursor-pointer"
-            >
-              Sign In
-            </button>
-            <button 
-              type="button" 
-              onClick={() => setActiveView('dashboard')}
-              className="inline-flex items-center justify-center text-sm font-semibold text-white bg-[#0F172A] hover:bg-[#1E293B] px-4 py-2 rounded-lg transition-all shadow-sm active:scale-95 cursor-pointer"
-            >
-              <span>Launch AURA 3D</span>
-              <ArrowRight className="w-4 h-4 ml-1.5" />
-            </button>
+          {/* Action CTAs */}
+          <div className="flex items-center space-x-2 shrink-0">
+            {activeView === 'overview' ? (
+              <div className="flex items-center gap-2">
+                <button 
+                  type="button" 
+                  onClick={() => {
+                    setActiveView('roadmap');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className="hidden sm:inline-flex items-center justify-center text-xs font-semibold text-[#06132B] bg-gradient-to-r from-amber-400 to-[#F5B82E] hover:from-amber-300 hover:to-amber-500 px-3 py-1.5 rounded-lg transition-all shadow-md active:scale-95 cursor-pointer"
+                >
+                  <Gamepad2 className="w-3.5 h-3.5 mr-1" />
+                  <span>Roadmap</span>
+                </button>
+                <button 
+                  type="button" 
+                  onClick={() => {
+                    setActiveView('behavioral');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className="hidden md:inline-flex items-center justify-center text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-500 px-3 py-1.5 rounded-lg transition-all shadow-md active:scale-95 cursor-pointer"
+                >
+                  <HeartPulse className="w-3.5 h-3.5 mr-1" />
+                  <span>Health Check</span>
+                </button>
+              </div>
+            ) : (
+              <button 
+                type="button" 
+                onClick={() => {
+                  setActiveView('overview');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="inline-flex items-center justify-center text-xs font-semibold text-white bg-blue-900/60 hover:bg-blue-800/80 border border-blue-700/50 px-3.5 py-2 rounded-lg transition-all active:scale-95 cursor-pointer"
+              >
+                <ArrowLeft className="w-3.5 h-3.5 mr-1" />
+                <span>Return to Overview</span>
+              </button>
+            )}
           </div>
         </div>
       </header>
@@ -134,50 +282,119 @@ export default function App() {
                     <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
                     <span>Multi-region data isolation: Active</span>
                   </div>
-                  <div className="flex items-center text-emerald-400 space-x-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
-                    <span>Zero-trust mTLS proxy: Enforced</span>
+                );
+              })}
+            </div>
+          </section>
+
+          {/* Middle Section: Interactive Trend Comparison Charts */}
+          <TrendAnalytics />
+
+          {/* Two Side-by-Side Interactive Feature Portals */}
+          <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full my-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              
+              {/* Feature 1: Lumina Quest Roadmap Game */}
+              <div className="rounded-2xl bg-gradient-to-br from-blue-950/90 via-indigo-950/80 to-slate-900/90 border border-cyan-400/30 p-6 sm:p-7 backdrop-blur-md shadow-2xl flex flex-col justify-between relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-amber-400/10 rounded-full blur-3xl pointer-events-none group-hover:bg-amber-400/20 transition-all duration-700" />
+                
+                <div className="space-y-3 text-left relative z-10">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400/10 border border-amber-400/30 text-amber-300 font-mono text-xs uppercase tracking-wider">
+                    <Compass className="w-3.5 h-3.5" />
+                    <span>Interactive Starlight Circuit</span>
                   </div>
-                  <div className="flex items-center text-cyan-400 space-x-2">
-                    <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
-                    <span>Latency overhead: &lt; 0.8ms p99</span>
-                  </div>
+                  <h3 className="text-2xl font-extrabold text-white tracking-tight">
+                    Lumina Quest Roadmap
+                  </h3>
+                  <p className="text-sm text-slate-300 leading-relaxed">
+                    Navigate the fiber-optic roadmap path. Complete orbital challenge nodes, trigger shooting current surges, collect achievement stars, and reach the Grand Trophy Vault.
+                  </p>
                 </div>
-                <p className="text-slate-400"><span className="text-purple-400">const</span> mesh = <span className="text-sky-400">createSecureMesh</span>(&#123; policy: <span className="text-emerald-400">'strict-local'</span> &#125;);</p>
-                <p className="text-slate-400"><span className="text-purple-400">await</span> mesh.<span className="text-sky-400">deploy</span>(&#123; target: <span className="text-amber-400">'eu-central-sovereign'</span> &#125;);</p>
+
+                <div className="pt-5 mt-4 border-t border-blue-900/40 relative z-10">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setActiveView('roadmap');
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-bold text-xs bg-gradient-to-r from-amber-400 to-[#F5B82E] text-[#06132B] shadow-lg shadow-amber-500/20 hover:scale-[1.02] active:scale-95 transition-all cursor-pointer whitespace-nowrap"
+                  >
+                    <span>Launch Roadmap Game</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-2 pt-5 mt-5 border-t border-slate-800 text-center">
-                <div className="p-2 rounded bg-slate-900/50">
-                  <Globe2 className="w-4 h-4 mx-auto text-[#FF7300] mb-1" />
-                  <span className="text-[10px] text-slate-400 uppercase tracking-wider block">Federation</span>
+              {/* Feature 2: Astronaut Behavioral Health & CrewMind */}
+              <div className="rounded-2xl bg-gradient-to-br from-teal-950/90 via-slate-900/90 to-blue-950/90 border border-emerald-400/30 p-6 sm:p-7 backdrop-blur-md shadow-2xl flex flex-col justify-between relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-400/10 rounded-full blur-3xl pointer-events-none group-hover:bg-emerald-400/20 transition-all duration-700" />
+                
+                <div className="space-y-3 text-left relative z-10">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-400/10 border border-emerald-400/30 text-emerald-300 font-mono text-xs uppercase tracking-wider">
+                    <HeartPulse className="w-3.5 h-3.5" />
+                    <span>Astronaut Health Assessment</span>
+                  </div>
+                  <h3 className="text-2xl font-extrabold text-white tracking-tight">
+                    CrewMind Behavioral Check
+                  </h3>
+                  <p className="text-sm text-slate-300 leading-relaxed">
+                    Comprehensive astronaut behavioral health suite: Part A personality baseline, daily mood & sleep logs (Part B), Part C readiness scoring, and Psychomotor Vigilance (PVT) testing.
+                  </p>
                 </div>
-                <div className="p-2 rounded bg-slate-900/50">
-                  <Cpu className="w-4 h-4 mx-auto text-[#FF7300] mb-1" />
-                  <span className="text-[10px] text-slate-400 uppercase tracking-wider block">Low Latency</span>
-                </div>
-                <div className="p-2 rounded bg-slate-900/50">
-                  <Terminal className="w-4 h-4 mx-auto text-[#FF7300] mb-1" />
-                  <span className="text-[10px] text-slate-400 uppercase tracking-wider block">GitOps Ready</span>
+
+                <div className="pt-5 mt-4 border-t border-blue-900/40 relative z-10">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setActiveView('behavioral');
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-bold text-xs bg-gradient-to-r from-emerald-400 to-teal-500 text-[#06132B] shadow-lg shadow-emerald-500/20 hover:scale-[1.02] active:scale-95 transition-all cursor-pointer whitespace-nowrap"
+                  >
+                    <span>Open Behavioral Health Check</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
                 </div>
               </div>
+
             </div>
-          </div>
+          </section>
 
         </div>
       </main>
 
-      {/* 3. LOGO MARQUEE SECTION */}
-      <footer className="w-full mt-auto">
+      {/* ROADMAP GAME VIEW */}
+      {activeView === 'roadmap' && (
+        <main className="flex-1 w-full relative z-10">
+          <RoadmapGame onBack={() => setActiveView('overview')} />
+        </main>
+      )}
+
+      {/* BEHAVIORAL HEALTH VIEW */}
+      {activeView === 'behavioral' && (
+        <main className="flex-1 w-full relative z-10">
+          <BehavioralHealthPage onBack={() => setActiveView('overview')} />
+        </main>
+      )}
+
+      {/* ====================================================================
+          3. BOTTOM SECTION: WSO2-STYLE INFINITE LOGO MARQUEE (INTACT)
+          ==================================================================== */}
+      <footer className="w-full mt-auto relative z-10">
         <LogoMarquee />
 
-        <div className="border-t border-slate-100 bg-slate-50/60 py-4">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-2">
-            <p>© {new Date().getFullYear()} INOVA Technologies. All rights reserved.</p>
+        {/* Minimal Bottom Baseline / Credits Bar */}
+        <div className="border-t border-blue-900/30 bg-[#040816]/70 py-4">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-2">
+            <p>© {new Date().getFullYear()} INOVA Aerospace & Digital Sovereignty. All telemetry verified.</p>
             <div className="flex items-center space-x-6">
-              <a href="#privacy" className="hover:text-slate-800 transition-colors">Privacy Policy</a>
-              <a href="#terms" className="hover:text-slate-800 transition-colors">Terms of Service</a>
-              <a href="#security" className="hover:text-slate-800 transition-colors">Security</a>
+              <a href="#privacy" className="hover:text-cyan-300 transition-colors">Security Policy</a>
+              <a href="#terms" className="hover:text-cyan-300 transition-colors">Mission Protocol</a>
+              <a href="#status" className="hover:text-cyan-300 transition-colors flex items-center gap-1.5">
+                <span>Relay Mesh Active</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+              </a>
             </div>
           </div>
         </div>

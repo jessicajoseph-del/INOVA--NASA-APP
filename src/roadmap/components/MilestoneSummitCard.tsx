@@ -35,6 +35,7 @@ export const MilestoneSummitCard: React.FC<MilestoneSummitCardProps> = ({
 
   return (
     <div
+      id="milestone-summit"
       style={{
         left: `${leftPercent}%`,
         top: `${topPercent}%`,
