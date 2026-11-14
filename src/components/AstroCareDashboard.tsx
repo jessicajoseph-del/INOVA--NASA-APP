@@ -18,7 +18,12 @@ import {
   Calendar,
   Layers,
   Sparkles,
-  Info
+  Info,
+  Dumbbell,
+  Plus,
+  X,
+  Check,
+  Flame
 } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -47,6 +52,8 @@ export interface AstronautProfile {
   bpOffset: number;
   sleepOffset: number;
   moodOffset: number;
+  exerciseOffset: number;
+  aredOffset: number;
 }
 
 export const ASTRONAUTS: AstronautProfile[] = [
@@ -61,6 +68,8 @@ export const ASTRONAUTS: AstronautProfile[] = [
     bpOffset: 0,
     sleepOffset: 0,
     moodOffset: 0,
+    exerciseOffset: 0,
+    aredOffset: 0,
   },
   {
     id: 'lin',
@@ -73,6 +82,8 @@ export const ASTRONAUTS: AstronautProfile[] = [
     bpOffset: -5,
     sleepOffset: 0.4,
     moodOffset: 0.3,
+    exerciseOffset: -8,
+    aredOffset: -260,
   },
   {
     id: 'rostova',
@@ -85,6 +96,8 @@ export const ASTRONAUTS: AstronautProfile[] = [
     bpOffset: 4,
     sleepOffset: -0.3,
     moodOffset: -0.2,
+    exerciseOffset: 8,
+    aredOffset: 140,
   },
 ];
 
@@ -100,6 +113,10 @@ export interface MissionRecord {
   temperature: number;
   sleepHours: number;
   moodScore: number;
+  exerciseMinutes: number;
+  aredLoadKg: number;
+  cardioMinutes: number;
+  cardioBpm: number;
   journal?: string;
   alert?: {
     type: 'nominal' | 'advisory' | 'critical';
@@ -143,6 +160,43 @@ function generateMissionRecords(astronaut: AstronautProfile): MissionRecord[] {
         parseFloat((8.1 + astronaut.moodOffset + Math.sin(i / 10) * 1.15).toFixed(1))
       )
     );
+
+    // Exercise countermeasure telemetry
+    let exerciseMin = Math.round(
+      132 + astronaut.exerciseOffset + Math.sin(i / 6) * 8 + Math.cos(i / 13) * 4
+    );
+    let aredKg = Math.round(
+      1820 + astronaut.aredOffset + Math.sin(i / 5) * 90
+    );
+    let cardioMin = 45;
+    let cardioBpm = 138;
+
+    if (i === 112 && astronaut.id === 'mercer') {
+      exerciseMin = 135;
+      aredKg = 1840;
+      cardioMin = 45;
+      cardioBpm = 138;
+    } else if (i === 1) {
+      exerciseMin = 25;
+      aredKg = 350;
+      cardioMin = 20;
+      cardioBpm = 118;
+    } else if (i === 42) {
+      exerciseMin = 90;
+      aredKg = 1100;
+      cardioMin = 30;
+      cardioBpm = 144;
+    } else if (i === 135) {
+      exerciseMin = 65;
+      aredKg = 850;
+      cardioMin = 35;
+      cardioBpm = 126;
+    } else if (i >= 175) {
+      exerciseMin = Math.min(150, 144 + astronaut.exerciseOffset);
+      aredKg = 2080 + astronaut.aredOffset;
+      cardioMin = 50;
+      cardioBpm = 142;
+    }
 
     let phase = 'In-Flight Adaptation';
     if (i <= 5) phase = 'Launch & Insertion';
@@ -188,6 +242,10 @@ function generateMissionRecords(astronaut: AstronautProfile): MissionRecord[] {
       temperature: temp,
       sleepHours: sleep,
       moodScore: mood,
+      exerciseMinutes: exerciseMin,
+      aredLoadKg: aredKg,
+      cardioMinutes: cardioMin,
+      cardioBpm: cardioBpm,
       journal,
       alert,
     });
@@ -207,6 +265,11 @@ interface SemiGaugeProps {
   targetText: string;
   colorHex?: string;
   formatFn?: (v: number) => string;
+  showGlowDot?: boolean;
+  subtitle?: string;
+  headerAction?: React.ReactNode;
+  footerContent?: React.ReactNode;
+  cardClassName?: string;
 }
 
 function SemiCircularGauge({
@@ -217,25 +280,43 @@ function SemiCircularGauge({
   targetText,
   colorHex = '#F5B82E',
   formatFn,
+  showGlowDot = true,
+  subtitle,
+  headerAction,
+  footerContent,
+  cardClassName = 'bg-[#0B152C]/90 border border-slate-700/40 rounded-xl p-4 sm:p-5',
 }: SemiGaugeProps) {
   const radius = 56;
   const cx = 75;
   const cy = 70;
-  const circumference = Math.PI * radius; // ~175.9
+  const circumference = Math.PI * radius; // ~175.929
   const clampedVal = Math.max(0, Math.min(value, max));
   const progressRatio = clampedVal / max;
   const strokeDashoffset = circumference * (1 - progressRatio);
 
+  // Exact endpoint coordinates for the glowing endpoint dot
+  const angleRad = Math.PI * progressRatio;
+  const dotX = cx - radius * Math.cos(angleRad);
+  const dotY = cy - radius * Math.sin(angleRad);
+
   const displayVal = formatFn ? formatFn(value) : value.toFixed(1);
 
   return (
-    <div className="bg-[#060F28] border border-blue-400/15 rounded-xl p-3.5 flex flex-col items-center justify-between shadow-lg relative overflow-hidden group hover:border-[#F5B82E]/30 transition-all duration-300">
-      <div className="absolute top-0 right-0 w-24 h-24 bg-[#F5B82E]/5 rounded-full blur-xl pointer-events-none" />
-      <span className="text-[11px] font-mono uppercase tracking-wider text-slate-300 font-semibold mb-1">
-        {label}
-      </span>
+    <div
+      className={`${cardClassName} flex flex-col items-center justify-between shadow-lg relative overflow-hidden group hover:border-[#FACC15]/40 transition-all duration-300 w-full`}
+    >
+      <div className="absolute top-0 right-0 w-28 h-28 bg-[#FACC15]/5 rounded-full blur-2xl pointer-events-none" />
 
-      <div className="relative w-[150px] h-[82px] flex items-center justify-center">
+      {/* Header Row: Label & Optional Action */}
+      <div className="w-full flex items-center justify-between gap-2 mb-1.5 relative z-10">
+        <span className="text-[11px] font-mono uppercase tracking-wider text-slate-300 font-semibold text-center flex-1">
+          {label}
+        </span>
+        {headerAction && <div className="shrink-0">{headerAction}</div>}
+      </div>
+
+      {/* Semicircular SVG Meter */}
+      <div className="relative w-[150px] h-[85px] flex items-center justify-center my-0.5">
         <svg width="150" height="85" viewBox="0 0 150 85" className="overflow-visible">
           {/* Background Track Arc */}
           <path
@@ -262,26 +343,51 @@ function SemiCircularGauge({
           />
 
           {/* Target tick marker at 80% */}
-          <circle cx="106" cy="27" r="2.5" fill="#FFFDF7" opacity="0.8" />
+          <circle cx="106" cy="27" r="2.5" fill="#FFFDF7" opacity="0.6" />
+
+          {/* Glowing White Endpoint Dot at tip of active arc */}
+          {showGlowDot && progressRatio > 0.02 && (
+            <g className="transition-all duration-500 ease-out">
+              <circle
+                cx={dotX}
+                cy={dotY}
+                r="4.5"
+                fill="#FFFFFF"
+                style={{
+                  filter: `drop-shadow(0 0 6px ${colorHex}) drop-shadow(0 0 10px #FFFFFF)`,
+                }}
+              />
+              <circle cx={dotX} cy={dotY} r="2.5" fill={colorHex} />
+            </g>
+          )}
         </svg>
 
         {/* Numeric Readout Centered at Bottom */}
         <div className="absolute bottom-1 flex flex-col items-center text-center">
-          <div className="flex items-baseline gap-0.5">
+          <div className="flex items-baseline gap-1">
             <span className="text-2xl font-black tracking-tight text-[#FFFDF7] font-sans drop-shadow-sm">
               {displayVal}
             </span>
-            <span className="text-[10px] text-amber-200/80 font-mono font-bold">
+            <span className="text-[11px] text-[#FACC15] font-mono font-bold">
               {unit}
             </span>
           </div>
+          {subtitle && (
+            <span className="text-[10px] text-amber-200/80 font-mono font-semibold">
+              {subtitle}
+            </span>
+          )}
         </div>
       </div>
 
-      <p className="text-[10px] font-mono text-slate-400 mt-1 flex items-center gap-1.5">
-        <span className="w-1.5 h-1.5 rounded-full bg-[#F5B82E]"></span>
+      {/* Yellow-dot baseline caption */}
+      <p className="text-[10px] font-mono text-slate-400 mt-1 flex items-center gap-1.5 text-center">
+        <span className="w-1.5 h-1.5 rounded-full bg-[#FACC15]"></span>
         <span>{targetText}</span>
       </p>
+
+      {/* Optional Compact Footer Content / Pills */}
+      {footerContent && <div className="w-full mt-2 relative z-10">{footerContent}</div>}
     </div>
   );
 }
@@ -308,6 +414,19 @@ export default function AstroCareDashboard({
     temp: true,
   });
 
+  // User-logged exercise sessions state
+  const [loggedSessions, setLoggedSessions] = useState<
+    Record<string, { minutes: number; aredKg: number }>
+  >({});
+  const [isLogModalOpen, setIsLogModalOpen] = useState<boolean>(false);
+  const [logForm, setLogForm] = useState({
+    type: 'ARED Resistive',
+    duration: 30,
+    volume: 250,
+    avgBpm: 140,
+  });
+  const [saveToast, setSaveToast] = useState<string | null>(null);
+
   const selectedAstronaut = useMemo(
     () => ASTRONAUTS.find((a) => a.id === selectedAstronautId) || ASTRONAUTS[0],
     [selectedAstronautId]
@@ -322,6 +441,15 @@ export default function AstroCareDashboard({
     () => dataset[currentDay - 1] || dataset[0],
     [dataset, currentDay]
   );
+
+  // Dynamic user-logged modifiers
+  const sessionKey = `${selectedAstronaut.id}-${currentDay}`;
+  const extraExercise = loggedSessions[sessionKey] || { minutes: 0, aredKg: 0 };
+  const effectiveExerciseMin = Math.min(
+    180,
+    currentRecord.exerciseMinutes + extraExercise.minutes
+  );
+  const effectiveAredLoad = currentRecord.aredLoadKg + extraExercise.aredKg;
 
   // Auto-replay timer
   const playIntervalRef = useRef<number | null>(null);
@@ -351,14 +479,42 @@ export default function AstroCareDashboard({
     setCurrentDay(clamped);
   };
 
+  const handleLogExerciseSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoggedSessions((prev) => {
+      const existing = prev[sessionKey] || { minutes: 0, aredKg: 0 };
+      return {
+        ...prev,
+        [sessionKey]: {
+          minutes: existing.minutes + logForm.duration,
+          aredKg:
+            existing.aredKg +
+            (logForm.type.includes('ARED') ? logForm.volume : 0),
+        },
+      };
+    });
+
+    setIsLogModalOpen(false);
+    setSaveToast(`+${logForm.duration}m ${logForm.type} logged on Day ${currentDay}!`);
+    setTimeout(() => setSaveToast(null), 3500);
+  };
+
   return (
     <div
       className={
         isEmbedded
-          ? 'w-full flex flex-col bg-[#060D21] text-slate-100 rounded-2xl border border-blue-400/20 shadow-2xl overflow-hidden'
-          : 'min-h-screen flex flex-col bg-[#060D21] bg-[radial-gradient(ellipse_at_top,_#0F214D_0%,_#060D21_70%)] text-slate-100 font-sans'
+          ? 'w-full flex flex-col bg-[#060D21] text-slate-100 rounded-2xl border border-blue-400/20 shadow-2xl overflow-hidden relative'
+          : 'min-h-screen flex flex-col bg-[#060D21] bg-[radial-gradient(ellipse_at_top,_#0F214D_0%,_#060D21_70%)] text-slate-100 font-sans relative'
       }
     >
+      {/* Toast Notification */}
+      {saveToast && (
+        <div className="absolute top-20 right-6 z-50 px-4 py-2.5 rounded-xl bg-emerald-500/90 text-slate-950 font-mono text-xs font-bold shadow-2xl flex items-center gap-2 animate-bounce">
+          <Check className="w-4 h-4" />
+          <span>{saveToast}</span>
+        </div>
+      )}
+
       {/* ====================================================================
           1. DASHBOARD TOP HEADER & MISSION MET IDENTIFIER
           ==================================================================== */}
@@ -841,32 +997,79 @@ export default function AstroCareDashboard({
                 </span>
               </div>
               <p className="text-xs text-slate-300 mt-0.5">
-                Daily restorative sleep & psychological readiness indicators.
+                Restorative sleep, countermeasure exercise & cognitive readiness.
               </p>
             </div>
 
-            {/* 2 Semi-Circular Gauges */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-3.5">
+            {/* 3 Semi-Circular Gauges: Sleep, Exercise, and Mood */}
+            <div className="flex flex-col gap-3.5">
+              
+              {/* 1. Daily Restorative Sleep */}
               <SemiCircularGauge
-                label="Daily Restorative Sleep"
+                label="DAILY RESTORATIVE SLEEP"
                 value={currentRecord.sleepHours}
                 max={10}
                 unit="h"
                 targetText="Target: 8.0h Rest Baseline"
                 colorHex="#F5B82E"
+                cardClassName="bg-[#0B152C]/90 border border-slate-700/40 rounded-xl p-4 sm:p-5"
               />
 
+              {/* 2. NEW: Daily Exercise Countermeasure (Directly Below Sleep) */}
               <SemiCircularGauge
-                label="Psychological Readiness Index"
+                label="DAILY EXERCISE COUNTERMEASURE"
+                value={effectiveExerciseMin}
+                max={150}
+                unit="min"
+                targetText="• Target: 150m ARED / T2 Baseline"
+                colorHex="#FACC15"
+                showGlowDot={true}
+                subtitle={`${Math.round((effectiveExerciseMin / 150) * 100)}% of Daily Target`}
+                headerAction={
+                  <button
+                    type="button"
+                    onClick={() => setIsLogModalOpen(true)}
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[10px] font-mono font-bold bg-[#FACC15]/10 hover:bg-[#FACC15]/20 text-[#FACC15] border border-[#FACC15]/35 transition-all cursor-pointer active:scale-95 shadow-sm"
+                    title="Log ARED or T2 Workout Session"
+                  >
+                    <Plus className="w-3 h-3" />
+                    <span>Log Session</span>
+                  </button>
+                }
+                cardClassName="bg-[#0B152C]/90 border border-slate-700/40 rounded-xl p-4 sm:p-5 hover:border-[#FACC15]/50 transition-all"
+                footerContent={
+                  <div className="flex items-center gap-2 mt-2 w-full justify-center flex-wrap pt-2 border-t border-slate-800/60">
+                    <div className="px-2.5 py-1 rounded-lg bg-[#060F28] border border-blue-400/20 font-mono text-[10px] text-slate-300 flex items-center gap-1.5 shadow-sm">
+                      <Dumbbell className="w-3 h-3 text-[#FACC15]" />
+                      <span className="text-slate-400">ARED LOAD:</span>
+                      <span className="font-bold text-[#FFFDF7]">
+                        {effectiveAredLoad.toLocaleString()} kg
+                      </span>
+                    </div>
+                    <div className="px-2.5 py-1 rounded-lg bg-[#060F28] border border-blue-400/20 font-mono text-[10px] text-slate-300 flex items-center gap-1.5 shadow-sm">
+                      <Activity className="w-3 h-3 text-cyan-400" />
+                      <span className="text-slate-400">T2 / CEVIS:</span>
+                      <span className="font-bold text-[#FFFDF7]">
+                        {currentRecord.cardioMinutes} min • {currentRecord.cardioBpm} bpm
+                      </span>
+                    </div>
+                  </div>
+                }
+              />
+
+              {/* 3. Psychological Readiness Index */}
+              <SemiCircularGauge
+                label="PSYCHOLOGICAL READINESS INDEX"
                 value={currentRecord.moodScore}
                 max={10}
                 unit="/10"
                 targetText="Behavioral Stability Normal"
                 colorHex="#FDE047"
+                cardClassName="bg-[#0B152C]/90 border border-slate-700/40 rounded-xl p-4 sm:p-5"
               />
             </div>
 
-            {/* Contextual Daily Flight Journal Entry */}
+            {/* 4. Contextual Daily Flight Journal Entry */}
             <div className="bg-[#060F28] border border-blue-400/15 rounded-xl p-3.5 text-left">
               <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-amber-300 mb-1">
                 <Radio className="w-3.5 h-3.5 text-[#F5B82E]" />
@@ -895,7 +1098,155 @@ export default function AstroCareDashboard({
 
         </div>
       </main>
+
+      {/* ====================================================================
+          5. QUICK-LOG EXERCISE SESSION MODAL DIALOG
+          ==================================================================== */}
+      {isLogModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-[#0B152C] border border-[#FACC15]/40 rounded-2xl w-full max-w-md p-6 shadow-2xl relative text-left">
+            <button
+              type="button"
+              onClick={() => setIsLogModalOpen(false)}
+              className="absolute top-4 right-4 text-slate-400 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="flex items-center gap-2.5 mb-1">
+              <div className="w-8 h-8 rounded-lg bg-[#FACC15]/10 border border-[#FACC15]/30 flex items-center justify-center text-[#FACC15]">
+                <Dumbbell className="w-4 h-4" />
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-white">Log Exercise Countermeasure</h3>
+                <p className="text-xs text-slate-400 font-mono">
+                  {selectedAstronaut.name} • Day {currentDay} ({currentRecord.date})
+                </p>
+              </div>
+            </div>
+
+            <form onSubmit={handleLogExerciseSubmit} className="space-y-4 mt-5">
+              {/* Protocol Type Selector */}
+              <div>
+                <label className="block text-xs font-mono text-slate-300 mb-1.5 uppercase tracking-wider font-semibold">
+                  Exercise Countermeasure Protocol
+                </label>
+                <div className="grid grid-cols-3 gap-2">
+                  {[
+                    'ARED Resistive',
+                    'T2 Treadmill',
+                    'CEVIS Cycle',
+                  ].map((proto) => (
+                    <button
+                      key={proto}
+                      type="button"
+                      onClick={() => setLogForm({ ...logForm, type: proto })}
+                      className={`px-2.5 py-2 rounded-lg text-xs font-semibold border transition-all text-center cursor-pointer ${
+                        logForm.type === proto
+                          ? 'bg-[#FACC15]/20 border-[#FACC15] text-[#FACC15] font-bold shadow-md shadow-[#FACC15]/10'
+                          : 'bg-[#060F28] border-slate-700 text-slate-400 hover:text-white'
+                      }`}
+                    >
+                      {proto.split(' ')[0]}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Session Duration */}
+              <div>
+                <div className="flex justify-between items-center text-xs font-mono text-slate-300 mb-1">
+                  <span className="uppercase tracking-wider font-semibold">Session Duration</span>
+                  <span className="text-[#FACC15] font-bold">{logForm.duration} minutes</span>
+                </div>
+                <input
+                  type="range"
+                  min="15"
+                  max="90"
+                  step="5"
+                  value={logForm.duration}
+                  onChange={(e) =>
+                    setLogForm({ ...logForm, duration: parseInt(e.target.value, 10) })
+                  }
+                  className="w-full accent-[#FACC15] h-2 bg-[#060F28] rounded-lg cursor-pointer"
+                />
+                <div className="flex justify-between text-[10px] font-mono text-slate-500 mt-1">
+                  <span>15m Quick</span>
+                  <span>45m Nominal</span>
+                  <span>90m High-Load</span>
+                </div>
+              </div>
+
+              {/* ARED Volume or Cardio Output */}
+              {logForm.type.includes('ARED') ? (
+                <div>
+                  <div className="flex justify-between items-center text-xs font-mono text-slate-300 mb-1">
+                    <span className="uppercase tracking-wider font-semibold">ARED Resistance Load Volume</span>
+                    <span className="text-[#FACC15] font-bold">+{logForm.volume} kg</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="100"
+                    max="600"
+                    step="50"
+                    value={logForm.volume}
+                    onChange={(e) =>
+                      setLogForm({ ...logForm, volume: parseInt(e.target.value, 10) })
+                    }
+                    className="w-full accent-[#FACC15] h-2 bg-[#060F28] rounded-lg cursor-pointer"
+                  />
+                  <div className="flex justify-between text-[10px] font-mono text-slate-500 mt-1">
+                    <span>+100 kg</span>
+                    <span>+350 kg</span>
+                    <span>+600 kg</span>
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  <div className="flex justify-between items-center text-xs font-mono text-slate-300 mb-1">
+                    <span className="uppercase tracking-wider font-semibold">Average Aerobic Heart Rate</span>
+                    <span className="text-cyan-400 font-bold">{logForm.avgBpm} BPM</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="115"
+                    max="165"
+                    step="1"
+                    value={logForm.avgBpm}
+                    onChange={(e) =>
+                      setLogForm({ ...logForm, avgBpm: parseInt(e.target.value, 10) })
+                    }
+                    className="w-full accent-cyan-400 h-2 bg-[#060F28] rounded-lg cursor-pointer"
+                  />
+                  <div className="flex justify-between text-[10px] font-mono text-slate-500 mt-1">
+                    <span>115 BPM (Endurance)</span>
+                    <span>140 BPM (Target)</span>
+                    <span>165 BPM (Sprint)</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Submit CTA */}
+              <div className="pt-2 flex items-center justify-end gap-2.5">
+                <button
+                  type="button"
+                  onClick={() => setIsLogModalOpen(false)}
+                  className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white bg-slate-800/80 transition-colors cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 rounded-xl text-xs font-bold text-slate-950 bg-gradient-to-r from-amber-400 to-[#FACC15] hover:from-amber-300 hover:to-yellow-400 shadow-lg shadow-[#FACC15]/20 transition-all cursor-pointer active:scale-95 flex items-center gap-1.5"
+                >
+                  <Check className="w-3.5 h-3.5" />
+                  <span>Commit Session to Telemetry</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
-
