@@ -284,7 +284,7 @@ export default function App() {
                 }}
                 className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl font-bold text-sm bg-gradient-to-r from-amber-400 to-[#F5B82E] text-[#06132B] shadow-lg shadow-amber-500/20 hover:scale-105 active:scale-95 transition-all cursor-pointer whitespace-nowrap relative z-10 shrink-0"
               >
-                <span>Launch Roadmap Game</span>
+                <span>Play Roadmap Game</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>

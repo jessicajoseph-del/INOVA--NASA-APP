@@ -305,6 +305,17 @@ export default function RoadmapGame({ onBack }: RoadmapGameProps = {}) {
       <ConfettiBurst triggerKey={confettiTrigger} reducedMotion={reducedMotion} />
       {/* 3-Zone Playful Game Top Bar */}
       <header className="sticky top-0 z-30 flex items-center justify-between gap-4 sm:gap-8 px-4 sm:px-6 h-16 border-b border-sky-300/15 bg-[#06132B]/94 backdrop-blur-md">
+        {/* Zone 1: Game Wordmark */}
+        <a
+          href="#map-canvas"
+          onClick={(e) => {
+            e.preventDefault();
+            handleJumpToCurrent();
+          }}
+          className="font-display text-lg sm:text-xl font-extrabold tracking-tight text-[#F7F3E9] whitespace-nowrap shrink-0"
+        >
+          Lumina Quest
+        </a>
         {/* Zone 1: Game Wordmark & Return Navigation */}
         <div className="flex items-center gap-3 shrink-0">
           {onBack && (
