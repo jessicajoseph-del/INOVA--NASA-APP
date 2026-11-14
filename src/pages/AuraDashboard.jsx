@@ -1,6 +1,7 @@
 import React, { useRef, Suspense, useState, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Text, useGLTF, Stars, Sphere, Sparkles } from '@react-three/drei';
+import { useNasaIssTelemetry } from '../hooks/useNasaIssTelemetry';
 // Uncomment below once you copy HandTracker.jsx into src/components/
 // import HandTracker from '../components/HandTracker';
 
@@ -86,6 +87,7 @@ function ARSceneRotator({ globalRotationRef, children }) {
 export default function AuraDashboard({ onBackToHome }) {
     // Local State replaces Inertia backend props
     const [isCritical, setIsCritical] = useState(false);
+    const { streamStatus, stationMode, atmosphere, oxygenGenerator } = useNasaIssTelemetry();
 
     // AR States
     const [arEnabled, setArEnabled] = useState(false);
@@ -266,30 +268,97 @@ export default function AuraDashboard({ onBackToHome }) {
         <div className="h-[100vh] w-[100vw] bg-slate-950 text-slate-100 flex flex-col font-sans overflow-hidden">
             {/* {arEnabled && <HandTracker onHandUpdate={handleHandUpdate} />} */}
 
-            <header className="h-[90px] shrink-0 p-6 border-b border-slate-800 flex justify-between items-center relative z-10">
-                <div>
-                    <h1 className="text-2xl font-bold tracking-widest text-cyan-400">AURA / EDGE_COMPUTE</h1>
-                    <button
-                        onClick={() => setArEnabled(!arEnabled)}
-                        className={`mt-2 px-3 py-1 text-xs rounded font-bold uppercase tracking-widest border ${
-                            arEnabled ? 'bg-cyan-900 border-cyan-500 text-cyan-300' : 'bg-transparent border-slate-700 text-slate-500 hover:text-slate-300'
-                        }`}
-                    >
-                        {arEnabled ? '● AR VISOR ACTIVE' : 'ENABLE AR VISOR'}
-                    </button>
+           <header className="shrink-0 px-5 py-3 border-b border-slate-800 bg-slate-950/95 flex flex-wrap xl:flex-nowrap justify-between items-center gap-4 relative z-10">
+                {/* Left: Brand & AR Toggle */}
+                <div className="shrink-0">
+                    <div className="flex items-center gap-2.5">
+                        <h1 className="text-xl font-bold tracking-widest text-cyan-400">AURA / EDGE_COMPUTE</h1>
+                        <span className={`text-[10px] font-mono px-2 py-0.5 rounded border ${
+                            streamStatus === 'NASA_ISSLIVE_ACTIVE'
+                                ? 'bg-emerald-950/70 border-emerald-500/50 text-emerald-300'
+                                : 'bg-amber-950/70 border-amber-500/50 text-amber-300'
+                        }`}>
+                            {streamStatus === 'NASA_ISSLIVE_ACTIVE' ? '● NASA ISSLIVE' : '◌ SYNCING NASA'}
+                        </span>
+                    </div>
+                    <div className="flex items-center gap-3 mt-1.5">
+                        <button
+                            onClick={() => setArEnabled(!arEnabled)}
+                            className={`px-2.5 py-0.5 text-[11px] rounded font-bold uppercase tracking-widest border ${
+                                arEnabled ? 'bg-cyan-900 border-cyan-500 text-cyan-300' : 'bg-transparent border-slate-700 text-slate-500 hover:text-slate-300'
+                            }`}
+                        >
+                            {arEnabled ? '● AR VISOR ACTIVE' : 'ENABLE AR VISOR'}
+                        </button>
+                        <span className="text-xs font-mono text-slate-400">
+                            Station Mode: <strong className="text-slate-200">{stationMode}</strong>
+                        </span>
+                    </div>
                 </div>
 
+                {/* Center: NASA ECLSS Atmosphere Matrix (Matches iss.telemetry.space) */}
+                <div className="flex-1 max-w-4xl bg-slate-900/90 border border-slate-800 rounded-lg px-4 py-2 text-xs font-mono">
+                    <div className="grid grid-cols-5 gap-2 text-[10px] uppercase tracking-wider text-slate-400 border-b border-slate-800 pb-1 mb-1">
+                        <span className="text-cyan-400 font-bold">Atmosphere</span>
+                        <span className="text-right">Temp</span>
+                        <span className="text-right">O₂ Partial Press</span>
+                        <span className="text-right">CO₂ Partial Press</span>
+                        <span className="text-right">N₂ Partial Press</span>
+                    </div>
+
+                    {/* Row 1: Mean */}
+                    <div className="grid grid-cols-5 gap-2 py-0.5 text-slate-200 border-b border-slate-800/50">
+                        <span className="text-slate-400 font-semibold">Mean</span>
+                        <span className="text-right text-slate-600">—</span>
+                        <span className="text-right text-cyan-300 font-bold">{atmosphere.mean.o2} <span className="text-slate-500 text-[10px]">mmHg</span></span>
+                        <span className="text-right text-amber-300 font-bold">{atmosphere.mean.co2} <span className="text-slate-500 text-[10px]">mmHg</span></span>
+                        <span className="text-right text-indigo-300 font-bold">{atmosphere.mean.n2} <span className="text-slate-500 text-[10px]">mmHg</span></span>
+                    </div>
+
+                    {/* Row 2: Destiny */}
+                    <div className="grid grid-cols-5 gap-2 py-0.5 text-slate-300 border-b border-slate-800/50">
+                        <span className="text-slate-400">Destiny</span>
+                        <span className="text-right text-emerald-300 font-bold">{atmosphere.destiny.temp} <span className="text-slate-500 text-[10px]">°C</span></span>
+                        <span className="text-right">{atmosphere.destiny.o2} <span className="text-slate-500 text-[10px]">mmHg</span></span>
+                        <span className="text-right">{atmosphere.destiny.co2} <span className="text-slate-500 text-[10px]">mmHg</span></span>
+                        <span className="text-right">{atmosphere.destiny.n2} <span className="text-slate-500 text-[10px]">mmHg</span></span>
+                    </div>
+
+                    {/* Row 3: Tranquility */}
+                    <div className="grid grid-cols-5 gap-2 py-0.5 text-slate-300">
+                        <span className="text-slate-400">Tranquility</span>
+                        <span className="text-right text-slate-600">—</span>
+                        <span className="text-right">{atmosphere.tranquility.o2} <span className="text-slate-500 text-[10px]">mmHg</span></span>
+                        <span className="text-right">{atmosphere.tranquility.co2} <span className="text-slate-500 text-[10px]">mmHg</span></span>
+                        <span className="text-right">{atmosphere.tranquility.n2} <span className="text-slate-500 text-[10px]">mmHg</span></span>
+                    </div>
+
+                    {/* Bottom Strip: Oxygen Generator */}
+                    <div className="mt-1 pt-1 border-t border-slate-800 flex items-center justify-between text-[11px]">
+                        <div className="flex items-center gap-4">
+                            <span className="text-slate-400">
+                                Oxygen Generator: <strong className="text-slate-200">{oxygenGenerator.rate} mg/s</strong>
+                            </span>
+                            <span className="text-slate-400">
+                                State: <strong className="text-emerald-400 uppercase">{oxygenGenerator.state}</strong>
+                            </span>
+                        </div>
+                        <span className="text-[10px] text-slate-500 hidden sm:inline">SRC: NASA ISSLIVE TELEMETRY</span>
+                    </div>
+                </div>
+
+                {/* Right: Back Button */}
                 {onBackToHome && (
                     <button
                         onClick={onBackToHome}
-                        className="px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded text-xs font-bold uppercase tracking-wider text-slate-300 transition-colors"
+                        className="shrink-0 px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded text-xs font-bold uppercase tracking-wider text-slate-300 transition-colors"
                     >
                         ← Back to INOVA
                     </button>
                 )}
             </header>
 
-            <main className="flex w-full h-[calc(100vh-90px)] overflow-hidden relative z-10">
+            <main className="flex-1 flex w-full min-h-0 overflow-hidden relative z-10">
                 {/* LEFT: 3D Visualization */}
                 <div className="flex-1 min-w-0 relative h-full bg-slate-900 shadow-inner overflow-hidden">
                     <div className="absolute top-6 left-6 z-10 pointer-events-none flex flex-col gap-4">
