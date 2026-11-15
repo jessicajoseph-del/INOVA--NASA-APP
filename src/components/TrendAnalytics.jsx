@@ -56,8 +56,8 @@ export const CATEGORY_BENCHMARKS = [
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-[#07112E]/95 border border-cyan-400/30 backdrop-blur-md px-4 py-3 rounded-xl shadow-2xl text-xs space-y-1.5 min-w-[170px]">
-        <p className="font-mono text-cyan-300 font-semibold border-b border-blue-900/50 pb-1 mb-1.5">
+      <div className="bg-[#0B1736] border border-[#DCD5C7]/40 backdrop-blur-md px-4 py-3 rounded-xl shadow-2xl text-xs space-y-1.5 min-w-[170px]">
+        <p className="font-mono text-cyan-300 font-semibold border-b border-white/10 pb-1 mb-1.5">
           {label}
         </p>
         {payload.map((item, index) => (
@@ -70,13 +70,13 @@ const CustomTooltip = ({ active, payload, label }) => {
               {item.name}:
             </span>
             <span className="font-mono font-bold text-white">
-              {item.value} <span className="text-[10px] text-slate-400 font-normal">pts</span>
+              {item.value} <span className="text-[10px] text-slate-300 font-normal">pts</span>
             </span>
           </div>
         ))}
         {payload[0] && payload[1] && (
-          <div className="pt-1.5 mt-1 border-t border-blue-900/40 flex items-center justify-between text-[11px]">
-            <span className="text-slate-400">Observed Delta:</span>
+          <div className="pt-1.5 mt-1 border-t border-white/10 flex items-center justify-between text-[11px]">
+            <span className="text-slate-300">Observed Delta:</span>
             <span className="font-mono font-semibold text-emerald-400">
               +{(payload[0].value - payload[1].value).toFixed(1)} pts
             </span>
@@ -98,19 +98,19 @@ export default function TrendAnalytics() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         
         {/* Section Header & Tab Controls */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-2 border-b border-blue-900/30">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-2 border-b border-[#DCD5C7]">
           <div>
-            <div className="flex items-center gap-2 text-cyan-400 text-xs font-mono uppercase tracking-wider mb-1">
-              <Activity className="w-3.5 h-3.5" />
+            <div className="flex items-center gap-2 text-[#5A657D] text-xs font-mono uppercase tracking-wider mb-1">
+              <Activity className="w-3.5 h-3.5 text-[#0B1736]" />
               <span>Telemetry Delta & Cohort Variance</span>
             </div>
-            <h3 className="text-xl md:text-2xl font-bold text-white tracking-tight">
+            <h3 className="text-xl md:text-2xl font-bold text-[#0B1736] tracking-tight">
               Mission Performance & Comparative Insights
             </h3>
           </div>
 
           {/* Interactive Period / Metric Filter Tabs */}
-          <div className="inline-flex items-center p-1 rounded-xl bg-[#0B1736]/90 border border-blue-400/20 backdrop-blur-md">
+          <div className="inline-flex items-center p-1 rounded-xl bg-[#EDE8DE] border border-[#DCD5C7] shadow-sm">
             {[
               { id: '7d', label: '7-Day Trend' },
               { id: '30d', label: '30-Day Comparison' },
@@ -123,8 +123,8 @@ export default function TrendAnalytics() {
                   onClick={() => setSelectedPeriod(tab.id)}
                   className={`px-3.5 py-1.5 text-xs font-medium rounded-lg transition-all duration-200 cursor-pointer ${
                     isActive
-                      ? 'bg-gradient-to-r from-[#FF7300] to-orange-500 text-white shadow-md shadow-orange-500/20 font-semibold'
-                      : 'text-slate-400 hover:text-white hover:bg-white/5'
+                      ? 'bg-[#0B1736] text-[#F7F4EE] shadow-sm font-semibold'
+                      : 'text-[#5A657D] hover:text-[#0B1736] hover:bg-white/40'
                   }`}
                 >
                   {tab.label}
@@ -138,22 +138,19 @@ export default function TrendAnalytics() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           
           {/* CHART 1: MULTI-SERIES TREND (BASELINE VS. OBSERVED) */}
-          <div className="bg-[#0B1736]/80 border border-blue-400/15 backdrop-blur-md rounded-2xl p-6 shadow-2xl relative overflow-hidden flex flex-col justify-between">
-            {/* Ambient subtle glow */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none" />
-
+          <div className="bg-[#FFFFFF] border border-[#DCD5C7] rounded-2xl p-6 shadow-[0_4px_20px_rgba(11,23,54,0.06)] relative overflow-hidden flex flex-col justify-between">
             <div>
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <h4 className="text-base font-semibold text-white flex items-center gap-2">
+                  <h4 className="text-base font-semibold text-[#0B1736] flex items-center gap-2">
                     <TrendingUp className="w-4 h-4 text-[#FF7300]" />
                     <span>Expected Baseline vs. Observed Actual</span>
                   </h4>
-                  <p className="text-xs text-slate-400 mt-0.5">
+                  <p className="text-xs text-[#5A657D] mt-0.5">
                     Continuous monitoring over time interval with variance threshold
                   </p>
                 </div>
-                <span className="text-[11px] font-mono font-medium px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
+                <span className="text-[11px] font-mono font-medium px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-700 border border-emerald-500/30 flex items-center gap-1">
                   <ArrowUpRight className="w-3 h-3" />
                   +19.5% Peak Delta
                 </span>
@@ -172,22 +169,22 @@ export default function TrendAnalytics() {
                         <stop offset="95%" stopColor="#FF7300" stopOpacity={0.0} />
                       </linearGradient>
                       <linearGradient id="baselineGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#38BDF8" stopOpacity={0.15} />
-                        <stop offset="100%" stopColor="#38BDF8" stopOpacity={0.0} />
+                        <stop offset="0%" stopColor="#0B1736" stopOpacity={0.12} />
+                        <stop offset="100%" stopColor="#0B1736" stopOpacity={0.0} />
                       </linearGradient>
                     </defs>
 
-                    <CartesianGrid stroke="#1E2F5A" strokeDasharray="3 3" vertical={false} />
+                    <CartesianGrid stroke="#DCD5C7" strokeDasharray="3 3" vertical={false} />
                     <XAxis
                       dataKey="period"
-                      stroke="#64748B"
-                      tick={{ fill: '#94A3B8', fontSize: 11 }}
+                      stroke="#5A657D"
+                      tick={{ fill: '#5A657D', fontSize: 11 }}
                       tickLine={false}
-                      axisLine={{ stroke: '#1E2F5A' }}
+                      axisLine={{ stroke: '#DCD5C7' }}
                     />
                     <YAxis
-                      stroke="#64748B"
-                      tick={{ fill: '#94A3B8', fontSize: 11 }}
+                      stroke="#5A657D"
+                      tick={{ fill: '#5A657D', fontSize: 11 }}
                       tickLine={false}
                       axisLine={false}
                       domain={['dataMin - 10', 'dataMax + 10']}
@@ -199,20 +196,20 @@ export default function TrendAnalytics() {
                       height={36}
                       iconType="plainline"
                       formatter={(value) => (
-                        <span className="text-xs text-slate-300 font-medium mr-2">{value}</span>
+                        <span className="text-xs text-[#5A657D] font-medium mr-2">{value}</span>
                       )}
                     />
 
-                    {/* Baseline: Dashed Cyan Line */}
+                    {/* Baseline: Dashed Line */}
                     <Line
                       type="monotone"
                       dataKey="baseline"
                       name="Expected Baseline"
-                      stroke="#38BDF8"
+                      stroke="#0B1736"
                       strokeDasharray="4 4"
                       strokeWidth={2}
-                      dot={{ r: 3, fill: '#38BDF8', strokeWidth: 0 }}
-                      activeDot={{ r: 5, fill: '#38BDF8', stroke: '#07112E', strokeWidth: 2 }}
+                      dot={{ r: 3, fill: '#0B1736', strokeWidth: 0 }}
+                      activeDot={{ r: 5, fill: '#0B1736', stroke: '#F7F4EE', strokeWidth: 2 }}
                     />
 
                     {/* Observed Actual: Solid Vibrant Orange with Soft Gradient */}
@@ -232,39 +229,36 @@ export default function TrendAnalytics() {
             </div>
 
             {/* Quick Summary Pill Bar */}
-            <div className="mt-4 pt-3 border-t border-blue-900/40 grid grid-cols-3 gap-2 text-center text-xs">
-              <div className="bg-blue-950/40 rounded-lg p-2 border border-blue-900/30">
-                <span className="text-slate-400 text-[10px] block">Mean Baseline</span>
-                <span className="font-mono font-bold text-sky-400">85.4 pts</span>
+            <div className="mt-4 pt-3 border-t border-[#DCD5C7] grid grid-cols-3 gap-2 text-center text-xs">
+              <div className="bg-[#EDE8DE] rounded-lg p-2 border border-[#DCD5C7]">
+                <span className="text-[#5A657D] text-[10px] block">Mean Baseline</span>
+                <span className="font-mono font-bold text-[#0B1736]">85.4 pts</span>
               </div>
-              <div className="bg-blue-950/40 rounded-lg p-2 border border-blue-900/30">
-                <span className="text-slate-400 text-[10px] block">Mean Actual</span>
+              <div className="bg-[#EDE8DE] rounded-lg p-2 border border-[#DCD5C7]">
+                <span className="text-[#5A657D] text-[10px] block">Mean Actual</span>
                 <span className="font-mono font-bold text-[#FF7300]">93.4 pts</span>
               </div>
-              <div className="bg-blue-950/40 rounded-lg p-2 border border-blue-900/30">
-                <span className="text-slate-400 text-[10px] block">Avg. Acceleration</span>
-                <span className="font-mono font-bold text-emerald-400">+9.4%</span>
+              <div className="bg-[#EDE8DE] rounded-lg p-2 border border-[#DCD5C7]">
+                <span className="text-[#5A657D] text-[10px] block">Avg. Acceleration</span>
+                <span className="font-mono font-bold text-emerald-700">+9.4%</span>
               </div>
             </div>
           </div>
 
           {/* CHART 2: COMPARATIVE BAR CHART (PREVIOUS VS. CURRENT CYCLE) */}
-          <div className="bg-[#0B1736]/80 border border-blue-400/15 backdrop-blur-md rounded-2xl p-6 shadow-2xl relative overflow-hidden flex flex-col justify-between">
-            {/* Ambient subtle glow */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-orange-500/5 rounded-full blur-3xl pointer-events-none" />
-
+          <div className="bg-[#FFFFFF] border border-[#DCD5C7] rounded-2xl p-6 shadow-[0_4px_20px_rgba(11,23,54,0.06)] relative overflow-hidden flex flex-col justify-between">
             <div>
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <h4 className="text-base font-semibold text-white flex items-center gap-2">
-                    <BarChart3 className="w-4 h-4 text-cyan-400" />
+                  <h4 className="text-base font-semibold text-[#0B1736] flex items-center gap-2">
+                    <BarChart3 className="w-4 h-4 text-[#0B1736]" />
                     <span>Category & Cohort Benchmark</span>
                   </h4>
-                  <p className="text-xs text-slate-400 mt-0.5">
+                  <p className="text-xs text-[#5A657D] mt-0.5">
                     Side-by-side comparison across telemetry architecture pillars
                   </p>
                 </div>
-                <span className="text-[11px] font-mono font-medium px-2.5 py-1 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/20">
+                <span className="text-[11px] font-mono font-medium px-2.5 py-1 rounded-full bg-[#EDE8DE] text-[#0B1736] border border-[#DCD5C7]">
                   6 Core Vectors
                 </span>
               </div>
@@ -277,17 +271,17 @@ export default function TrendAnalytics() {
                     margin={{ top: 10, right: 10, left: -15, bottom: 0 }}
                     barGap={6}
                   >
-                    <CartesianGrid stroke="#1E2F5A" strokeDasharray="3 3" vertical={false} />
+                    <CartesianGrid stroke="#DCD5C7" strokeDasharray="3 3" vertical={false} />
                     <XAxis
                       dataKey="category"
-                      stroke="#64748B"
-                      tick={{ fill: '#94A3B8', fontSize: 10 }}
+                      stroke="#5A657D"
+                      tick={{ fill: '#5A657D', fontSize: 10 }}
                       tickLine={false}
-                      axisLine={{ stroke: '#1E2F5A' }}
+                      axisLine={{ stroke: '#DCD5C7' }}
                     />
                     <YAxis
-                      stroke="#64748B"
-                      tick={{ fill: '#94A3B8', fontSize: 11 }}
+                      stroke="#5A657D"
+                      tick={{ fill: '#5A657D', fontSize: 11 }}
                       tickLine={false}
                       axisLine={false}
                       domain={[0, 110]}
@@ -298,15 +292,15 @@ export default function TrendAnalytics() {
                       align="right"
                       height={36}
                       formatter={(value) => (
-                        <span className="text-xs text-slate-300 font-medium mr-2">{value}</span>
+                        <span className="text-xs text-[#5A657D] font-medium mr-2">{value}</span>
                       )}
                     />
 
-                    {/* Previous Cycle: Cyan */}
+                    {/* Previous Cycle */}
                     <Bar
                       dataKey="previous"
                       name="Previous Cycle"
-                      fill="#38BDF8"
+                      fill="#0B1736"
                       radius={[4, 4, 0, 0]}
                     />
 
@@ -323,14 +317,14 @@ export default function TrendAnalytics() {
             </div>
 
             {/* Key Analytical Insight Strip */}
-            <div className="mt-4 p-3.5 rounded-xl bg-gradient-to-r from-blue-950/70 via-indigo-950/50 to-blue-950/70 border border-cyan-400/20 flex items-start gap-3">
-              <div className="p-1.5 rounded-lg bg-cyan-500/10 text-cyan-400 shrink-0 mt-0.5">
+            <div className="mt-4 p-3.5 rounded-xl bg-[#EDE8DE] border border-[#DCD5C7] flex items-start gap-3">
+              <div className="p-1.5 rounded-lg bg-[#0B1736]/10 text-[#0B1736] shrink-0 mt-0.5">
                 <ShieldCheck className="w-4 h-4" />
               </div>
               <div className="text-xs leading-relaxed">
-                <span className="font-semibold text-white">Key Analytical Insight: </span>
-                <span className="text-slate-300">
-                  Current operational cycle exhibits a <strong className="text-cyan-300">+30.8% throughput increase</strong> in Mesh Routing and reaches near-perfect <strong className="text-orange-400">99.0% compliance</strong> in cryptographic Data Sovereignty verification.
+                <span className="font-semibold text-[#0B1736]">Key Analytical Insight: </span>
+                <span className="text-[#5A657D]">
+                  Current operational cycle exhibits a <strong className="text-[#0B1736] font-bold">+30.8% throughput increase</strong> in Mesh Routing and reaches near-perfect <strong className="text-[#FF7300] font-bold">99.0% compliance</strong> in cryptographic Data Sovereignty verification.
                 </span>
               </div>
             </div>

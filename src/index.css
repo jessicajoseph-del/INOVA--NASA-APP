@@ -3,6 +3,30 @@
 @tailwind utilities;
 
 /* ============================================================================
+   RIDGE DESIGN SYSTEM & BRAND KIT SPECIFICATION
+   1. Core Surface & Typography Hierarchy:
+   - Primary Canvas:        #F7F4EE (Oat Ivory - Main page background across all modules)
+   - Elevated Card / Panel: #FFFFFF (Warm Alabaster - Telemetry cards, charts, modals)
+   - Secondary Surface:     #EDE8DE (Soft Flax / Linen - Inactive gauge arcs, rows, inputs)
+   - Subtle Border/Divider: #DCD5C7 (Sandstone Hairline - Crisp 1px card outlines, gridlines)
+   - Primary Text:          #0B1736 (Deep Ink Navy - Headings, biometric values, body text)
+   - Muted / Monospace:     #5A657D (Slate Pewter - Uppercase telemetry labels, axis ticks)
+   ============================================================================ */
+:root {
+  --ridge-canvas: #F7F4EE;
+  --ridge-card: #FFFFFF;
+  --ridge-surface: #EDE8DE;
+  --ridge-border: #DCD5C7;
+  --ridge-ink: #0B1736;
+  --ridge-muted: #5A657D;
+}
+
+body {
+  background-color: #F7F4EE;
+  color: #0B1736;
+}
+
+/* ============================================================================
    WSO2-STYLE INFINITE LOGO MARQUEE ANIMATION
    ============================================================================ */
 @keyframes marquee {
@@ -25,12 +49,12 @@
    ============================================================================ */
 /* Luminous Oat Ivory canvas with subtle Ink-Blue architectural starlight grid */
 .ink-canvas-bg {
-  background-color: #f6eedb;
+  background-color: #F7F4EE;
   background-image:
-    radial-gradient(circle at 20% 15%, rgba(6, 19, 43, 0.06) 0%, transparent 42%),
-    radial-gradient(circle at 82% 35%, rgba(14, 40, 89, 0.05) 0%, transparent 38%),
-    radial-gradient(ellipse 85% 65% at 50% 60%, rgba(246, 238, 219, 0.95) 0%, transparent 72%),
-    radial-gradient(rgba(6, 19, 43, 0.08) 1px, transparent 1px);
+    radial-gradient(circle at 20% 15%, rgba(11, 23, 54, 0.05) 0%, transparent 42%),
+    radial-gradient(circle at 82% 35%, rgba(11, 23, 54, 0.04) 0%, transparent 38%),
+    radial-gradient(ellipse 85% 65% at 50% 60%, rgba(247, 244, 238, 0.95) 0%, transparent 72%),
+    radial-gradient(rgba(11, 23, 54, 0.07) 1px, transparent 1px);
   background-size: 100% 100%, 100% 100%, 100% 100%, 48px 48px;
   background-position: 0 0, 0 0, 0 0, 0 0;
 }

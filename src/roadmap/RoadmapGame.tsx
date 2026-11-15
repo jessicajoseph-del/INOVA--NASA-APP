@@ -360,10 +360,10 @@ export default function RoadmapGame({ onBack, isEmbedded = false }: RoadmapGameP
   };
 
   return (
-    <div className={isEmbedded ? "w-full flex flex-col bg-[#F6EEDB] text-[#06132B] rounded-2xl border border-[#06132B]/20 shadow-2xl" : "min-h-screen flex flex-col bg-[#F6EEDB] text-[#06132B]"}>
+    <div className={isEmbedded ? "w-full flex flex-col bg-[#F7F4EE] text-[#0B1736] rounded-2xl border border-[#DCD5C7] shadow-xl" : "min-h-screen flex flex-col bg-[#F7F4EE] text-[#0B1736]"}>
       <ConfettiBurst triggerKey={confettiTrigger} reducedMotion={reducedMotion} />
       {/* 3-Zone Playful Game Top Bar (Ink Blue Header on Oat Ivory Canvas) */}
-      <header className={`${isEmbedded ? 'relative' : 'sticky top-0'} z-30 flex items-center justify-between gap-4 sm:gap-8 px-4 sm:px-6 h-16 border-b border-[#06132B]/20 bg-[#06132B] text-[#F6EEDB] backdrop-blur-md`}>
+      <header className={`${isEmbedded ? 'relative' : 'sticky top-0'} z-30 flex items-center justify-between gap-4 sm:gap-8 px-4 sm:px-6 h-16 border-b border-[#DCD5C7] bg-[#0B1736] text-[#F7F4EE] backdrop-blur-md`}>
         {/* Zone 1: Game Wordmark & Optional Standalone Return Navigation */}
         <div className="flex items-center gap-3 shrink-0">
           {!isEmbedded && onBack && (

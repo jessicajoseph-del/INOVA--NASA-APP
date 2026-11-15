@@ -22,11 +22,25 @@ interface ExpressionMonitorProps {
   onError: (message: string) => void;
 }
 
-let faceApiLoadPromise: Promise<typeof import('face-api.js')> | null = null;
+let faceApiLoadPromise: Promise<any> | null = null;
 
 function loadFaceApi() {
   if (!faceApiLoadPromise) {
-    faceApiLoadPromise = import('face-api.js')
+    faceApiLoadPromise = (async () => {
+      if (typeof window !== 'undefined' && (window as any).faceapi) {
+        return (window as any).faceapi;
+      }
+      try {
+        const pkgName = 'face-api.js';
+        const mod = await import(/* @vite-ignore */ pkgName);
+        return mod.default || mod;
+      } catch {
+        if (typeof window !== 'undefined' && (window as any).faceapi) {
+          return (window as any).faceapi;
+        }
+        throw new Error('Facial expression detection module is offline.');
+      }
+    })()
       .then(async (faceapi) => {
         await Promise.all([
           faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),

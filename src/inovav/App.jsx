@@ -429,7 +429,7 @@ const HohmannParticleSwarm = () => {
       } else if (i < p4) {
         const E = ((i - p3) / (p4 - p3)) * Math.PI * 2.0;
         target.set(a * Math.cos(E) - a * e, 0.0, b * Math.sin(E));
-        color.setHSL(0.3, 0.8, 0.3);
+        color.setHSL(0.6, 0.18, 0.42); // Slate Pewter (#5A657D)
       } else {
         const idx = i - p4;
         const hash = (idx * 0.54321) % 1.0;
@@ -437,7 +437,7 @@ const HohmannParticleSwarm = () => {
         const phi = Math.acos(1.0 - 2.0 * ((idx * 0.111) % 1.0));
         const theta = ((idx * 0.222) % 1.0) * Math.PI * 2.0;
         target.set(cx + spread * Math.sin(phi) * Math.cos(theta), spread * Math.sin(phi) * Math.sin(theta), cz + spread * Math.cos(phi));
-        color.setHSL(0.15, 1.0, 0.8 + hash * 0.2);
+        color.setHSL(0.61, 0.65, 0.15 + hash * 0.2); // Deep Ink Navy (#0B1736)
       }
       positions[i].lerp(target, 0.1);
       dummy.position.copy(positions[i]);
@@ -803,7 +803,34 @@ export default function InovavPortal({
 
 
   return (
-    <div style={{ position: 'relative', width: '100%', minHeight: '100vh', height: '100vh', background: '#f6eedb', color: '#06132b', overflow: 'hidden' }}>
+    <div style={{ position: 'relative', width: '100%', minHeight: '100vh', height: '100vh', background: '#F7F4EE', color: '#0B1736', overflow: 'hidden' }}>
+
+      {/* Floating Back Navigation Bar */}
+      {onBackToOverview && (
+        <div style={{ position: 'fixed', top: '16px', left: '16px', zIndex: 99999, display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <button
+            type="button"
+            onClick={onBackToOverview}
+            className="tech-btn"
+            style={{
+              padding: '8px 18px',
+              fontSize: '0.72rem',
+              letterSpacing: '0.14em',
+              background: '#0B1736',
+              border: '1px solid #DCD5C7',
+              color: '#F7F4EE',
+              backdropFilter: 'blur(12px)',
+              boxShadow: '0 4px 24px rgba(11, 23, 54, 0.25)',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+            }}
+          >
+            <span>←</span>
+            <span>RETURN TO OVERVIEW</span>
+          </button>
+        </div>
+      )}
 
       {/* ── 1. STARTING SCREEN: RIDGE IN THE CENTER & 8S TIMEOUT ── */}
       {screen === 'intro' && (
@@ -815,7 +842,7 @@ export default function InovavPortal({
             inset: 0,
             zIndex: 10,
             cursor: 'pointer',
-            backgroundColor: '#06132b',
+            backgroundColor: '#F7F4EE',
           }}
           title="Click to proceed"
         >
@@ -827,7 +854,7 @@ export default function InovavPortal({
               <shaderPass
                 args={[
                   {
-                    uniforms: { tDiffuse: { value: null }, bgColor: { value: new THREE.Color('#06132b') } },
+                    uniforms: { tDiffuse: { value: null }, bgColor: { value: new THREE.Color('#F7F4EE') } },
                     vertexShader: `varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
                     fragmentShader: `uniform sampler2D tDiffuse; uniform vec3 bgColor; varying vec2 vUv; void main() { vec4 texel = texture2D(tDiffuse, vUv); float alpha = clamp(max(texel.r, max(texel.g, texel.b)), 0.0, 1.0); gl_FragColor = vec4(texel.rgb + bgColor * (1.0 - alpha), 1.0); }`,
                   },
@@ -860,20 +887,36 @@ export default function InovavPortal({
                 margin: 0,
                 fontSize: 'clamp(3.8rem, 10vw, 7.2rem)',
                 fontWeight: 700,
-                color: '#f6eedb',
+                color: '#0B1736',
                 letterSpacing: '0.34em',
                 textIndent: '0.34em',
                 lineHeight: 1,
-                textShadow: '0 0 50px rgba(246, 238, 219, 0.4), 0 0 100px rgba(56, 189, 248, 0.25)',
+                textShadow: '0 4px 30px rgba(11, 23, 54, 0.12)',
               }}
             >
               RIDGE
             </h1>
 
+            {/* Health Monitoring System subtitle below RIDGE */}
+            <span
+              className="font-mono"
+              style={{
+                marginTop: '16px',
+                fontSize: 'clamp(0.85rem, 2vw, 1.1rem)',
+                fontWeight: 600,
+                color: '#5A657D',
+                letterSpacing: '0.24em',
+                textIndent: '0.24em',
+                textTransform: 'uppercase',
+              }}
+            >
+              Health Monitoring System
+            </span>
+
             {/* 8-second timeout indicator below RIDGE */}
             <div
               style={{
-                marginTop: '36px',
+                marginTop: '28px',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
@@ -883,20 +926,21 @@ export default function InovavPortal({
               <div
                 style={{
                   width: '240px',
-                  height: '3px',
-                  background: 'rgba(246, 238, 219, 0.15)',
-                  borderRadius: '3px',
+                  height: '4px',
+                  background: '#EDE8DE',
+                  border: '1px solid #DCD5C7',
+                  borderRadius: '4px',
                   overflow: 'hidden',
-                  boxShadow: '0 0 12px rgba(246, 238, 219, 0.2)',
+                  boxShadow: '0 2px 8px rgba(11, 23, 54, 0.05)',
                 }}
               >
                 <div
                   style={{
                     width: `${((8 - countdown) / 8) * 100}%`,
                     height: '100%',
-                    background: 'linear-gradient(90deg, #38bdf8, #f6eedb)',
+                    background: '#0B1736',
                     transition: 'width 1s linear',
-                    boxShadow: '0 0 10px #f6eedb',
+                    borderRadius: '4px',
                   }}
                 />
               </div>
@@ -904,10 +948,10 @@ export default function InovavPortal({
                 className="font-mono"
                 style={{
                   fontSize: '0.78rem',
-                  color: '#ead9b2',
+                  color: '#5A657D',
                   letterSpacing: '0.22em',
                   fontWeight: 600,
-                  opacity: 0.85,
+                  opacity: 0.9,
                 }}
               >
                 0{countdown}S

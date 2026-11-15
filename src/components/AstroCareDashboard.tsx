@@ -284,7 +284,7 @@ export function SemiCircularGauge({
   subtitle,
   headerAction,
   footerContent,
-  cardClassName = 'bg-[#0B152C]/90 border border-slate-700/40 rounded-xl p-4 sm:p-5',
+  cardClassName = 'bg-white border border-[#DCD5C7] rounded-xl p-4 sm:p-5 shadow-sm',
 }: SemiGaugeProps) {
   const radius = 56;
   const cx = 75;
@@ -303,13 +303,11 @@ export function SemiCircularGauge({
 
   return (
     <div
-      className={`${cardClassName} flex flex-col items-center justify-between shadow-lg relative overflow-hidden group hover:border-[#FACC15]/40 transition-all duration-300 w-full`}
+      className={`${cardClassName} flex flex-col items-center justify-between shadow-sm relative overflow-hidden group hover:border-[#0B1736]/40 transition-all duration-300 w-full`}
     >
-      <div className="absolute top-0 right-0 w-28 h-28 bg-[#FACC15]/5 rounded-full blur-2xl pointer-events-none" />
-
       {/* Header Row: Label & Optional Action */}
       <div className="w-full flex items-center justify-between gap-2 mb-1.5 relative z-10">
-        <span className="text-[11px] font-mono uppercase tracking-wider text-slate-300 font-semibold text-center flex-1">
+        <span className="text-[11px] font-mono uppercase tracking-wider text-[#5A657D] font-semibold text-center flex-1">
           {label}
         </span>
         {headerAction && <div className="shrink-0">{headerAction}</div>}
@@ -318,11 +316,11 @@ export function SemiCircularGauge({
       {/* Semicircular SVG Meter */}
       <div className="relative w-[150px] h-[85px] flex items-center justify-center my-0.5">
         <svg width="150" height="85" viewBox="0 0 150 85" className="overflow-visible">
-          {/* Background Track Arc */}
+          {/* Background Track Arc (Soft Flax / Linen #EDE8DE per RIDGE Brand Kit) */}
           <path
             d="M 19 70 A 56 56 0 0 1 131 70"
             fill="none"
-            stroke="#162752"
+            stroke="#EDE8DE"
             strokeWidth="10"
             strokeLinecap="round"
           />
@@ -365,24 +363,24 @@ export function SemiCircularGauge({
         {/* Numeric Readout Centered at Bottom */}
         <div className="absolute bottom-1 flex flex-col items-center text-center">
           <div className="flex items-baseline gap-1">
-            <span className="text-2xl font-black tracking-tight text-[#FFFDF7] font-sans drop-shadow-sm">
+            <span className="text-2xl font-black tracking-tight text-[#0B1736] font-sans">
               {displayVal}
             </span>
-            <span className="text-[11px] text-[#FACC15] font-mono font-bold">
+            <span className="text-[11px] text-[#5A657D] font-mono font-bold">
               {unit}
             </span>
           </div>
           {subtitle && (
-            <span className="text-[10px] text-amber-200/80 font-mono font-semibold">
+            <span className="text-[10px] text-[#5A657D] font-mono font-semibold">
               {subtitle}
             </span>
           )}
         </div>
       </div>
 
-      {/* Yellow-dot baseline caption */}
-      <p className="text-[10px] font-mono text-slate-400 mt-1 flex items-center gap-1.5 text-center">
-        <span className="w-1.5 h-1.5 rounded-full bg-[#FACC15]"></span>
+      {/* Target baseline caption */}
+      <p className="text-[10px] font-mono text-[#5A657D] mt-1 flex items-center gap-1.5 text-center">
+        <span className="w-1.5 h-1.5 rounded-full bg-[#0B1736]"></span>
         <span>{targetText}</span>
       </p>
 
@@ -503,8 +501,8 @@ export default function AstroCareDashboard({
     <div
       className={
         isEmbedded
-          ? 'w-full flex flex-col bg-[#F6EEDB] text-[#06132B] rounded-2xl border border-[#06132B]/20 shadow-2xl overflow-hidden relative'
-          : 'min-h-screen flex flex-col bg-[#F6EEDB] text-[#06132B] font-sans relative'
+          ? 'w-full flex flex-col bg-[#F7F4EE] text-[#0B1736] rounded-2xl border border-[#DCD5C7] shadow-sm overflow-hidden relative'
+          : 'min-h-screen flex flex-col bg-[#F7F4EE] text-[#0B1736] font-sans relative'
       }
     >
       {/* Toast Notification */}
@@ -516,33 +514,33 @@ export default function AstroCareDashboard({
       )}
 
       {/* 1. DASHBOARD TOP HEADER & MISSION MET IDENTIFIER */}
-      <header className="sticky top-0 z-30 px-4 sm:px-6 py-3.5 bg-[#07112E]/95 border-b border-blue-400/15 backdrop-blur-md">
+      <header className="sticky top-0 z-30 px-4 sm:px-6 py-3.5 bg-[#0B1736] text-[#F7F4EE] border-b border-[#DCD5C7]/30 backdrop-blur-md">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             {onBack && (
               <button
                 type="button"
                 onClick={onBack}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-900/40 hover:bg-blue-800/60 border border-blue-400/20 text-xs font-semibold text-cyan-300 transition-all cursor-pointer active:scale-95"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 text-xs font-semibold text-white transition-all cursor-pointer active:scale-95"
               >
                 <span>← Back</span>
               </button>
             )}
 
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-[#F5B82E] p-0.5 shadow-lg shadow-amber-400/20 flex items-center justify-center text-slate-950 font-black text-lg">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-600 p-0.5 shadow-lg flex items-center justify-center text-white font-black text-lg">
               🛰️
             </div>
 
             <div>
               <div className="flex items-center gap-2">
-                <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-400/10 border border-amber-400/30 text-[#FDE047]">
+                <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-white/10 border border-white/20 text-[#EDE8DE]">
                   ASTROCARE 2.0
                 </span>
-                <span className="text-xs font-mono text-cyan-300 tracking-wider font-semibold">
+                <span className="text-xs font-mono text-[#EDE8DE] tracking-wider font-semibold">
                   NASA EXPEDITION 75 TELEMETRY REPLAY
                 </span>
               </div>
-              <h1 className="text-base sm:text-lg font-extrabold text-white tracking-tight flex items-center gap-2">
+              <h1 className="text-base sm:text-lg font-extrabold text-[#F7F4EE] tracking-tight flex items-center gap-2">
                 Long-Duration ISS Crew Health & Vitals Monitor
               </h1>
             </div>
@@ -550,10 +548,10 @@ export default function AstroCareDashboard({
 
           {/* Crew Selector Pill & Status */}
           <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
-            <span className="text-xs font-mono text-slate-400 hidden lg:inline-block">
+            <span className="text-xs font-mono text-[#5A657D] hidden lg:inline-block">
               Astronaut Profile:
             </span>
-            <div className="flex items-center bg-[#0B1736] p-1 rounded-xl border border-blue-400/20">
+            <div className="flex items-center bg-[#EDE8DE] p-1 rounded-xl border border-[#DCD5C7]">
               {ASTRONAUTS.map((astro) => (
                 <button
                   key={astro.id}
@@ -561,8 +559,8 @@ export default function AstroCareDashboard({
                   onClick={() => setSelectedAstronautId(astro.id)}
                   className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                     selectedAstronautId === astro.id
-                      ? 'bg-gradient-to-r from-amber-400 to-[#F5B82E] text-slate-950 font-bold shadow-md'
-                      : 'text-slate-300 hover:text-white hover:bg-white/5'
+                      ? 'bg-[#0B1736] text-[#F7F4EE] font-bold shadow-sm'
+                      : 'text-[#5A657D] hover:text-[#0B1736] hover:bg-white/50'
                   }`}
                 >
                   {astro.name.split(' ')[1]} ({astro.avatarSeed})
@@ -570,8 +568,8 @@ export default function AstroCareDashboard({
               ))}
             </div>
 
-            <div className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-500/10 border border-emerald-400/20 text-emerald-300 text-xs font-mono font-semibold">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <div className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-500/10 border border-emerald-400/20 text-emerald-700 text-xs font-mono font-semibold">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
               <span>Telemetry Lock</span>
             </div>
           </div>
@@ -580,33 +578,31 @@ export default function AstroCareDashboard({
 
       {/* 2. TIMELINE SCRUBBER & SUBJECT CONTROLS BANNER */}
       <main className="max-w-7xl mx-auto p-4 sm:p-6 space-y-6 w-full">
-        <div className="bg-[#0B1736]/90 border border-blue-400/20 rounded-2xl p-4 sm:p-5 backdrop-blur-md shadow-xl flex flex-col lg:flex-row items-center justify-between gap-5 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-80 h-40 bg-amber-400/5 rounded-full blur-3xl pointer-events-none" />
-
+        <div className="bg-white border border-[#DCD5C7] rounded-2xl p-4 sm:p-5 shadow-sm flex flex-col lg:flex-row items-center justify-between gap-5 relative overflow-hidden">
           {/* Subject Badge & Current MET */}
           <div className="flex items-center gap-4 w-full lg:w-auto">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-900 to-[#07112E] border-2 border-amber-400/40 flex items-center justify-center font-mono font-extrabold text-[#FDE047] text-lg shadow-inner">
+            <div className="w-14 h-14 rounded-2xl bg-[#EDE8DE] border-2 border-[#DCD5C7] flex items-center justify-center font-mono font-extrabold text-[#0B1736] text-lg shadow-sm">
               {selectedAstronaut.avatarSeed}
             </div>
             <div>
               <div className="flex items-center gap-2 flex-wrap">
-                <h2 className="text-sm sm:text-base font-bold text-white tracking-wide">
+                <h2 className="text-sm sm:text-base font-bold text-[#0B1736] tracking-wide">
                   {selectedAstronaut.name}
                 </h2>
-                <span className="px-2 py-0.5 text-[10px] font-mono bg-cyan-950/80 text-cyan-300 border border-cyan-700/50 rounded">
+                <span className="px-2 py-0.5 text-[10px] font-mono bg-[#EDE8DE] text-[#0B1736] border border-[#DCD5C7] rounded">
                   {selectedAstronaut.code}
                 </span>
-                <span className="px-2 py-0.5 text-[10px] font-mono bg-amber-400/10 text-[#FDE047] border border-amber-400/30 rounded">
+                <span className="px-2 py-0.5 text-[10px] font-mono bg-[#EDE8DE] text-[#5A657D] border border-[#DCD5C7] rounded">
                   {selectedAstronaut.role}
                 </span>
               </div>
-              <p className="text-xs text-slate-300 mt-1 flex items-center gap-2 font-mono">
+              <p className="text-xs text-[#5A657D] mt-1 flex items-center gap-2 font-mono">
                 <span>Timeline Position:</span>
-                <span className="text-[#FDE047] font-bold">
+                <span className="text-[#0B1736] font-bold">
                   Day {currentRecord.day} ({currentRecord.date})
                 </span>
-                <span className="text-slate-500">•</span>
-                <span className="text-cyan-300 font-semibold">{currentRecord.phase}</span>
+                <span className="text-[#DCD5C7]">•</span>
+                <span className="text-[#0B1736] font-semibold">{currentRecord.phase}</span>
               </p>
             </div>
           </div>
@@ -616,124 +612,124 @@ export default function AstroCareDashboard({
             <button
               type="button"
               onClick={() => jumpToDay(1)}
-              className="px-3 py-1.5 bg-[#060F28] hover:bg-blue-900/60 border border-blue-400/20 text-xs font-semibold rounded-lg text-slate-300 transition-all cursor-pointer active:scale-95"
+              className="px-3 py-1.5 bg-[#EDE8DE] hover:bg-[#DCD5C7] border border-[#DCD5C7] text-xs font-semibold rounded-lg text-[#0B1736] transition-all cursor-pointer active:scale-95"
             >
               Launch (D-1)
             </button>
             <button
               type="button"
               onClick={() => jumpToDay(42)}
-              className="px-3 py-1.5 bg-[#060F28] hover:bg-blue-900/60 border border-blue-400/20 text-xs font-semibold rounded-lg text-slate-300 transition-all cursor-pointer active:scale-95"
+              className="px-3 py-1.5 bg-[#EDE8DE] hover:bg-[#DCD5C7] border border-[#DCD5C7] text-xs font-semibold rounded-lg text-[#0B1736] transition-all cursor-pointer active:scale-95"
             >
               EVA Spacewalk (D-42)
             </button>
             <button
               type="button"
               onClick={() => jumpToDay(90)}
-              className="px-3 py-1.5 bg-[#060F28] hover:bg-blue-900/60 border border-blue-400/20 text-xs font-semibold rounded-lg text-slate-300 transition-all cursor-pointer active:scale-95"
+              className="px-3 py-1.5 bg-[#EDE8DE] hover:bg-[#DCD5C7] border border-[#DCD5C7] text-xs font-semibold rounded-lg text-[#0B1736] transition-all cursor-pointer active:scale-95"
             >
               Mid-Mission (D-90)
             </button>
             <button
               type="button"
               onClick={() => jumpToDay(135)}
-              className="px-3 py-1.5 bg-[#060F28] hover:bg-blue-900/60 border border-blue-400/20 text-xs font-semibold rounded-lg text-slate-300 transition-all cursor-pointer active:scale-95"
+              className="px-3 py-1.5 bg-[#EDE8DE] hover:bg-[#DCD5C7] border border-[#DCD5C7] text-xs font-semibold rounded-lg text-[#0B1736] transition-all cursor-pointer active:scale-95"
             >
               Solar Shelter (D-135)
             </button>
             <button
               type="button"
               onClick={() => jumpToDay(180)}
-              className="px-3.5 py-1.5 bg-gradient-to-r from-amber-400 to-[#F5B82E] hover:from-amber-300 hover:to-amber-500 text-slate-950 font-bold text-xs rounded-lg transition-all shadow-md cursor-pointer active:scale-95"
+              className="px-3.5 py-1.5 bg-[#0B1736] hover:bg-[#1E3A8A] text-[#F7F4EE] font-bold text-xs rounded-lg transition-all shadow-sm cursor-pointer active:scale-95"
             >
               Landing Prep (D-180)
             </button>
           </div>
         </div>
 
-        {/* 3. 4 CORE VITALS CARDS (SPACE TELEMETRY OBSIDIAN THEME MATCHING REFERENCE) */}
+        {/* 3. 4 CORE VITALS CARDS (RIDGE BRAND KIT ELEVATED CARDS) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           
           {/* Heart Rate Card */}
-          <div className="bg-[#0B1736]/80 border border-blue-400/15 rounded-2xl p-4 shadow-xl hover:border-blue-400/35 transition-all group">
-            <div className="flex items-center justify-between text-slate-400">
+          <div className="bg-white border border-[#DCD5C7] rounded-2xl p-4 shadow-sm hover:border-[#0B1736]/40 transition-all group">
+            <div className="flex items-center justify-between text-[#5A657D]">
               <span className="text-[11px] font-mono uppercase tracking-wider font-semibold">
                 Heart Rate (HR)
               </span>
-              <Heart className="w-4 h-4 text-rose-400 group-hover:scale-110 transition-transform" />
+              <Heart className="w-4 h-4 text-rose-500 group-hover:scale-110 transition-transform" />
             </div>
             <div className="flex items-baseline justify-between mt-2">
-              <h3 className="text-3xl font-black text-cyan-300 font-sans tracking-tight">
+              <h3 className="text-3xl font-black text-[#0B1736] font-sans tracking-tight">
                 {currentRecord.heartRate}
               </h3>
-              <span className="text-xs font-mono text-slate-400 font-bold">BPM</span>
+              <span className="text-xs font-mono text-[#5A657D] font-bold">BPM</span>
             </div>
             <div className="mt-2.5 flex items-center justify-between text-[11px]">
-              <span className="text-emerald-400 font-mono flex items-center gap-1.5 font-semibold">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+              <span className="text-emerald-700 font-mono flex items-center gap-1.5 font-semibold">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
                 <span>Resting Pace</span>
               </span>
-              <span className="text-slate-400 font-mono text-[10px]">Baseline: 64 BPM</span>
+              <span className="text-[#5A657D] font-mono text-[10px]">Baseline: 64 BPM</span>
             </div>
           </div>
 
           {/* Blood Pressure Card */}
-          <div className="bg-[#0B1736]/80 border border-blue-400/15 rounded-2xl p-4 shadow-xl hover:border-yellow-400/35 transition-all group">
-            <div className="flex items-center justify-between text-slate-400">
+          <div className="bg-white border border-[#DCD5C7] rounded-2xl p-4 shadow-sm hover:border-[#0B1736]/40 transition-all group">
+            <div className="flex items-center justify-between text-[#5A657D]">
               <span className="text-[11px] font-mono uppercase tracking-wider font-semibold">
                 Blood Pressure
               </span>
-              <Activity className="w-4 h-4 text-[#FDE047] group-hover:scale-110 transition-transform" />
+              <Activity className="w-4 h-4 text-amber-500 group-hover:scale-110 transition-transform" />
             </div>
             <div className="flex items-baseline justify-between mt-2">
-              <h3 className="text-3xl font-black text-[#FDE047] font-sans tracking-tight">
+              <h3 className="text-3xl font-black text-[#0B1736] font-sans tracking-tight">
                 {currentRecord.bloodPressure}
               </h3>
-              <span className="text-xs font-mono text-slate-400 font-bold">mmHg</span>
+              <span className="text-xs font-mono text-[#5A657D] font-bold">mmHg</span>
             </div>
             <div className="mt-2.5 flex items-center justify-between text-[11px]">
-              <span className="text-cyan-300 font-mono font-semibold">Microgravity Reg.</span>
-              <span className="text-slate-400 font-mono text-[10px]">Sys/Dia</span>
+              <span className="text-[#0B1736] font-mono font-semibold">Microgravity Reg.</span>
+              <span className="text-[#5A657D] font-mono text-[10px]">Sys/Dia</span>
             </div>
           </div>
 
           {/* Core Temperature Card */}
-          <div className="bg-[#0B1736]/80 border border-blue-400/15 rounded-2xl p-4 shadow-xl hover:border-yellow-400/35 transition-all group">
-            <div className="flex items-center justify-between text-slate-400">
+          <div className="bg-white border border-[#DCD5C7] rounded-2xl p-4 shadow-sm hover:border-[#0B1736]/40 transition-all group">
+            <div className="flex items-center justify-between text-[#5A657D]">
               <span className="text-[11px] font-mono uppercase tracking-wider font-semibold">
                 Core Temperature
               </span>
-              <Thermometer className="w-4 h-4 text-[#FDE047] group-hover:scale-110 transition-transform" />
+              <Thermometer className="w-4 h-4 text-orange-500 group-hover:scale-110 transition-transform" />
             </div>
             <div className="flex items-baseline justify-between mt-2">
-              <h3 className="text-3xl font-black text-[#FDE047] font-sans tracking-tight">
+              <h3 className="text-3xl font-black text-[#0B1736] font-sans tracking-tight">
                 {currentRecord.temperature}
               </h3>
-              <span className="text-xs font-mono text-slate-400 font-bold">°C</span>
+              <span className="text-xs font-mono text-[#5A657D] font-bold">°C</span>
             </div>
             <div className="mt-2.5 flex items-center justify-between text-[11px]">
-              <span className="text-emerald-400 font-mono font-semibold">Thermoregulated</span>
-              <span className="text-slate-400 font-mono text-[10px]">Optimal 36.6°C</span>
+              <span className="text-emerald-700 font-mono font-semibold">Thermoregulated</span>
+              <span className="text-[#5A657D] font-mono text-[10px]">Optimal 36.6°C</span>
             </div>
           </div>
 
           {/* Blood Oxygen (SpO2) Card */}
-          <div className="bg-[#0B1736]/80 border border-blue-400/15 rounded-2xl p-4 shadow-xl hover:border-emerald-400/35 transition-all group">
-            <div className="flex items-center justify-between text-slate-400">
+          <div className="bg-white border border-[#DCD5C7] rounded-2xl p-4 shadow-sm hover:border-[#0B1736]/40 transition-all group">
+            <div className="flex items-center justify-between text-[#5A657D]">
               <span className="text-[11px] font-mono uppercase tracking-wider font-semibold">
                 Blood Oxygen (SpO2)
               </span>
-              <Wind className="w-4 h-4 text-emerald-400 group-hover:scale-110 transition-transform" />
+              <Wind className="w-4 h-4 text-blue-500 group-hover:scale-110 transition-transform" />
             </div>
             <div className="flex items-baseline justify-between mt-2">
-              <h3 className="text-3xl font-black text-emerald-400 font-sans tracking-tight">
+              <h3 className="text-3xl font-black text-[#0B1736] font-sans tracking-tight">
                 {currentRecord.spo2}%
               </h3>
-              <span className="text-xs font-mono text-slate-400 font-bold">O₂ Sat</span>
+              <span className="text-xs font-mono text-[#5A657D] font-bold">O₂ Sat</span>
             </div>
             <div className="mt-2.5 flex items-center justify-between text-[11px]">
-              <span className="text-emerald-400 font-mono font-semibold">Cabin Norm: 21.0 kPa</span>
-              <span className="text-slate-400 font-mono text-[10px]">Nominal</span>
+              <span className="text-emerald-700 font-mono font-semibold">Cabin Norm: 21.0 kPa</span>
+              <span className="text-[#5A657D] font-mono text-[10px]">Nominal</span>
             </div>
           </div>
 
@@ -743,18 +739,18 @@ export default function AstroCareDashboard({
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
           {/* Multi-Metric Trend Chart (Spans 2 columns) */}
-          <div className="lg:col-span-2 bg-[#0B1736]/90 border border-blue-400/20 p-5 rounded-2xl shadow-xl flex flex-col justify-between">
+          <div className="lg:col-span-2 bg-white border border-[#DCD5C7] p-5 rounded-2xl shadow-sm flex flex-col justify-between">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
               <div>
                 <div className="flex items-center gap-2">
-                  <h2 className="text-sm sm:text-base font-bold text-white tracking-wide">
+                  <h2 className="text-sm sm:text-base font-bold text-[#0B1736] tracking-wide">
                     180-Day Mission Vitals & Adaptation Trajectory
                   </h2>
-                  <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-cyan-400/10 text-cyan-300 border border-cyan-400/30">
+                  <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#EDE8DE] text-[#0B1736] border border-[#DCD5C7]">
                     Interactive
                   </span>
                 </div>
-                <p className="text-xs text-slate-300 mt-0.5">
+                <p className="text-xs text-[#5A657D] mt-0.5">
                   Click any point along the curve or scrub the slider to jump timeline coordinates.
                 </p>
               </div>

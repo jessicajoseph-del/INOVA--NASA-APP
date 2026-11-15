@@ -156,15 +156,15 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-between bg-[#F6EEDB] text-[#06132B] selection:bg-[#06132B] selection:text-[#F6EEDB] font-sans relative overflow-x-hidden">
+    <div className="min-h-screen flex flex-col justify-between bg-[#F7F4EE] text-[#0B1736] selection:bg-[#0B1736] selection:text-[#F7F4EE] font-sans relative overflow-x-hidden">
       
       {/* Background Ambient Oat Grid */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(6,19,43,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(6,19,43,0.04)_1px,transparent_1px)] bg-[size:4rem_4rem] pointer-events-none" />
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(11,23,54,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(11,23,54,0.04)_1px,transparent_1px)] bg-[size:4rem_4rem] pointer-events-none" />
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-blue-900/5 rounded-full blur-[120px] pointer-events-none" />
 
       {/* 1. HEADER / FLOATING CAPSULE NAVIGATION BAR (INK BLUE CAPSULE ON OAT IVORY BACKDROP) */}
       <header className="sticky top-0 z-50 w-full px-3 py-2.5 sm:px-6 pointer-events-none">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-3 pointer-events-auto bg-[#06132B] text-[#F6EEDB] backdrop-blur-2xl border border-[#06132B]/30 shadow-[0_12px_40px_rgba(6,19,43,0.35)] rounded-2xl sm:rounded-full px-3 sm:px-4 py-2">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-3 pointer-events-auto bg-[#0B1736] text-[#F7F4EE] backdrop-blur-2xl border border-[#DCD5C7]/30 shadow-[0_12px_40px_rgba(11,23,54,0.35)] rounded-2xl sm:rounded-full px-3 sm:px-4 py-2">
           
           {/* Brand Pill (Emblem pill inspired by side bar.jpg) */}
           <div 
@@ -196,7 +196,7 @@ export default function App() {
               }}
               className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-full transition-all cursor-pointer whitespace-nowrap ${
                 activeView === 'portal'
-                  ? 'bg-[#f6eedb] text-[#06132b] shadow-md shadow-white/20 font-bold scale-[1.02]'
+                  ? 'bg-[#F7F4EE] text-[#0B1736] shadow-md shadow-white/20 font-bold scale-[1.02]'
                   : 'text-slate-300 hover:text-white hover:bg-white/10'
               }`}
             >
@@ -214,7 +214,7 @@ export default function App() {
               }}
               className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-full transition-all cursor-pointer whitespace-nowrap ${
                 activeView === 'aura'
-                  ? 'bg-[#f6eedb] text-[#06132b] shadow-md shadow-white/20 font-bold scale-[1.02]'
+                  ? 'bg-[#F7F4EE] text-[#0B1736] shadow-md shadow-white/20 font-bold scale-[1.02]'
                   : 'text-slate-300 hover:text-purple-300 hover:bg-white/10'
               }`}
             >
@@ -231,7 +231,7 @@ export default function App() {
               }}
               className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-full transition-all cursor-pointer whitespace-nowrap ${
                 activeView === 'overview'
-                  ? 'bg-[#f6eedb] text-[#06132b] shadow-md shadow-white/20 font-bold scale-[1.02]'
+                  ? 'bg-[#F7F4EE] text-[#0B1736] shadow-md shadow-white/20 font-bold scale-[1.02]'
                   : 'text-slate-300 hover:text-white hover:bg-white/10'
               }`}
             >
@@ -248,7 +248,7 @@ export default function App() {
               }}
               className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-full transition-all cursor-pointer whitespace-nowrap ${
                 activeView === 'behavioral'
-                  ? 'bg-[#f6eedb] text-[#06132b] shadow-md shadow-white/20 font-bold scale-[1.02]'
+                  ? 'bg-[#F7F4EE] text-[#0B1736] shadow-md shadow-white/20 font-bold scale-[1.02]'
                   : 'text-slate-300 hover:text-emerald-300 hover:bg-white/10'
               }`}
             >
@@ -265,7 +265,7 @@ export default function App() {
               }}
               className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-full transition-all cursor-pointer whitespace-nowrap ${
                 activeView === 'roadmap'
-                  ? 'bg-[#f6eedb] text-[#06132b] shadow-md shadow-white/20 font-bold scale-[1.02]'
+                  ? 'bg-[#F7F4EE] text-[#0B1736] shadow-md shadow-white/20 font-bold scale-[1.02]'
                   : 'text-slate-300 hover:text-amber-300 hover:bg-white/10'
               }`}
             >
@@ -282,7 +282,7 @@ export default function App() {
               }}
               className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-full transition-all cursor-pointer whitespace-nowrap ${
                 activeView === 'astri'
-                  ? 'bg-[#f6eedb] text-[#06132b] shadow-md shadow-white/20 font-bold scale-[1.02]'
+                  ? 'bg-[#F7F4EE] text-[#0B1736] shadow-md shadow-white/20 font-bold scale-[1.02]'
                   : 'text-slate-300 hover:text-cyan-300 hover:bg-white/10'
               }`}
             >
@@ -341,18 +341,18 @@ export default function App() {
             <div className="max-w-4xl space-y-4 text-left">
               
               {/* Eyebrow Badge */}
-              <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full border border-[#06132B]/20 bg-[#06132B]/8 text-[#06132B] font-mono text-xs uppercase tracking-wider shadow-sm">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#1E3A8A] animate-ping"></span>
+              <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full border border-[#DCD5C7] bg-[#EDE8DE] text-[#0B1736] font-mono text-xs uppercase tracking-wider shadow-sm">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#0B1736] animate-ping"></span>
                 <span>{TOPIC_DATA.eyebrow}</span>
               </div>
 
               {/* Main Topic Title */}
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-[#06132B] leading-[1.15]">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-[#0B1736] leading-[1.15]">
                 {TOPIC_DATA.title}
               </h1>
 
               {/* Subtitle */}
-              <p className="text-base sm:text-lg text-[#1E3A8A] font-normal leading-relaxed max-w-3xl">
+              <p className="text-base sm:text-lg text-[#5A657D] font-normal leading-relaxed max-w-3xl">
                 {TOPIC_DATA.subtitle}
               </p>
             </div>
@@ -364,26 +364,26 @@ export default function App() {
                 return (
                   <div
                     key={kpi.id}
-                    className="bg-[#0B1736]/80 border border-blue-400/15 backdrop-blur-md rounded-2xl p-5 shadow-xl hover:border-cyan-400/30 hover:shadow-cyan-950/40 transition-all duration-300 flex flex-col justify-between group"
+                    className="bg-[#FFFFFF] border border-[#DCD5C7] rounded-2xl p-5 shadow-[0_4px_20px_rgba(11,23,54,0.06)] hover:border-[#0B1736]/30 hover:shadow-[0_8px_30px_rgba(11,23,54,0.12)] transition-all duration-300 flex flex-col justify-between group"
                   >
                     <div className="flex items-start justify-between">
                       <div className="space-y-1">
-                        <span className="text-xs font-mono text-slate-400 tracking-wider uppercase font-semibold">
+                        <span className="text-xs font-mono text-[#5A657D] tracking-wider uppercase font-semibold">
                           {kpi.title}
                         </span>
-                        <div className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+                        <div className="text-2xl sm:text-3xl font-extrabold text-[#0B1736] tracking-tight">
                           {kpi.currentValue}
                         </div>
                       </div>
-                      <div className="p-2.5 rounded-xl bg-blue-900/30 border border-blue-400/10 text-slate-300 group-hover:text-cyan-400 group-hover:border-cyan-400/20 transition-colors">
+                      <div className="p-2.5 rounded-xl bg-[#EDE8DE] border border-[#DCD5C7] text-[#0B1736] group-hover:bg-[#DCD5C7]/50 transition-colors">
                         <IconComponent className="w-5 h-5" />
                       </div>
                     </div>
 
-                    <div className="mt-4 pt-3 border-t border-blue-900/30 flex items-center justify-between text-xs">
-                      <div className="text-slate-400">
+                    <div className="mt-4 pt-3 border-t border-[#DCD5C7] flex items-center justify-between text-xs">
+                      <div className="text-[#5A657D]">
                         <span>Baseline: </span>
-                        <span className="font-mono font-semibold text-slate-200">
+                        <span className="font-mono font-semibold text-[#0B1736]">
                           {kpi.baselineValue}
                         </span>
                       </div>
@@ -400,7 +400,7 @@ export default function App() {
                       </span>
                     </div>
 
-                    <p className="text-[11px] text-slate-400 mt-2 leading-tight">
+                    <p className="text-[11px] text-[#5A657D] mt-2 leading-tight">
                       {kpi.description}
                     </p>
                   </div>
@@ -492,14 +492,14 @@ export default function App() {
           <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full my-8">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <span className="text-xs font-mono uppercase tracking-wider text-[#1E3A8A] font-semibold">
+                <span className="text-xs font-mono uppercase tracking-wider text-[#5A657D] font-semibold">
                   // RIDGE BIOMETRIC & 3D PHYSIOLOGY SUITE
                 </span>
-                <h3 className="text-xl sm:text-2xl font-extrabold text-[#06132B] tracking-tight">
+                <h3 className="text-xl sm:text-2xl font-extrabold text-[#0B1736] tracking-tight">
                   Astronaut Portal & 3D Vital Observatory
                 </h3>
               </div>
-              <span className="text-xs text-[#1E3A8A] font-mono hidden sm:inline-block">
+              <span className="text-xs text-[#5A657D] font-mono hidden sm:inline-block">
                 OAT IVORY // INK BLUE TELEMETRY
               </span>
             </div>
@@ -512,20 +512,20 @@ export default function App() {
                   setActiveView('portal');
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
-                className="rounded-2xl bg-gradient-to-b from-[#0e2859]/90 to-[#06132b]/95 border border-amber-400/30 p-6 backdrop-blur-md shadow-xl hover:border-amber-400 hover:shadow-amber-500/10 transition-all duration-300 cursor-pointer group flex flex-col justify-between"
+                className="rounded-2xl bg-[#FFFFFF] border border-[#DCD5C7] p-6 shadow-[0_4px_20px_rgba(11,23,54,0.06)] hover:border-[#0B1736]/30 hover:shadow-[0_8px_30px_rgba(11,23,54,0.12)] transition-all duration-300 cursor-pointer group flex flex-col justify-between"
               >
                 <div className="space-y-3">
-                  <div className="w-10 h-10 rounded-xl bg-amber-400/10 border border-amber-400/30 flex items-center justify-center text-amber-300 group-hover:scale-110 transition-transform">
+                  <div className="w-10 h-10 rounded-xl bg-[#EDE8DE] border border-[#DCD5C7] flex items-center justify-center text-[#0B1736] group-hover:scale-110 transition-transform">
                     <Rocket className="w-5 h-5" />
                   </div>
-                  <h4 className="text-lg font-bold text-[#f6eedb] group-hover:text-amber-300 transition-colors">
+                  <h4 className="text-lg font-bold text-[#0B1736] group-hover:text-blue-900 transition-colors">
                     Mission Start & Swarm
                   </h4>
-                  <p className="text-xs text-slate-300 leading-relaxed">
+                  <p className="text-xs text-[#5A657D] leading-relaxed">
                     3D Hohmann transfer particle trajectory simulation, RIDGE system countdown, and real-time mission telemetry handshake.
                   </p>
                 </div>
-                <div className="pt-4 mt-4 border-t border-blue-900/40 flex items-center justify-between text-xs font-bold text-amber-300">
+                <div className="pt-4 mt-4 border-t border-[#DCD5C7] flex items-center justify-between text-xs font-bold text-[#0B1736]">
                   <span>Enter Mission Start</span>
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </div>
@@ -537,20 +537,20 @@ export default function App() {
                   setActiveView('login');
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
-                className="rounded-2xl bg-gradient-to-b from-[#0e2859]/90 to-[#06132b]/95 border border-cyan-400/30 p-6 backdrop-blur-md shadow-xl hover:border-cyan-400 hover:shadow-cyan-500/10 transition-all duration-300 cursor-pointer group flex flex-col justify-between"
+                className="rounded-2xl bg-[#FFFFFF] border border-[#DCD5C7] p-6 shadow-[0_4px_20px_rgba(11,23,54,0.06)] hover:border-[#0B1736]/30 hover:shadow-[0_8px_30px_rgba(11,23,54,0.12)] transition-all duration-300 cursor-pointer group flex flex-col justify-between"
               >
                 <div className="space-y-3">
-                  <div className="w-10 h-10 rounded-xl bg-cyan-400/10 border border-cyan-400/30 flex items-center justify-center text-cyan-300 group-hover:scale-110 transition-transform">
+                  <div className="w-10 h-10 rounded-xl bg-[#EDE8DE] border border-[#DCD5C7] flex items-center justify-center text-[#0B1736] group-hover:scale-110 transition-transform">
                     <UserCheck className="w-5 h-5" />
                   </div>
-                  <h4 className="text-lg font-bold text-[#f6eedb] group-hover:text-cyan-300 transition-colors">
+                  <h4 className="text-lg font-bold text-[#0B1736] group-hover:text-blue-900 transition-colors">
                     Sliding Login & 3D Visor
                   </h4>
-                  <p className="text-xs text-slate-300 leading-relaxed">
+                  <p className="text-xs text-[#5A657D] leading-relaxed">
                     Dual-panel sliding sign-in & registration, 3D face camera biometrics, helmet visor face mesh reflection, and suit telemetry.
                   </p>
                 </div>
-                <div className="pt-4 mt-4 border-t border-blue-900/40 flex items-center justify-between text-xs font-bold text-cyan-300">
+                <div className="pt-4 mt-4 border-t border-[#DCD5C7] flex items-center justify-between text-xs font-bold text-[#0B1736]">
                   <span>Open Crew Login</span>
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </div>
@@ -562,20 +562,20 @@ export default function App() {
                   setActiveView('vital');
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
-                className="rounded-2xl bg-gradient-to-b from-[#0e2859]/90 to-[#06132b]/95 border border-rose-400/30 p-6 backdrop-blur-md shadow-xl hover:border-rose-400 hover:shadow-rose-500/10 transition-all duration-300 cursor-pointer group flex flex-col justify-between"
+                className="rounded-2xl bg-[#FFFFFF] border border-[#DCD5C7] p-6 shadow-[0_4px_20px_rgba(11,23,54,0.06)] hover:border-[#0B1736]/30 hover:shadow-[0_8px_30px_rgba(11,23,54,0.12)] transition-all duration-300 cursor-pointer group flex flex-col justify-between"
               >
                 <div className="space-y-3">
-                  <div className="w-10 h-10 rounded-xl bg-rose-400/10 border border-rose-400/30 flex items-center justify-center text-rose-300 group-hover:scale-110 transition-transform">
+                  <div className="w-10 h-10 rounded-xl bg-[#EDE8DE] border border-[#DCD5C7] flex items-center justify-center text-[#0B1736] group-hover:scale-110 transition-transform">
                     <Dna className="w-5 h-5" />
                   </div>
-                  <h4 className="text-lg font-bold text-[#f6eedb] group-hover:text-rose-300 transition-colors">
+                  <h4 className="text-lg font-bold text-[#0B1736] group-hover:text-blue-900 transition-colors">
                     3D Vital Human Observatory
                   </h4>
-                  <p className="text-xs text-slate-300 leading-relaxed">
+                  <p className="text-xs text-[#5A657D] leading-relaxed">
                     Interactive 3D anatomical model, beating heart, crystal skull, internal organ zoom (liver, spleen), and touchless AR palm controls.
                   </p>
                 </div>
-                <div className="pt-4 mt-4 border-t border-blue-900/40 flex items-center justify-between text-xs font-bold text-rose-300">
+                <div className="pt-4 mt-4 border-t border-[#DCD5C7] flex items-center justify-between text-xs font-bold text-[#0B1736]">
                   <span>Launch 3D Vital Observatory</span>
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </div>
@@ -592,14 +592,14 @@ export default function App() {
           <section id="roadmap-section" className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full my-10 relative z-10">
             <div className="mb-6 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
               <div>
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[#06132B]/20 bg-[#06132B]/8 text-[#06132B] font-mono text-xs uppercase tracking-wider mb-2">
-                  <Compass className="w-3.5 h-3.5 text-[#1E3A8A]" />
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[#DCD5C7] bg-[#EDE8DE] text-[#0B1736] font-mono text-xs uppercase tracking-wider mb-2">
+                  <Compass className="w-3.5 h-3.5 text-[#0B1736]" />
                   <span>Interactive Mission Circuit</span>
                 </div>
-                <h2 className="text-2xl sm:text-3xl font-extrabold text-[#06132B] tracking-tight">
+                <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0B1736] tracking-tight">
                   Lumina Path — Interactive Road Map Game
                 </h2>
-                <p className="text-sm text-[#1E3A8A] mt-1 max-w-2xl leading-relaxed">
+                <p className="text-sm text-[#5A657D] mt-1 max-w-2xl leading-relaxed">
                   Start at the unlocked stage and mark progress directly on the circuit to trigger shooting fiber currents downward. Complete all mission checkpoints to unlock the Grand Trophy Vault!
                 </p>
               </div>
@@ -733,13 +733,13 @@ export default function App() {
       />
 
       {/* 5. BOTTOM CREDITS / STATUS BAR (INK BLUE BAR ON OAT IVORY PAGE) */}
-      <footer className="w-full mt-auto relative z-10 border-t border-[#06132B]/15 bg-[#06132B] text-[#F6EEDB] py-4">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between text-xs text-[#E2D8C0] gap-2">
+      <footer className="w-full mt-auto relative z-10 border-t border-[#DCD5C7] bg-[#0B1736] text-[#F7F4EE] py-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between text-xs text-[#EDE8DE] gap-2">
           <p>© {new Date().getFullYear()} Ridge Aerospace & Digital Sovereignty. All telemetry verified.</p>
           <div className="flex items-center space-x-6">
-            <a href="#privacy" className="hover:text-[#FDE047] transition-colors">Security Policy</a>
-            <a href="#terms" className="hover:text-[#FDE047] transition-colors">Mission Protocol</a>
-            <a href="#status" className="hover:text-[#FDE047] transition-colors flex items-center gap-1.5">
+            <a href="#privacy" className="hover:text-amber-300 transition-colors">Security Policy</a>
+            <a href="#terms" className="hover:text-amber-300 transition-colors">Mission Protocol</a>
+            <a href="#status" className="hover:text-amber-300 transition-colors flex items-center gap-1.5">
               <span>Relay Mesh Active</span>
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
             </a>

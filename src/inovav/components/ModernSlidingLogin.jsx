@@ -6,14 +6,14 @@ import {
 import { recordFaceAuthSuccess } from '../utils/faceAuthLog';
 import { firebaseAuthSignIn, firebaseAuthSignUp, isFirebaseOnline } from '../firebase';
 
-// Palette: Oat Yellow (#f6eedb) & Ink Blue (#06132b)
-const OAT_BG = '#f6eedb';
-const OAT_INPUT = '#eae0c8';
-const OAT_CARD_SOFT = '#efe5ce';
-const INK_BLUE = '#06132b';
-const INK_MID = '#0e2859';
-const INK_SOFT = '#314770';
-const INK_BORDER = 'rgba(6, 19, 43, 0.16)';
+// RIDGE Brand Kit Palette
+const OAT_BG = '#F7F4EE';        // Primary Canvas: Oat Ivory
+const OAT_INPUT = '#EDE8DE';     // Secondary Surface / Track: Soft Flax / Linen
+const OAT_CARD_SOFT = '#FFFFFF'; // Elevated Card / Panel: Warm Alabaster
+const INK_BLUE = '#0B1736';      // Primary Text: Deep Ink Navy
+const INK_MID = '#0B1736';       // Deep Ink Navy
+const INK_SOFT = '#5A657D';      // Muted / Monospace Label: Slate Pewter
+const INK_BORDER = '#DCD5C7';    // Subtle Border / Divider: Sandstone Hairline
 
 export default function ModernSlidingLogin({
   activeAstronaut,
