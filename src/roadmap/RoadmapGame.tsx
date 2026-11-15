@@ -59,6 +59,7 @@ export default function RoadmapGame({ onBack, isEmbedded = false }: RoadmapGameP
     const firstUnlocked = initial.find((t) => t.status === 'unlocked');
     return firstUnlocked?.id ?? initial[0]?.id ?? '';
   });
+
   const [freeUnlockMode, setFreeUnlockMode] = useState<boolean>(false);
   const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
   const [surgingSegment, setSurgingSegment] = useState<number | null>(null);
@@ -463,6 +464,29 @@ export default function RoadmapGame({ onBack, isEmbedded = false }: RoadmapGameP
             </div>
           </div>
 
+            {/* Pre Flight Recommendation */}
+          <div className="mx-auto max-w-[900px] mb-8 px-2">
+            <div className="bg-white/40 backdrop-blur-sm border border-[#06132B]/10 rounded-xl p-4 shadow-sm">
+              <h2 className="font-display text-[15px] sm:text-base font-bold text-[#06132B] mb-2 uppercase tracking-wide">
+                Pre Flight Recommendation
+              </h2>
+              <ul className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-[#1E3A8A] font-medium">
+                <li className="flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-[#F5B82E] shadow-[0_0_4px_#F5B82E]"></span>
+                  Multivitamin
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-[#F5B82E] shadow-[0_0_4px_#F5B82E]"></span>
+                  Nutrient-food
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-[#F5B82E] shadow-[0_0_4px_#F5B82E]"></span>
+                  Prescribed drugs
+                </li>
+              </ul>
+            </div>
+          </div>
+
           {/* Winding Map Stage */}
           <div
             className="relative mx-auto w-full max-w-[900px]"
@@ -516,6 +540,37 @@ export default function RoadmapGame({ onBack, isEmbedded = false }: RoadmapGameP
                 />
               );
             })}
+
+            {geometry.taskPositions[0] && (
+              <aside
+                aria-label="Stage 1 briefing"
+                className="absolute z-20 hidden flex-col gap-3 rounded-xl border border-amber-400/50 bg-[#F7F3E9]/95 p-3 text-[#12233B] shadow-lg md:flex lg:hidden xl:flex"
+                style={{
+                  left: `calc(${(geometry.taskPositions[0].x / geometry.viewBoxWidth) * 100}% + 134px)`,
+                  right: '12px',
+                  top: `${(geometry.taskPositions[0].y / geometry.viewBoxHeight) * 100}%`,
+                  transform: 'translateY(-50%)',
+                }}
+              >
+                <h2 className="font-display text-xs font-extrabold tracking-wide text-[#12233B]">
+                  STAGE 01 BRIEF
+                </h2>
+                <dl className="space-y-2.5 text-[11px] leading-snug">
+                  <div>
+                    <dt className="font-extrabold text-[#9A5B00]">WHY</dt>
+                    <dd>Monitor hydration and electrolyte biomarkers in microgravity.</dd>
+                  </div>
+                  <div>
+                    <dt className="font-extrabold text-[#9A5B00]">HOW</dt>
+                    <dd>Collect a midstream sample, check specific gravity, and transmit the results.</dd>
+                  </div>
+                  <div>
+                    <dt className="font-extrabold text-[#9A5B00]">WHAT</dt>
+                    <dd>Complete the morning urine test between 06:00 and 06:10 AM.</dd>
+                  </div>
+                </dl>
+              </aside>
+            )}
           </div>
 
           {/* Full-Width Side-by-Side: Task Deck and Weekly Puzzle */}
@@ -558,6 +613,25 @@ export default function RoadmapGame({ onBack, isEmbedded = false }: RoadmapGameP
           />
         </div>
       </div>
+
+      {/* Full-width Task Deck and Weekly Puzzle */}
+      <section className="w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        <div className="grid w-full grid-cols-1 lg:grid-cols-2 items-start gap-8 xl:gap-12">
+          <div className="relative z-20 min-w-0 w-full">
+            <CollapsedRoadmapView
+              tasks={tasks}
+              onSelectTask={(id) => {
+                setSelectedTaskId(id);
+                const idx = tasks.findIndex((t) => t.id === id);
+                if (idx >= 0) scrollToStage(idx);
+              }}
+            />
+          </div>
+          <div className="relative z-10 min-w-0 w-full">
+            <WeeklyPuzzle streakDays={streakDays} />
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

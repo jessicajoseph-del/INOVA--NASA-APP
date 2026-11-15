@@ -25,8 +25,8 @@ export const CollapsedRoadmapView: React.FC<CollapsedRoadmapViewProps> = ({ task
   }, [tasks.length]);
 
   return (
-    <div className="mx-auto w-full max-w-[900px] mt-16 mb-20 relative z-10 flex flex-col items-center">
-      <h2 className="font-display text-[22px] font-extrabold text-[#F7F3E9] mb-12 tracking-wide text-center">
+    <div className="mx-auto w-full max-w-[900px] relative z-10 flex flex-col items-center">
+      <h2 className="font-display text-[22px] font-extrabold text-[#12233B] mb-12 tracking-wide text-center">
         Task Deck
       </h2>
 
@@ -49,7 +49,7 @@ export const CollapsedRoadmapView: React.FC<CollapsedRoadmapViewProps> = ({ task
               }}
             >
               {/* Playing Card Shape */}
-              <div 
+              <div
                 className={`w-[140px] h-[196px] sm:w-[160px] sm:h-[224px] rounded-xl border-2 flex flex-col p-3 shadow-[0_10px_20px_rgba(0,0,0,0.5)] transition-transform duration-300 group-hover:scale-125 group-hover:-rotate-[${transform.rotate}deg] ${
                   isMissed
                     ? 'bg-[#1a0808] border-red-500/80 shadow-red-900/40'
@@ -65,13 +65,13 @@ export const CollapsedRoadmapView: React.FC<CollapsedRoadmapViewProps> = ({ task
                 }}
                 // Injecting dynamic counter-rotation via hover relies on the wrapper handling the base transform
                 // and the inner div resetting its own visual angle via a CSS trick or standard group-hover.
-                // We handle the straighten-out effect by neutralizing the wrapper's rotation via a negative rotation inside, 
+                // We handle the straighten-out effect by neutralizing the wrapper's rotation via a negative rotation inside,
                 // but standard CSS approach:
               >
                 {/* Inner counter-rotation wrapper for hover */}
-                <div 
+                <div
                   className="absolute inset-0 rounded-xl transition-transform duration-300 ease-out flex flex-col p-3"
-                  style={{ transform: 'rotate(0deg)' }} 
+                  style={{ transform: 'rotate(0deg)' }}
                   onMouseEnter={(e) => {
                     const parent = e.currentTarget.parentElement;
                     if (parent) {
@@ -87,7 +87,6 @@ export const CollapsedRoadmapView: React.FC<CollapsedRoadmapViewProps> = ({ task
                     }
                   }}
                 >
-                  
                   {/* Card Corner (Top Left) */}
                   <div className="flex flex-col items-center self-start">
                     <span className={`text-[10px] font-mono font-extrabold ${isMissed ? 'text-red-400' : isCompleted || !isLocked ? 'text-[#07142E]' : 'text-sky-200/50'}`}>

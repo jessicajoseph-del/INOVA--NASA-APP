@@ -210,7 +210,7 @@ export async function matchLiveFaceAgainstCrew(videoElement, astronauts = []) {
 
   // Map cosine similarity (~0.45..0.98) to intuitive confidence percentage (0..99.9%)
   const confidence = Math.max(0, Math.min(99.9, Math.round(((bestScore + 0.25) / 1.18) * 1000) / 10));
-  const matched = bestScore >= 0.58;
+ const matched = bestScore >= 0.34;
 
   return {
     matched,

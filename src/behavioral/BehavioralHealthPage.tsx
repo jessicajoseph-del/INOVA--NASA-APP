@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ClipboardCheck,
   Feather,
@@ -10,6 +10,12 @@ import {
 import { PartAForm } from './components/PartAForm';
 import { PartBForm } from './components/PartBForm';
 import { PartCReport } from './components/PartCReport';
+import {
+  ExpressionMonitor,
+  ExpressionSample,
+  ExpressionSummary,
+  summarizeExpressionSamples,
+} from './components/ExpressionMonitor';
 import { PVTActivity } from './components/PVTActivity';
 import { ReflectionsView } from './components/ReflectionsView';
 import {
@@ -21,6 +27,7 @@ import { PartAAnswers, PartBEntry, PVTResult } from './types/assessment';
 import { scoreMissionEntries, scorePartA } from './utils/scoring';
 
 type NavSection = 'daily' | 'baseline' | 'report' | 'pvt' | 'reflections';
+type ExpressionCollectionStatus = 'idle' | 'starting' | 'active' | 'error' | 'skipped';
 
 const STORAGE_KEY = 'lumina_path_behavioural_v1';
 const PVT_STORAGE_KEY = 'lumina_path_pvt_v1';
@@ -99,6 +106,15 @@ export default function BehavioralHealthPage({ onBack }: BehavioralHealthPagePro
   const [justSavedDay, setJustSavedDay] = useState<number | null>(null);
   const [savedPartAToast, setSavedPartAToast] = useState(false);
   const [editSessionKey, setEditSessionKey] = useState(0);
+  const [expressionCollectionEnabled, setExpressionCollectionEnabled] = useState(false);
+  const [expressionCollectionStatus, setExpressionCollectionStatus] =
+    useState<ExpressionCollectionStatus>('idle');
+  const [expressionCollectionError, setExpressionCollectionError] = useState('');
+  const [expressionSummary, setExpressionSummary] = useState<ExpressionSummary | null>(null);
+  const [shareChoice, setShareChoice] = useState<'yes' | 'no' | null>(null);
+  const [consultationChoice, setConsultationChoice] = useState<'yes' | 'no' | null>(null);
+  const [expressionMatchChoice, setExpressionMatchChoice] = useState<'yes' | 'no' | null>(null);
+  const expressionSamplesRef = useRef<ExpressionSample[]>([]);
 
   useEffect(() => {
     try {
@@ -135,7 +151,55 @@ export default function BehavioralHealthPage({ onBack }: BehavioralHealthPagePro
   const isEditingLoggedDay = missionLog.some((e) => e.day === draft.day);
   const isLivePreview = selectedReportDay === draft.day && !isEditingLoggedDay;
 
+  const handleExpressionSample = useCallback((sample: ExpressionSample) => {
+    expressionSamplesRef.current.push(sample);
+  }, []);
+
+  const handleExpressionMonitoringChange = useCallback((active: boolean) => {
+    setExpressionCollectionStatus(active ? 'active' : 'idle');
+  }, []);
+
+  const handleExpressionError = useCallback((message: string) => {
+    expressionSamplesRef.current = [];
+    setExpressionCollectionError(message);
+    setExpressionCollectionEnabled(false);
+    setExpressionCollectionStatus('error');
+  }, []);
+
+  const handleStartExpressionCollection = () => {
+    expressionSamplesRef.current = [];
+    setExpressionCollectionError('');
+    setExpressionCollectionStatus('starting');
+    setExpressionCollectionEnabled(true);
+  };
+
+  const handleStopExpressionCollection = () => {
+    expressionSamplesRef.current = [];
+    setExpressionCollectionEnabled(false);
+    setExpressionCollectionError('');
+    setExpressionCollectionStatus('idle');
+  };
+
+  const handleCloseExpressionSummary = () => {
+    setExpressionSummary(null);
+    setShareChoice(null);
+    setConsultationChoice(null);
+    setExpressionMatchChoice(null);
+  };
+
   const handleLogDailyCheck = () => {
+    const completedExpressionSummary = summarizeExpressionSamples(
+      expressionSamplesRef.current
+    );
+    expressionSamplesRef.current = [];
+    setExpressionCollectionEnabled(false);
+    setExpressionCollectionStatus('idle');
+    setExpressionCollectionError('');
+    setShareChoice(null);
+    setConsultationChoice(null);
+    setExpressionMatchChoice(null);
+    setExpressionSummary(completedExpressionSummary);
+
     const updatedLog = [
       ...missionLog.filter((e) => e.day !== draft.day),
       draft,
@@ -176,6 +240,7 @@ export default function BehavioralHealthPage({ onBack }: BehavioralHealthPagePro
   const handleEditDayReflection = (day: number) => {
     const target = missionLog.find((e) => e.day === day);
     if (!target) return;
+    handleStopExpressionCollection();
     setDraft({
       ...target,
       reflectionType: target.reflectionType ?? 'journal',
@@ -221,6 +286,7 @@ export default function BehavioralHealthPage({ onBack }: BehavioralHealthPagePro
   };
 
   const handleReturnToNextDay = () => {
+    handleStopExpressionCollection();
     const maxLoggedDay = missionLog.reduce((max, e) => Math.max(max, e.day), 0);
     const nextDayNum = maxLoggedDay + 1;
     setDraft(createBlankDayEntry(nextDayNum));
@@ -248,6 +314,7 @@ export default function BehavioralHealthPage({ onBack }: BehavioralHealthPagePro
   };
 
   const handleClearAllData = () => {
+    handleStopExpressionCollection();
     setMissionLog([]);
     setPvtResults([]);
     const freshDay1 = createBlankDayEntry(1);
@@ -260,6 +327,7 @@ export default function BehavioralHealthPage({ onBack }: BehavioralHealthPagePro
   };
 
   const handleResetDemo = () => {
+    handleStopExpressionCollection();
     setPartA(DEFAULT_PART_A);
     setMissionLog(INITIAL_MISSION_LOG);
     setDraft(DEFAULT_DAY_24_DRAFT);
@@ -278,6 +346,12 @@ export default function BehavioralHealthPage({ onBack }: BehavioralHealthPagePro
     { id: 'pvt', label: 'Attention (PVT)' },
     { id: 'reflections', label: 'Journal & Poetry' },
   ];
+  const shouldOfferConsultation =
+    expressionSummary !== null &&
+    expressionSummary.frequency >= 0.5 &&
+    ['sad', 'angry', 'fearful', 'disgusted'].includes(
+      expressionSummary.expression.toLowerCase()
+    );
 
   return (
     <div className="min-h-screen flex flex-col bg-[#F6EEDB] text-[#06132B] pb-20 lg:pb-10">
@@ -351,22 +425,101 @@ export default function BehavioralHealthPage({ onBack }: BehavioralHealthPagePro
         {/* Quiet context intro line */}
         <div className="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-2">
           <div>
-            <h1 className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-[#FCF9F0]">
+            <h1 className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-[#12233B]">
               Astronaut Behavioural Check
             </h1>
-            <p className="text-sm text-[#B4C6DF] mt-1">
+            <p className="text-sm text-[#4A5C75] mt-1">
               Baseline profile · Daily mood &amp; load check · 3-min attention activity · Unscored journal &amp; poetry
             </p>
           </div>
-          <div className="text-xs font-mono tabular-nums text-[#A9BCD6] whitespace-nowrap shrink-0">
+          <div className="text-xs font-mono tabular-nums text-[#4A5C75] whitespace-nowrap shrink-0">
             Logged Days: {missionLog.length} · Baseline: {baseline.daysUsed}/7d · PVT: {pvtResults.length}
           </div>
         </div>
+
+        {expressionCollectionEnabled && (
+          <ExpressionMonitor
+            enabled={expressionCollectionEnabled}
+            onSample={handleExpressionSample}
+            onMonitoringChange={handleExpressionMonitoringChange}
+            onError={handleExpressionError}
+          />
+        )}
 
         {/* Desktop Daily Check shows Part B Form alongside Live Part C Report; mobile shows focused single view */}
         {activeTab === 'daily' && (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-7 items-start">
             <div className="lg:col-span-6 space-y-3">
+              {!isEditingLoggedDay && (
+                <section
+                  aria-labelledby="expression-consent-title"
+                  className="rounded-2xl border border-[#12233B]/15 bg-[#FCF9F0] p-4 shadow-sm"
+                >
+                  <h2
+                    id="expression-consent-title"
+                    className="font-display text-lg font-bold text-[#12233B]"
+                  >
+                    Optional private expression check
+                  </h2>
+                  <p className="mt-1 text-sm leading-relaxed text-[#4A5C75]">
+                    If you opt in, your camera preview stays hidden while a local model samples
+                    facial-expression estimates during today&apos;s check. Only temporary labels and
+                    scores are kept in page memory; no video, frames, or face descriptors are
+                    saved. Sampling stops when you submit or stop it. Account sharing is not
+                    available until Firestore security rules are confirmed, and nothing will be
+                    uploaded now.
+                  </p>
+                  {expressionCollectionStatus === 'active' && (
+                    <p className="mt-3 text-sm font-semibold text-[#145252]" aria-live="polite">
+                      Local sampling is active. The camera preview is hidden.
+                    </p>
+                  )}
+                  {expressionCollectionStatus === 'starting' && (
+                    <p className="mt-3 text-sm font-semibold text-[#4A5C75]" aria-live="polite">
+                      Loading local models and requesting camera permission…
+                    </p>
+                  )}
+                  {expressionCollectionStatus === 'skipped' && (
+                    <p className="mt-3 text-sm text-[#4A5C75]" aria-live="polite">
+                      Skipped. No camera data is being collected.
+                    </p>
+                  )}
+                  {expressionCollectionError && (
+                    <p className="mt-3 text-sm font-medium text-red-800" role="alert">
+                      {expressionCollectionError}
+                    </p>
+                  )}
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {expressionCollectionEnabled ? (
+                      <button
+                        type="button"
+                        onClick={handleStopExpressionCollection}
+                        className="min-h-10 rounded-full border border-[#12233B]/25 px-4 py-2 text-sm font-semibold text-[#12233B] hover:bg-[#12233B]/5"
+                      >
+                        Stop and discard
+                      </button>
+                    ) : (
+                      <>
+                        <button
+                          type="button"
+                          onClick={handleStartExpressionCollection}
+                          className="min-h-10 rounded-full bg-[#12233B] px-4 py-2 text-sm font-semibold text-white hover:bg-[#243D5F]"
+                        >
+                          I agree — start local check
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setExpressionCollectionStatus('skipped')}
+                          className="min-h-10 rounded-full border border-[#12233B]/25 px-4 py-2 text-sm font-semibold text-[#12233B] hover:bg-[#12233B]/5"
+                        >
+                          Skip
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </section>
+              )}
+
               {isEditingLoggedDay && (
                 <div className="flex items-center justify-between gap-3 px-4 py-2.5 rounded-2xl bg-[#162C4E]/80 border border-white/10 text-xs text-[#E2D1A8]">
                   <span>
@@ -534,6 +687,149 @@ export default function BehavioralHealthPage({ onBack }: BehavioralHealthPagePro
           </button>
         </div>
       </nav>
+
+      {expressionSummary && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-[#071121]/75 p-4 backdrop-blur-sm"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="expression-summary-title"
+        >
+          <section className="w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-2xl bg-[#FCF9F0] p-5 text-[#12233B] shadow-2xl sm:p-7">
+            <h2
+              id="expression-summary-title"
+              className="font-display text-xl font-bold sm:text-2xl"
+            >
+              Today&apos;s private check-in
+            </h2>
+            <p className="mt-4 text-sm leading-relaxed text-[#4A5C75]">
+              The local model most often labeled your facial expression as{' '}
+              <strong className="capitalize text-[#12233B]">{expressionSummary.expression}</strong>
+              . It appeared in {Math.round(expressionSummary.frequency * 100)}% of the{' '}
+              {expressionSummary.sampleCount} sampled frames, with an average model score of{' '}
+              {Math.round(expressionSummary.averageProbability * 100)}%.
+            </p>
+            <p className="mt-3 text-sm leading-relaxed text-[#4A5C75]">
+              Facial expressions cannot reliably tell us how you feel. This is not a diagnosis.
+              Does this estimate feel like a fair reflection of how you feel today?
+            </p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <button
+                type="button"
+                aria-pressed={expressionMatchChoice === 'yes'}
+                onClick={() => setExpressionMatchChoice('yes')}
+                className={`min-h-10 rounded-full px-4 py-2 text-sm font-semibold ${
+                  expressionMatchChoice === 'yes'
+                    ? 'bg-[#145252] text-white'
+                    : 'border border-[#12233B]/25 text-[#12233B] hover:bg-[#12233B]/5'
+                }`}
+              >
+                Yes, it fits
+              </button>
+              <button
+                type="button"
+                aria-pressed={expressionMatchChoice === 'no'}
+                onClick={() => setExpressionMatchChoice('no')}
+                className={`min-h-10 rounded-full px-4 py-2 text-sm font-semibold ${
+                  expressionMatchChoice === 'no'
+                    ? 'bg-[#145252] text-white'
+                    : 'border border-[#12233B]/25 text-[#12233B] hover:bg-[#12233B]/5'
+                }`}
+              >
+                No, it doesn&apos;t
+              </button>
+            </div>
+            {expressionMatchChoice === 'no' && (
+              <p className="mt-2 text-sm text-[#4A5C75]">
+                Thanks for letting us know. The estimate can be wrong and does not override your
+                own experience.
+              </p>
+            )}
+
+            {shouldOfferConsultation && (
+              <div className="mt-5 rounded-xl bg-[#F7F0DC] p-4">
+                <p className="text-sm font-semibold text-[#12233B]">
+                  Some samples leaned toward a {expressionSummary.expression} expression. Would
+                  you like to explore speaking with someone?
+                </p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    aria-pressed={consultationChoice === 'yes'}
+                    onClick={() => setConsultationChoice('yes')}
+                    className="min-h-10 rounded-full bg-[#12233B] px-4 py-2 text-sm font-semibold text-white hover:bg-[#243D5F]"
+                  >
+                    Yes, I would
+                  </button>
+                  <button
+                    type="button"
+                    aria-pressed={consultationChoice === 'no'}
+                    onClick={() => setConsultationChoice('no')}
+                    className="min-h-10 rounded-full border border-[#12233B]/25 px-4 py-2 text-sm font-semibold text-[#12233B] hover:bg-white/60"
+                  >
+                    No, thanks
+                  </button>
+                </div>
+                {consultationChoice === 'yes' && (
+                  <p className="mt-3 text-sm leading-relaxed text-[#4A5C75]">
+                    RIDGE does not have a consultation service connected yet. If you want
+                    professional support, contact your organization&apos;s health service or a
+                    qualified local provider.
+                  </p>
+                )}
+              </div>
+            )}
+
+            <div className="mt-5 border-t border-[#12233B]/10 pt-4">
+              <p className="text-sm font-semibold text-[#12233B]">
+                Would you like to share this estimate with your Firebase account?
+              </p>
+              <p className="mt-1 text-xs leading-relaxed text-[#4A5C75]">
+                Sharing is paused until Firestore security rules are confirmed. Nothing will be
+                uploaded or saved to your account now. This summary stays in page memory and is
+                cleared when you close this check-in.
+              </p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  aria-pressed={shareChoice === 'yes'}
+                  onClick={() => setShareChoice('yes')}
+                  className="min-h-10 rounded-full bg-[#12233B] px-4 py-2 text-sm font-semibold text-white hover:bg-[#243D5F]"
+                >
+                  Yes, when secure sharing is available
+                </button>
+                <button
+                  type="button"
+                  aria-pressed={shareChoice === 'no'}
+                  onClick={() => setShareChoice('no')}
+                  className="min-h-10 rounded-full border border-[#12233B]/25 px-4 py-2 text-sm font-semibold text-[#12233B] hover:bg-[#12233B]/5"
+                >
+                  No, keep it private
+                </button>
+              </div>
+              {shareChoice === 'yes' && (
+                <p className="mt-2 text-sm text-[#4A5C75]" role="status">
+                  Your choice applies only to this check-in. No data was uploaded; you&apos;ll be
+                  asked again once secure account sharing is enabled.
+                </p>
+              )}
+              {shareChoice === 'no' && (
+                <p className="mt-2 text-sm text-[#4A5C75]" role="status">
+                  Nothing will be shared. Close this check-in to clear the temporary summary.
+                </p>
+              )}
+            </div>
+
+            <button
+              type="button"
+              onClick={handleCloseExpressionSummary}
+              className="mt-5 min-h-11 w-full rounded-full bg-[#145252] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#0F3F3F]"
+            >
+              Close and clear temporary summary
+            </button>
+          </section>
+        </div>
+      )}
     </div>
   );
 }

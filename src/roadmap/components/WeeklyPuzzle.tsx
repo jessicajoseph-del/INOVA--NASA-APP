@@ -12,8 +12,8 @@ export const WeeklyPuzzle: React.FC<WeeklyPuzzleProps> = ({ streakDays }) => {
   const PLANT_IMG = 'https://images.unsplash.com/photo-1453904300235-0f2f60b15b5d?auto=format&fit=crop&w=800&q=80';
 
   return (
-    <div className="mx-auto w-full max-w-[900px] mt-8 mb-16 bg-[#06132B] rounded-xl border border-amber-400/20 p-5 sm:p-8 shadow-[0_0_30px_rgba(250,204,21,0.05)] text-center relative overflow-hidden">
-      
+    <div className="mx-auto w-full max-w-[900px] bg-[#06132B] rounded-xl border border-amber-400/20 p-5 sm:p-8 shadow-[0_0_30px_rgba(250,204,21,0.05)] text-center relative overflow-hidden">
+
       <div className="mb-6 flex items-center justify-center gap-2">
         <Sprout className="h-6 w-6 text-amber-400" />
         <h2 className="font-display text-xl font-extrabold text-[#F7F3E9]">

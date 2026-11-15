@@ -177,7 +177,10 @@ export default function App() {
             </div>
             <div className="flex items-center">
               <span className="font-extrabold text-base tracking-tight text-white group-hover:text-cyan-300 transition-colors">
-                Ridge
+                RIDGE<span className="text-amber-400">.</span>
+              </span>
+              <span className="ml-1.5 text-[10px] font-mono uppercase tracking-wider text-cyan-300/80">
+                NASA
               </span>
             </div>
           </div>

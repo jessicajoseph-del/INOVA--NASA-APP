@@ -92,7 +92,7 @@ const saveAstronautToDb = (newAstro) => {
   }
 };
 
-// ── 3D Holographic Human Body Component for "SCAN VITAL 3D BODY" ──────────
+// ── 3D Holographic Human Body Component ──────────
 const HolographicBody3D = ({ scanProgress }) => {
   const groupRef = useRef();
 
@@ -104,22 +104,18 @@ const HolographicBody3D = ({ scanProgress }) => {
 
   return (
     <group ref={groupRef} position={[0, -0.2, 0]} scale={1.1}>
-      {/* Head */}
       <mesh position={[0, 1.45, 0]}>
         <sphereGeometry args={[0.22, 24, 24]} />
         <meshBasicMaterial color="#00ffff" wireframe transparent opacity={0.7} />
       </mesh>
-      {/* Torso */}
       <mesh position={[0, 0.75, 0]}>
         <cylinderGeometry args={[0.25, 0.2, 1.1, 16]} />
         <meshBasicMaterial color="#0099ff" wireframe transparent opacity={0.5} />
       </mesh>
-      {/* Heart Core */}
       <mesh position={[0.04, 0.85, 0.05]}>
         <sphereGeometry args={[0.07, 16, 16]} />
         <meshBasicMaterial color="#ff2266" transparent opacity={0.9} />
       </mesh>
-      {/* Lungs */}
       <mesh position={[-0.08, 0.88, 0]}>
         <capsuleGeometry args={[0.06, 0.18, 8, 16]} />
         <meshBasicMaterial color="#00ffcc" wireframe transparent opacity={0.6} />
@@ -128,7 +124,6 @@ const HolographicBody3D = ({ scanProgress }) => {
         <capsuleGeometry args={[0.06, 0.18, 8, 16]} />
         <meshBasicMaterial color="#00ffcc" wireframe transparent opacity={0.6} />
       </mesh>
-      {/* Arms */}
       <mesh position={[-0.38, 0.75, 0]} rotation={[0, 0, 0.2]}>
         <capsuleGeometry args={[0.06, 0.9, 8, 16]} />
         <meshBasicMaterial color="#00e5ff" wireframe transparent opacity={0.45} />
@@ -137,7 +132,6 @@ const HolographicBody3D = ({ scanProgress }) => {
         <capsuleGeometry args={[0.06, 0.9, 8, 16]} />
         <meshBasicMaterial color="#00e5ff" wireframe transparent opacity={0.45} />
       </mesh>
-      {/* Legs */}
       <mesh position={[-0.15, -0.4, 0]}>
         <capsuleGeometry args={[0.08, 1.2, 8, 16]} />
         <meshBasicMaterial color="#0088ff" wireframe transparent opacity={0.45} />
@@ -146,8 +140,6 @@ const HolographicBody3D = ({ scanProgress }) => {
         <capsuleGeometry args={[0.08, 1.2, 8, 16]} />
         <meshBasicMaterial color="#0088ff" wireframe transparent opacity={0.45} />
       </mesh>
-
-      {/* Dynamic Laser Scanning Ring */}
       <mesh position={[0, -0.9 + (scanProgress % 100) * 0.026, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <ringGeometry args={[0.42, 0.52, 32]} />
         <meshBasicMaterial color="#00ffff" side={THREE.DoubleSide} transparent opacity={0.85} />
@@ -491,7 +483,6 @@ const PetrovaParticleSwarm = () => {
     return geo;
   }, [count]);
 
-  const orbitRadius = 220.0;
   const lineDensity = 2.5;
   const speed = 1.2;
   const chaos = 2.0;
@@ -533,408 +524,133 @@ const PetrovaParticleSwarm = () => {
   return <instancedMesh ref={meshRef} args={[geometry, material, count]} />;
 };
 
-class AstronautErrorBoundary extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { hasError: false };
-  }
-  static getDerivedStateFromError() {
-    return { hasError: true };
-  }
-  render() {
-    if (this.state.hasError) {
-      return this.props.fallback || null;
-    }
-    return this.props.children;
-  }
-}
 
-const ExternalGLTFAstronaut = ({ onSetAction }) => {
-  const { scene, animations } = useGLTF('/animated_astronaut_in_space_suit_loop/scene.gltf');
-  const modelRef = useRef();
-  const clone = useMemo(() => {
-    const c = SkeletonUtils.clone(scene);
-    c.traverse((child) => {
-      if (child.isMesh && child.material) {
-        child.material.toneMapped = true;
-        if (child.material.name === 'material1') {
-          child.material.roughness = 0.15;
-          child.material.metalness = 0.85;
-        } else {
-          child.material.roughness = 0.65;
-          child.material.metalness = 0.15;
-        }
-      }
-    });
-    return c;
-  }, [scene]);
+// ── DAILY ASTRONAUT MESSAGING SYSTEM ────────────────────────────────────
+const GENERAL_MESSAGES = [
+  "Even across galaxies, your heartbeat belongs to humanity.",
+  "Earth is far away, but its care travels with you.",
+  "Every heartbeat carries a little piece of home.",
+  "You are never just a signal in the silence.",
+  "Somewhere on Earth, millions of hearts beat alongside yours.",
+  "Your vitals tell a story Earth is listening to.",
+  "Distance separates worlds, never the lives connecting them.",
+  "Even in silence, your body speaks, and we listen.",
+  "A universe apart, yet connected by every heartbeat.",
+  "Your solitude is vast, but so is our care.",
+  "Across the darkness, your heartbeat remains our brightest signal.",
+  "Every breath connects you to the world you left behind.",
+  "The stars may surround you, but humanity travels within you.",
+  "Your heartbeat is a familiar rhythm in an unfamiliar world.",
+  "Even light-years cannot measure the distance between caring hearts.",
+  "Beyond Earth's atmosphere, you remain part of its heartbeat.",
+  "Your wellbeing echoes across every mile between us.",
+  "The universe is quiet; your connection to Earth is not.",
+  "Every vital sign brings us a little closer.",
+  "Home is listening, one heartbeat at a time.",
+  "Your strength travels further than any spacecraft.",
+  "In the quiet of space, remember the warmth of belonging.",
+  "Millions of miles away, never outside the circle of care.",
+  "Your heartbeat is a message we never stop receiving.",
+  "Even the loneliest orbit carries a connection home.",
+  "Your body holds the rhythm of a world behind you.",
+  "The stars are distant; our attention is not.",
+  "Every signal from you reminds us how connected we are.",
+  "Let the quiet remind you of your inner strength.",
+  "Your heartbeat bridges the silence between worlds.",
+  "Earth may be a distant blue, but its care remains close.",
+  "Every breath is proof of your remarkable resilience.",
+  "Your health connects two worlds through one shared purpose.",
+  "In infinite space, your wellbeing is never a small thing.",
+  "The silence outside cannot quiet the strength within.",
+  "Your vital signs carry whispers of life across the cosmos.",
+  "Somewhere beneath the same stars, someone is thinking of you.",
+  "Every heartbeat is another thread connecting you to home.",
+  "Space may feel endless; our care has no distance.",
+  "Your pulse keeps time with the human story.",
+  "A quiet moment can still hold countless connections.",
+  "Your wellbeing matters beyond the boundaries of Earth.",
+  "Even in orbit, you belong to something greater.",
+  "Your heartbeat travels farther than you can imagine.",
+  "Let each steady breath bring a little piece of Earth closer.",
+  "The universe surrounds you; humanity stands behind you.",
+  "Your signals cross the stars, carrying life and hope.",
+  "You are Earth's explorer, never its stranger.",
+  "Every synced heartbeat reminds us that nobody stands alone.",
+  "Your body is extraordinary; so is the care surrounding it.",
+  "The stars witness your courage; your data tells your story.",
+  "In the vastness, find comfort in the rhythm within.",
+  "Your connection to home is stronger than the distance.",
+  "Even far from Earth, you remain deeply rooted.",
+  "A thousand stars above, countless hearts beside you.",
+  "Your pulse is a gentle reminder that you belong.",
+  "Beyond the atmosphere, the human connection remains constant.",
+  "Every health signal carries a little reassurance from home.",
+  "The distance is astronomical; the care is immeasurable.",
+  "Your heartbeat is never just your own.",
+  "Even when Earth disappears from view, belonging remains.",
+  "Let your steady pulse anchor you among the stars.",
+  "Your wellbeing is part of humanity's greatest journey.",
+  "Across the cosmic silence, your life keeps us connected.",
+  "The universe is enormous, but you are never insignificant.",
+  "Each breath carries the resilience of those who came before.",
+  "Your health data travels; our thoughts travel further.",
+  "There is strength in solitude and comfort in connection.",
+  "One small heartbeat, one extraordinary connection to Earth.",
+  "Wherever your orbit takes you, you are part of us.",
+  "Even light-years away, you are held by countless hearts.",
+  "Your heartbeat makes the silence feel a little less distant.",
+  "Every signal home carries a reminder that you belong.",
+  "The stars may feel endless, but connection knows no boundaries.",
+  "One steady breath closer to home, one heartbeat stronger."
+];
 
-  const { actions, names } = useAnimations(animations, modelRef);
-
-  useEffect(() => {
-    if (actions && names.length > 0) {
-      const act = actions[names[0]];
-      if (act) {
-        act.reset().fadeIn(0.5).play();
-        act.timeScale = 0.65;
-        if (onSetAction) onSetAction(act);
-      }
-    }
-    return () => {
-      if (onSetAction) onSetAction(null);
-    };
-  }, [actions, names, onSetAction]);
-
-  return <primitive ref={modelRef} object={clone} />;
+const SPECIAL_DAYS = {
+  "04-22": { text: "Every planet deserves the care we give our own home.", event: "Earth Day" },
+  "06-05": { text: "A cleaner atmosphere begins with understanding every breath.", event: "World Environment Day" },
+  "04-07": { text: "Healthy bodies make extraordinary journeys possible.", event: "World Health Day" },
+  "10-10": { text: "Mental wellbeing matters, even millions of miles from home.", event: "World Mental Health Day" },
+  "09-07": { text: "Clean air is life's invisible foundation, on Earth and beyond.", event: "International Day of Clean Air" },
+  "03-22": { text: "Every drop matters, whether in oceans or spacecraft.", event: "World Water Day" },
+  "04-12": { text: "Humanity's journey into space began with one remarkable flight.", event: "International Day of Human Space Flight" },
+  "11-10": { text: "Every discovery begins with the courage to question.", event: "World Science Day for Peace and Development" },
+  "07-30": { text: "Across galaxies, human connection remains our greatest constant.", event: "International Day of Friendship" },
+  "10-16": { text: "Nourishment is the foundation of every extraordinary expedition.", event: "World Food Day" },
+  "05-16": { text: "Light helps us explore the universe and understand life.", event: "International Day of Light" },
+  "06-08": { text: "Our oceans regulate the blue planet we call home.", event: "World Oceans Day" },
+  "05-22": { text: "Protecting biodiversity means protecting the future of life.", event: "International Day for Biological Diversity" },
+  "03-21": { text: "Every forest contributes to the planet's breathing system.", event: "International Day of Forests" },
+  "03-13": { text: "Sleep restores the mind and body for tomorrow's discoveries.", event: "World Sleep Day" },
+  "07-11": { text: "A growing population deserves healthier environments and sustainable futures.", event: "World Population Day" },
+  "06-07": { text: "Safe food sustains healthy explorers across every frontier.", event: "World Food Safety Day" },
+  "05-03": { text: "The Sun powers life, discovery, and our changing planet.", event: "International Sun Day" },
+  "09-29": { text: "Every heartbeat deserves attention, wherever humanity travels.", event: "World Heart Day" },
+  "12-05": { text: "Healthy soil sustains the food systems that sustain us.", event: "World Soil Day" },
+  "04-21": { text: "Innovation transforms scientific curiosity into meaningful progress.", event: "World Creativity and Innovation Day" },
+  "09-21": { text: "A peaceful mind supports a resilient human spirit.", event: "International Day of Peace" },
+  "10-02": { text: "Every breath reminds us how precious Earth's atmosphere is.", event: "World Space Week" },
+  "03-03": { text: "Protecting wildlife means preserving the balance of our ecosystems.", event: "World Wildlife Day" },
+  "11-20": { text: "Every generation inherits the responsibility of a living planet.", event: "World Children's Day" },
+  "03-23": { text: "Understanding our climate helps protect tomorrow's explorers.", event: "World Meteorological Day" },
+  "12-20": { text: "Human resilience grows through knowledge, care, and connection.", event: "International Human Solidarity Day" },
+  "12-08": { text: "Our planet's changing climate deserves our scientific attention.", event: "World Climate Day" },
+  "03-18": { text: "Every step toward sustainability shapes humanity's future among the stars.", event: "Global Recycling Day" },
+  "02-11": { text: "Scientific discoveries flourish when every mind has room to explore.", event: "International Day of Women and Girls in Science" }
 };
 
-// Detailed Articulated 3D Astronaut rendered when scene.bin is absent from repo
-const ProceduralAstronautModel = ({ isHovered }) => {
-  const rightShoulderRef = useRef();
-  const rightElbowRef = useRef();
-  const leftShoulderRef = useRef();
-  const headRef = useRef();
-  const leftLegRef = useRef();
-  const rightLegRef = useRef();
+const getDailyMessage = () => {
+  const today = new Date();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  const dateKey = `${month}-${day}`;
 
-  const [suitTex, visorTex] = useMemo(() => {
-    const loader = new THREE.TextureLoader();
-    const s = loader.load('/animated_astronaut_in_space_suit_loop/textures/material0_baseColor.png');
-    s.colorSpace = THREE.SRGBColorSpace;
-    const v = loader.load('/animated_astronaut_in_space_suit_loop/textures/material1_baseColor.png');
-    v.colorSpace = THREE.SRGBColorSpace;
-    return [s, v];
-  }, []);
+  if (SPECIAL_DAYS[dateKey]) {
+    return SPECIAL_DAYS[dateKey];
+  }
 
-  useEffect(() => {
-    return () => {
-      suitTex?.dispose();
-      visorTex?.dispose();
-    };
-  }, [suitTex, visorTex]);
-
-  useFrame((state) => {
-    const t = state.clock.getElapsedTime();
-    const speed = isHovered ? 2.1 : 1.0;
-
-    // Gentle waving right arm + subtle zero-G counter balance
-    if (rightShoulderRef.current) {
-      rightShoulderRef.current.rotation.z = 2.15 + Math.sin(t * 2.2 * speed) * 0.28;
-      rightShoulderRef.current.rotation.x = -0.25 + Math.cos(t * 1.4) * 0.08;
-    }
-    if (rightElbowRef.current) {
-      rightElbowRef.current.rotation.z = 0.55 + Math.sin(t * 3.0 * speed + 0.5) * 0.26;
-    }
-    if (leftShoulderRef.current) {
-      leftShoulderRef.current.rotation.z = -0.22 + Math.sin(t * 1.1) * 0.06;
-      leftShoulderRef.current.rotation.x = 0.12 + Math.cos(t * 1.3) * 0.07;
-    }
-    if (headRef.current) {
-      headRef.current.rotation.y = Math.sin(t * 0.8) * 0.12;
-      headRef.current.rotation.x = Math.sin(t * 1.1) * 0.05;
-    }
-    if (leftLegRef.current && rightLegRef.current) {
-      leftLegRef.current.rotation.x = Math.sin(t * 1.2) * 0.06;
-      rightLegRef.current.rotation.x = -Math.sin(t * 1.2) * 0.06;
-    }
-  });
-
-  return (
-    <group>
-      {/* Torso & Chest Assembly */}
-      <mesh position={[0, 1.04, 0]}>
-        <capsuleGeometry args={[0.24, 0.36, 12, 24]} />
-        <meshStandardMaterial color="#e8edf5" map={suitTex} roughness={0.55} metalness={0.18} />
-      </mesh>
-
-      {/* Waist Belt / Gimbal Ring */}
-      <mesh position={[0, 0.77, 0]}>
-        <cylinderGeometry args={[0.24, 0.23, 0.1, 24]} />
-        <meshStandardMaterial color="#1f2c40" roughness={0.45} metalness={0.55} />
-      </mesh>
-
-      {/* Chest Telemetry Display Control Module (DCM) */}
-      <mesh position={[0, 1.08, 0.23]}>
-        <boxGeometry args={[0.24, 0.2, 0.1]} />
-        <meshStandardMaterial color="#cad4e2" roughness={0.4} metalness={0.45} />
-      </mesh>
-      <mesh position={[-0.055, 1.11, 0.285]}>
-        <boxGeometry args={[0.075, 0.055, 0.015]} />
-        <meshBasicMaterial color={isHovered ? '#00ffff' : '#38bdf8'} />
-      </mesh>
-      <mesh position={[0.055, 1.11, 0.285]} rotation={[Math.PI / 2, 0, 0]}>
-        <cylinderGeometry args={[0.02, 0.02, 0.015, 16]} />
-        <meshBasicMaterial color="#ff5a5f" />
-      </mesh>
-
-      {/* PLSS Life Support Backpack */}
-      <mesh position={[0, 1.08, -0.25]}>
-        <boxGeometry args={[0.42, 0.54, 0.2]} />
-        <meshStandardMaterial color="#dce4f0" roughness={0.5} metalness={0.25} />
-      </mesh>
-      <mesh position={[0.14, 1.42, -0.28]}>
-        <cylinderGeometry args={[0.012, 0.012, 0.22, 10]} />
-        <meshStandardMaterial color="#94a3b8" metalness={0.8} roughness={0.2} />
-      </mesh>
-      <mesh position={[0.14, 1.54, -0.28]}>
-        <sphereGeometry args={[0.022, 12, 12]} />
-        <meshBasicMaterial color="#00ffcc" />
-      </mesh>
-
-      {/* Helmet & Neck Seal Ring */}
-      <mesh position={[0, 1.36, 0]} rotation={[Math.PI / 2, 0, 0]}>
-        <torusGeometry args={[0.19, 0.038, 14, 28]} />
-        <meshStandardMaterial color="#253652" metalness={0.65} roughness={0.3} />
-      </mesh>
-
-      <group ref={headRef} position={[0, 1.56, 0]}>
-        {/* White Helmet Shell */}
-        <mesh>
-          <sphereGeometry args={[0.255, 32, 32]} />
-          <meshStandardMaterial color="#f1f5f9" roughness={0.35} metalness={0.2} />
-        </mesh>
-        {/* Gold/Obsidian Reflective EVA Visor */}
-        <mesh position={[0, -0.01, 0.075]} scale={[0.92, 0.88, 0.92]}>
-          <sphereGeometry args={[0.225, 32, 32]} />
-          <meshStandardMaterial
-            color="#d49b38"
-            map={visorTex}
-            roughness={0.1}
-            metalness={0.92}
-            emissive="#1a1204"
-            emissiveIntensity={0.45}
-          />
-        </mesh>
-        {/* Visor Oat Yellow HUD Glint */}
-        <mesh position={[-0.08, 0.06, 0.25]}>
-          <sphereGeometry args={[0.025, 12, 12]} />
-          <meshBasicMaterial color="#f6eedb" transparent opacity={0.7} />
-        </mesh>
-        {/* Side Helmet Comms Pods */}
-        <mesh position={[-0.255, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
-          <cylinderGeometry args={[0.065, 0.065, 0.05, 16]} />
-          <meshStandardMaterial color="#334155" metalness={0.55} roughness={0.4} />
-        </mesh>
-        <mesh position={[0.255, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
-          <cylinderGeometry args={[0.065, 0.065, 0.05, 16]} />
-          <meshStandardMaterial color="#334155" metalness={0.55} roughness={0.4} />
-        </mesh>
-      </group>
-
-      {/* Left Arm */}
-      <group ref={leftShoulderRef} position={[-0.29, 1.24, 0]}>
-        <mesh>
-          <sphereGeometry args={[0.095, 16, 16]} />
-          <meshStandardMaterial color="#e2e8f0" roughness={0.5} />
-        </mesh>
-        <mesh position={[-0.04, -0.18, 0.02]} rotation={[0, 0, -0.14]}>
-          <capsuleGeometry args={[0.072, 0.24, 10, 16]} />
-          <meshStandardMaterial color="#e8edf5" map={suitTex} roughness={0.6} />
-        </mesh>
-        <mesh position={[-0.07, -0.4, 0.07]} rotation={[0.25, 0, -0.08]}>
-          <capsuleGeometry args={[0.065, 0.22, 10, 16]} />
-          <meshStandardMaterial color="#dce4f0" roughness={0.55} />
-        </mesh>
-        <mesh position={[-0.08, -0.56, 0.1]}>
-          <sphereGeometry args={[0.068, 14, 14]} />
-          <meshStandardMaterial color="#1e293b" roughness={0.45} metalness={0.4} />
-        </mesh>
-      </group>
-
-      {/* Right Arm (Waving) */}
-      <group ref={rightShoulderRef} position={[0.29, 1.24, 0]}>
-        <mesh>
-          <sphereGeometry args={[0.095, 16, 16]} />
-          <meshStandardMaterial color="#e2e8f0" roughness={0.5} />
-        </mesh>
-        <mesh position={[0.02, -0.17, 0.02]}>
-          <capsuleGeometry args={[0.072, 0.23, 10, 16]} />
-          <meshStandardMaterial color="#e8edf5" map={suitTex} roughness={0.6} />
-        </mesh>
-        <group ref={rightElbowRef} position={[0.02, -0.34, 0.02]}>
-          <mesh position={[0.02, -0.14, 0.04]}>
-            <capsuleGeometry args={[0.064, 0.2, 10, 16]} />
-            <meshStandardMaterial color="#dce4f0" roughness={0.55} />
-          </mesh>
-          <mesh position={[0.03, -0.28, 0.06]}>
-            <sphereGeometry args={[0.068, 14, 14]} />
-            <meshStandardMaterial color="#1e293b" roughness={0.45} metalness={0.4} />
-          </mesh>
-        </group>
-      </group>
-
-      {/* Left Leg & EVA Boot */}
-      <group ref={leftLegRef} position={[-0.125, 0.72, 0]}>
-        <mesh position={[0, -0.18, 0]}>
-          <capsuleGeometry args={[0.092, 0.26, 10, 18]} />
-          <meshStandardMaterial color="#e8edf5" map={suitTex} roughness={0.6} />
-        </mesh>
-        <mesh position={[0, -0.45, -0.01]}>
-          <capsuleGeometry args={[0.084, 0.26, 10, 18]} />
-          <meshStandardMaterial color="#dce4f0" roughness={0.55} />
-        </mesh>
-        <mesh position={[0, -0.64, 0.045]}>
-          <boxGeometry args={[0.14, 0.1, 0.24]} />
-          <meshStandardMaterial color="#1e293b" roughness={0.5} metalness={0.45} />
-        </mesh>
-      </group>
-
-      {/* Right Leg & EVA Boot */}
-      <group ref={rightLegRef} position={[0.125, 0.72, 0]}>
-        <mesh position={[0, -0.18, 0]}>
-          <capsuleGeometry args={[0.092, 0.26, 10, 18]} />
-          <meshStandardMaterial color="#e8edf5" map={suitTex} roughness={0.6} />
-        </mesh>
-        <mesh position={[0, -0.45, -0.01]}>
-          <capsuleGeometry args={[0.084, 0.26, 10, 18]} />
-          <meshStandardMaterial color="#dce4f0" roughness={0.55} />
-        </mesh>
-        <mesh position={[0, -0.64, 0.045]}>
-          <boxGeometry args={[0.14, 0.1, 0.24]} />
-          <meshStandardMaterial color="#1e293b" roughness={0.5} metalness={0.45} />
-        </mesh>
-      </group>
-    </group>
-  );
+  const randomGenMsg = GENERAL_MESSAGES[Math.floor(Math.random() * GENERAL_MESSAGES.length)];
+  return { text: randomGenMsg, event: null };
 };
 
-// ── 3D Astronaut Component with Evasion Physics ───────────────────────────
-const Astronaut = ({ onHover, isHovered, positionSide = 'right' }) => {
-  const group = useRef();
-  const actionRef = useRef(null);
-
-  const enterTimeRef = useRef(null);
-
-  // Dynamic target positioning for smooth planet-style cross-screen transitions
-  const getTargets = (side) => {
-    switch (side) {
-      case 'center':
-      case 'welcome': {
-        const now = performance.now();
-        if (enterTimeRef.current === null) {
-          enterTimeRef.current = now;
-        }
-        const elapsedSec = Math.max(0, (now - enterTimeRef.current) / 1000);
-        const flyProgress = THREE.MathUtils.clamp(elapsedSec / 1.8, 0, 1);
-        const ease = 1 - Math.pow(1 - flyProgress, 3);
-        const dynamicScale = THREE.MathUtils.lerp(5.5, 33.5, ease);
-        const dynamicY = THREE.MathUtils.lerp(-10.0, -26.0, ease);
-        const dynamicZ = THREE.MathUtils.lerp(-55.0, 12.0, ease);
-        return { x: 0.0, y: dynamicY, z: dynamicZ, scale: dynamicScale, facingY: 0.0 };
-      }
-      case 'login-right': {
-        enterTimeRef.current = null;
-        return { x: 12.8, y: -13.0, z: 0.0, scale: 10.2, facingY: -0.22 };
-      }
-      case 'login-left': {
-        enterTimeRef.current = null;
-        return { x: -12.8, y: -13.0, z: 0.0, scale: 10.2, facingY: 0.22 };
-      }
-      case 'dashboard': {
-        enterTimeRef.current = null;
-        return { x: -30.5, y: -15.0, z: 0.0, scale: 13.5, facingY: 0.28 };
-      }
-      default:
-        enterTimeRef.current = null;
-        return { x: 0.0, y: -16.0, z: 0.0, scale: 16.5, facingY: 0.0 };
-    }
-  };
-
-  const initial = getTargets(positionSide);
-  const currentBaseX = useRef(initial.x);
-  const currentBaseY = useRef(initial.y);
-  const currentBaseZ = useRef(initial.z || 0.0);
-  const currentScale = useRef(initial.scale);
-  const currentOffset = useRef(new THREE.Vector3(0, 0, 0));
-  const plane = useMemo(() => new THREE.Plane(new THREE.Vector3(0, 0, 1), 0), []);
-  const mouse3D = useMemo(() => new THREE.Vector3(), []);
-
-  useFrame((state) => {
-    if (!group.current) return;
-    const t = state.clock.getElapsedTime();
-    const { x: targetX, y: targetY, z: targetZ = 0.0, scale: targetScale, facingY: targetFacingY } = getTargets(positionSide);
-
-    currentBaseX.current = THREE.MathUtils.lerp(currentBaseX.current, targetX, 0.05);
-    currentBaseY.current = THREE.MathUtils.lerp(currentBaseY.current, targetY, 0.05);
-    currentBaseZ.current = THREE.MathUtils.lerp(currentBaseZ.current, targetZ, 0.05);
-    currentScale.current = THREE.MathUtils.lerp(currentScale.current, targetScale, 0.05);
-
-    plane.constant = -currentBaseZ.current;
-    state.raycaster.setFromCamera(state.pointer, state.camera);
-    state.raycaster.ray.intersectPlane(plane, mouse3D);
-
-    const astroCenter = new THREE.Vector3(
-      currentBaseX.current + currentOffset.current.x,
-      currentBaseY.current + (currentScale.current * 0.95) + currentOffset.current.y,
-      currentBaseZ.current + currentOffset.current.z
-    );
-
-    const distToMouse = astroCenter.distanceTo(mouse3D);
-    const evadeRadius = positionSide === 'center' ? (currentScale.current * 2.2) : 20.0;
-    const isEscaping = distToMouse < evadeRadius;
-
-    if (onHover) onHover(isEscaping);
-
-    if (actionRef.current) {
-      const targetSpeed = isEscaping ? 2.2 : 0.65;
-      actionRef.current.timeScale = THREE.MathUtils.lerp(actionRef.current.timeScale, targetSpeed, 0.08);
-    }
-
-    const targetOffset = new THREE.Vector3(0, 0, 0);
-
-    if (isEscaping && positionSide === 'center') {
-      const repelDir = astroCenter.clone().sub(mouse3D).normalize();
-      const forceRatio = (evadeRadius - distToMouse) / evadeRadius;
-      const force = Math.pow(forceRatio, 1.2) * 24.0;
-      targetOffset.x = repelDir.x * force * 1.1;
-      targetOffset.y = repelDir.y * force * 0.8;
-      targetOffset.z = -force * 0.85;
-    }
-
-    targetOffset.y += Math.sin(t * 1.5) * 1.6;
-    targetOffset.x += Math.cos(t * 0.9) * 0.9;
-    currentOffset.current.lerp(targetOffset, 0.09);
-
-    group.current.position.set(
-      currentBaseX.current + currentOffset.current.x,
-      currentBaseY.current + currentOffset.current.y,
-      currentBaseZ.current + currentOffset.current.z
-    );
-    group.current.scale.setScalar(currentScale.current);
-
-    let targetRotY = targetFacingY + Math.sin(t * 0.5) * 0.12;
-    let targetRotX = Math.sin(t * 0.7) * 0.05;
-    let targetRotZ = Math.sin(t * 0.8) * 0.04;
-
-    if (isEscaping && positionSide === 'center') {
-      const dx = astroCenter.x - mouse3D.x;
-      const dy = astroCenter.y - mouse3D.y;
-      targetRotZ = THREE.MathUtils.clamp(-dx * 0.02, -0.4, 0.4);
-      targetRotX = THREE.MathUtils.clamp(-0.25 - dy * 0.015, -0.45, 0.08);
-      targetRotY += THREE.MathUtils.clamp(dx * 0.015, -0.35, 0.35);
-    }
-
-    group.current.rotation.y = THREE.MathUtils.lerp(group.current.rotation.y, targetRotY, 0.08);
-    group.current.rotation.x = THREE.MathUtils.lerp(group.current.rotation.x, targetRotX, 0.08);
-    group.current.rotation.z = THREE.MathUtils.lerp(group.current.rotation.z, targetRotZ, 0.08);
-  });
-
-  return (
-    <group ref={group} style={{ cursor: 'pointer' }}>
-      <AstronautErrorBoundary fallback={<ProceduralAstronautModel isHovered={isHovered} />}>
-        <Suspense fallback={<ProceduralAstronautModel isHovered={isHovered} />}>
-          <ExternalGLTFAstronaut onSetAction={(act) => { actionRef.current = act; }} />
-        </Suspense>
-      </AstronautErrorBoundary>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.05, 0]}>
-        <ringGeometry args={[1.1, 1.45, 64]} />
-        <meshBasicMaterial color={isHovered ? '#f6eedb' : '#ead9b2'} transparent opacity={isHovered ? 0.9 : 0.35} side={THREE.DoubleSide} />
-      </mesh>
-    </group>
-  );
-};
-
-useGLTF.preload('/animated_astronaut_in_space_suit_loop/scene.gltf');
 
 // ── MAIN APPLICATION COMPONENT ────────────────────────────────────────────
 export default function InovavPortal({
@@ -950,8 +666,8 @@ export default function InovavPortal({
   showProfileSettings = false,
   onCloseProfileSettings,
 }) {
-  const [screen, setScreen] = useState(initialScreen); // 'intro' | 'astronaut' | 'login' | 'dashboard'
-  const [loginMode, setLoginMode] = useState('signin'); // 'signin' | 'signup'
+  const [screen, setScreen] = useState(initialScreen);
+  const [loginMode, setLoginMode] = useState('signin');
   const [countdown, setCountdown] = useState(8);
   const [activeTab, setActiveTab] = useState('home');
   const [showBodyScanModal, setShowBodyScanModal] = useState(initialShowBodyScan);
@@ -978,7 +694,6 @@ export default function InovavPortal({
     if (showProfileSettings) setShow3DFaceStudio(true);
   }, [showProfileSettings]);
 
-  // Astronaut DB & Active User
   const [astronauts, setAstronauts] = useState(getStoredAstronauts);
   const [activeAstronaut, setActiveAstronaut] = useState(() => {
     if (propActiveAstronaut && propActiveAstronaut.id) return propActiveAstronaut;
@@ -993,20 +708,20 @@ export default function InovavPortal({
   }, [propActiveAstronaut]);
 
   const [isAstroHovered, setIsAstroHovered] = useState(false);
+  const [dailyGreeting] = useState(getDailyMessage());
 
-  // Visor 3D interactive tilt & angle
-  const [visorMouseX, setVisorMouseX] = useState(0);
-  const [visorMouseY, setVisorMouseY] = useState(0);
   const [show3DFaceStudio, setShow3DFaceStudio] = useState(false);
-  const [suitTelemetryView, setSuitTelemetryView] = useState('metrics'); // 'metrics' | 'auth-log'
+  const [suitTelemetryView, setSuitTelemetryView] = useState('metrics');
   const [faceAuthLogs, setFaceAuthLogs] = useState(getFaceAuthLogs);
-  const [telemetrySide, setTelemetrySide] = useState('left'); // 'left' = Suit Telemetry on the left, Astronaut with 3D Face on the right
+  const [telemetrySide, setTelemetrySide] = useState('left');
   const [exerciseMinutes, setExerciseMinutes] = useState(135);
   const [aredVolume, setAredVolume] = useState(1840);
   const [sleepHours, setSleepHours] = useState(6.6);
   const [psychReadiness, setPsychReadiness] = useState(7.0);
 
-  // Real-time Heart Rate Telemetry Buffer for Suit Telemetry Line Chart
+  const [visorMouseX, setVisorMouseX] = useState(0);
+  const [visorMouseY, setVisorMouseY] = useState(0);
+
   const [heartRateHistory, setHeartRateHistory] = useState(() => {
     const now = Date.now();
     return Array.from({ length: 24 }, (_, idx) => {
@@ -1020,14 +735,6 @@ export default function InovavPortal({
 
   const liveHeartRate = heartRateHistory[heartRateHistory.length - 1]?.bpm ?? 74;
 
-  // Dynamic 3D model positioning for continuous planetary-style transition
-  const astroPositionSide = useMemo(() => {
-    if (screen === 'astronaut') return 'center';
-    if (screen === 'login') return loginMode === 'signup' ? 'login-left' : 'login-right';
-    return 'center';
-  }, [screen, loginMode]);
-
-  // Sync astronauts database with Google Cloud / Firebase Firestore
   useEffect(() => {
     getAstronautsFromFirebase().then((cloudList) => {
       if (cloudList && cloudList.length > 0) {
@@ -1038,7 +745,6 @@ export default function InovavPortal({
     });
   }, []);
 
-  // 8-second auto intro transition to welcome astronaut page
   useEffect(() => {
     if (screen !== 'intro') return;
     const timer = setInterval(() => {
@@ -1054,7 +760,6 @@ export default function InovavPortal({
     return () => clearInterval(timer);
   }, [screen]);
 
-  // Real-time 1 Hz heart rate telemetry stream while Suit Telemetry dashboard is active
   useEffect(() => {
     if (screen !== 'dashboard') return;
     let tick = 24;
@@ -1089,7 +794,6 @@ export default function InovavPortal({
     if (onAstronautChange) onAstronautChange(updatedAstro);
   };
 
-  // Determine current active face snap (center, left, right) based on mouse hover across visor
   const currentVisorFaceSnap = useMemo(() => {
     const snaps = activeAstronaut.faceSnaps || {};
     if (visorMouseX < -0.2 && snaps.left) return snaps.left;
@@ -1097,35 +801,9 @@ export default function InovavPortal({
     return snaps.center || snaps.left || snaps.right || null;
   }, [visorMouseX, activeAstronaut]);
 
+
   return (
     <div style={{ position: 'relative', width: '100%', minHeight: '100vh', height: '100vh', background: '#f6eedb', color: '#06132b', overflow: 'hidden' }}>
-
-      {/* Floating Back Navigation Bar */}
-      {onBackToOverview && (
-        <div style={{ position: 'fixed', top: '16px', left: '16px', zIndex: 99999, display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <button
-            type="button"
-            onClick={onBackToOverview}
-            className="tech-btn"
-            style={{
-              padding: '8px 18px',
-              fontSize: '0.72rem',
-              letterSpacing: '0.14em',
-              background: '#06132b',
-              border: '1px solid rgba(6, 19, 43, 0.4)',
-              color: '#f6eedb',
-              backdropFilter: 'blur(12px)',
-              boxShadow: '0 4px 24px rgba(6, 19, 43, 0.25)',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-            }}
-          >
-            <span>←</span>
-            <span>RETURN TO OVERVIEW</span>
-          </button>
-        </div>
-      )}
 
       {/* ── 1. STARTING SCREEN: RIDGE IN THE CENTER & 8S TIMEOUT ── */}
       {screen === 'intro' && (
@@ -1239,7 +917,57 @@ export default function InovavPortal({
         </div>
       )}
 
-      {/* ── PERSISTENT 3D ASTRONAUT & PARTICLE SWARM SCENE (WELCOME & LOGIN SCREENS ONLY) ── */}
+      {/* ── NEW: CROSS-DOMAIN OPERATIONS SCREEN ── */}
+      {screen === 'cross-domain' && (
+        <div className="screen-fade" style={{ position: 'absolute', inset: 0, zIndex: 30, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#06132b', padding: '20px', overflowY: 'auto' }}>
+          <div style={{ position: 'fixed', inset: 0, backgroundImage: 'radial-gradient(circle at 50% 50%, rgba(14, 40, 89, 0.6) 0%, #06132b 80%)', pointerEvents: 'none' }} />
+
+          <div style={{ position: 'absolute', top: '40px', left: '40px', zIndex: 40 }}>
+            <button onClick={() => setScreen('intro')} className="tech-btn" style={{ padding: '8px 16px', fontSize: '0.75rem', letterSpacing: '0.15em' }}>
+              ← BACK TO SYSTEM BOOT
+            </button>
+          </div>
+
+          <div style={{ position: 'relative', zIndex: 10, maxWidth: '900px', width: '100%', textAlign: 'center', margin: 'auto' }}>
+            <span className="font-mono" style={{ fontSize: '0.85rem', color: '#9fb6da', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: '16px', display: 'block' }}>
+              RIDGE // MULTI-ENVIRONMENT SUPPORT
+            </span>
+            <h1 className="font-tech" style={{ fontSize: 'clamp(2.2rem, 5vw, 3.5rem)', fontWeight: 600, color: '#f6eedb', marginBottom: '40px', letterSpacing: '0.05em' }}>
+              Cross-Domain Operations
+            </h1>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '30px', textAlign: 'left' }}>
+              {/* Card 1: Submariners */}
+              <div style={{ background: 'rgba(10, 28, 63, 0.6)', border: '1px solid rgba(0, 229, 255, 0.3)', borderRadius: '16px', padding: '32px', backdropFilter: 'blur(12px)', boxShadow: '0 12px 32px rgba(0,0,0,0.4)' }}>
+                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+                    <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'rgba(0, 229, 255, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(0, 229, 255, 0.4)' }}>
+                      <Radio className="w-6 h-6 text-[#00e5ff]" />
+                    </div>
+                    <h3 style={{ fontSize: '1.4rem', color: '#f6eedb', margin: 0, fontWeight: 500 }}>Deep-Sea Submariners</h3>
+                 </div>
+                 <p style={{ color: '#9fb6da', fontSize: '0.9rem', lineHeight: 1.6, margin: 0 }}>
+                   Extreme pressure environments require continuous physiological monitoring. The RIDGE system tracks oxygen saturation, stress levels, and isolation fatigue for naval submarine crews during prolonged underwater deployments, ensuring operational readiness beneath the surface.
+                 </p>
+              </div>
+
+              {/* Card 2: HERA Analog */}
+              <div style={{ background: 'rgba(10, 28, 63, 0.6)', border: '1px solid rgba(255, 115, 0, 0.3)', borderRadius: '16px', padding: '32px', backdropFilter: 'blur(12px)', boxShadow: '0 12px 32px rgba(0,0,0,0.4)' }}>
+                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+                    <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'rgba(255, 115, 0, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(255, 115, 0, 0.4)' }}>
+                      <Activity className="w-6 h-6 text-[#ff7300]" />
+                    </div>
+                    <h3 style={{ fontSize: '1.4rem', color: '#f6eedb', margin: 0, fontWeight: 500 }}>HERA Analog Astronauts</h3>
+                 </div>
+                 <p style={{ color: '#9fb6da', fontSize: '0.9rem', lineHeight: 1.6, margin: 0 }}>
+                   Simulating deep-space isolation on Earth. RIDGE monitors behavioral health, team dynamics, and biometric baselines for crews in the Human Exploration Research Analog (HERA), preparing humanity for the psychological demands of Mars-bound missions.
+                 </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── PERSISTENT PARTICLE SWARM SCENE (WELCOME & LOGIN SCREENS ONLY) ── */}
       {(screen === 'astronaut' || screen === 'login') && (
         <div
           style={{
@@ -1255,13 +983,6 @@ export default function InovavPortal({
             <directionalLight position={[-25, 10, 20]} intensity={1.0} color="#9fb8de" />
             <pointLight position={[0, 10, 30]} intensity={1.6} color="#ead9b2" distance={80} />
             <PetrovaParticleSwarm />
-            <Suspense fallback={null}>
-              <Astronaut
-                onHover={setIsAstroHovered}
-                isHovered={isAstroHovered}
-                positionSide={astroPositionSide}
-              />
-            </Suspense>
             <OrbitControls autoRotate={false} enableDamping={true} enabled={false} />
             <Effects disableGamma>
               <unrealBloomPass threshold={0.85} strength={0.4} radius={0.2} />
@@ -1279,55 +1000,110 @@ export default function InovavPortal({
         </div>
       )}
 
-      {/* ── 2. WELCOME PAGE: ANIMATED WELCOME + 3D ASTRONAUT + LOGIN BUTTON ── */}
+      {/* ── 2. WELCOME PAGE: ANIMATED WELCOME + MESSAGE + LOGIN BUTTON ── */}
       {screen === 'astronaut' && (
-        <div className="screen-fade" style={{ position: 'absolute', inset: 0, zIndex: 10, pointerEvents: 'none' }}>
-          {/* Animated Welcome Heading */}
-          <div
-            style={{
-              position: 'absolute',
-              top: '56px',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              zIndex: 10,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              textAlign: 'center',
-              userSelect: 'none',
-              pointerEvents: 'none',
-            }}
-          >
-            <h1
-              className="welcome-title font-tech"
+        <div
+          className="screen-fade"
+          style={{
+            position: 'absolute',
+            inset: 0,
+            zIndex: 10,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            pointerEvents: 'none',
+            gap: '36px'
+          }}
+        >
+         {/* Animated Welcome Heading & Message Container */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', width: '100%' }}>
+
+          {/* Small, subtle Welcome text */}
+        <h1
+          className="font-tech"
+          style={{
+            margin: 0,
+            fontSize: '54px', // Reduced from (1rem, 3vw, 1.4rem)
+            fontWeight: 500,                         // Reduced weight for subtlety
+            color: '#9fb6da',
+            letterSpacing: '0.6em',                  // Increased tracking for that "tech" look
+            lineHeight: 1,
+            textTransform: 'uppercase',
+            textShadow: '0 0 15px rgba(159, 182, 218, 0.3)' // Dimmed the glow slightly
+          }}
+        >
+          Welcome
+        </h1>
+{/* Daily Wishing Message (Glassmorphism Tech Card) */}
+<div
+  style={{
+    marginTop: '16px',
+    maxWidth: '840px',    // Brought down slightly to frame the text better
+    width: '94%',
+    padding: '40px 56px', // Slightly tighter padding to match the new text scale
+    background: 'linear-gradient(180deg, rgba(10, 28, 63, 0.4) 0%, rgba(6, 19, 43, 0.7) 100%)',
+    border: '1px solid rgba(246, 238, 219, 0.15)',
+    borderRadius: '16px',
+    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4), inset 0 0 16px rgba(246,238,219,0.05)',
+    backdropFilter: 'blur(12px)',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: '24px',
+    pointerEvents: 'auto',
+  }}
+>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Radio className="w-4 h-4 text-cyan-400 animate-pulse" />
+                <span className="font-mono" style={{ fontSize: '0.75rem', color: '#9fb6da', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
+                  SECURE CREW TRANSMISSION
+                </span>
+              </div>
+
+            {/* Massive, bold wishing message */}
+            <h2
+              className="font-tech"
               style={{
                 margin: 0,
-                fontSize: 'clamp(2.8rem, 6vw, 4.8rem)',
-                fontWeight: 600,
-                color: '#06132b',
-                textIndent: '0.34em',
-                lineHeight: 1.05,
+                fontSize: '27px', // Scaled down significantly for a 2-line fit
+                fontWeight: 700,
+                color: '#f6eedb',
+                letterSpacing: '0.04em',
+                lineHeight: 1.3,                          // Relaxed line height for readability
                 textTransform: 'uppercase',
+                textShadow: '0 0 30px rgba(246, 238, 219, 0.5)', // Softer, cleaner glow
+                textAlign: 'center',
+                textWrap: 'balance',                      // Ensures lines are roughly equal in width
               }}
             >
-              Welcome
-            </h1>
+              "{dailyGreeting.text}"
+            </h2>
+
+              {dailyGreeting.event && (
+                <div className="font-mono" style={{
+                  marginTop: '8px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  fontSize: '0.75rem',
+                  color: '#ead9b2',
+                  background: 'rgba(234, 217, 178, 0.1)',
+                  padding: '6px 16px',
+                  borderRadius: '20px',
+                  border: '1px solid rgba(234, 217, 178, 0.25)',
+                  letterSpacing: '0.1em',
+                  textTransform: 'uppercase',
+                }}>
+                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981', boxShadow: '0 0 8px #10b981' }}></span>
+                  {dailyGreeting.event}
+                </div>
+              )}
+            </div>
           </div>
 
-          {/* Single Login Button */}
-          <div
-            style={{
-              position: 'absolute',
-              bottom: '56px',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              zIndex: 10,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              pointerEvents: 'auto',
-            }}
-          >
+          {/* Centered Login Button */}
+          <div style={{ pointerEvents: 'auto' }}>
             <button
               type="button"
               onClick={() => {
@@ -2230,7 +2006,7 @@ export default function InovavPortal({
             {activeTab === 'calendar' && (
               <div style={{ maxWidth: '640px', marginLeft: 'auto', marginRight: 'auto' }}>
                 <div className="font-mono" style={{ fontSize: '0.72rem', color: '#1e3a8a', letterSpacing: '0.22em', marginBottom: '8px', textTransform: 'uppercase', fontWeight: 700 }}>
-                  INOVA // ASTRONAUT CHRONO SCHEDULE
+                  RIDGE // ASTRONAUT CHRONO SCHEDULE
                 </div>
                 <h2 style={{ fontSize: '2rem', fontWeight: 600, color: '#06132b', margin: '0 0 20px 0' }}>Daily Mission Schedule</h2>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
@@ -2434,16 +2210,19 @@ export default function InovavPortal({
           </main>
         </div>
 
-        {/* ── SECTION 2: MONITOR HEALTH PAGE (CONTINUING DOWNWARDS DIRECTLY ON THE SAME PAGE) ── */}
+       {/* ── SECTION 2: MONITOR HEALTH PAGE (CONTINUING DOWNWARDS DIRECTLY ON THE SAME PAGE) ── */}
         <div
           id="monitor-health-section"
           style={{
             position: 'relative',
             width: '100%',
+            height: '100vh',
             minHeight: '960px',
             borderTop: '1px solid rgba(6, 19, 43, 0.15)',
             zIndex: 20,
             backgroundColor: '#f6eedb',
+            transform: 'translateZ(0)', // Traps the fixed 3D canvas inside this container
+            overflow: 'hidden',         // Prevents the 3D model from bleeding out of the section
           }}
         >
           {/* Section Header Anchor */}
@@ -2459,6 +2238,8 @@ export default function InovavPortal({
               background: '#06132b',
               color: '#f6eedb',
               boxShadow: '0 4px 20px rgba(6, 19, 43, 0.18)',
+              position: 'relative',
+              zIndex: 30,
             }}
           >
             <div>
@@ -2487,6 +2268,7 @@ export default function InovavPortal({
                   padding: '8px 16px',
                   fontSize: '0.7rem',
                   letterSpacing: '0.14em',
+                  cursor: 'pointer',
                 }}
               >
                 ↑ SUIT TELEMETRY
