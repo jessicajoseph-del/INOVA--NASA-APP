@@ -76,6 +76,7 @@ const saveAstronautToDb = (newAstro) => {
     const current = getStoredAstronauts();
     const updated = [...current.filter((a) => a.id.toLowerCase() !== newAstro.id.toLowerCase()), newAstro];
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+    // Persist to Google Cloud / Firebase Firestore
     saveAstronautToFirebase(newAstro).catch(console.warn);
     return updated;
   } catch (err) {
@@ -139,6 +140,217 @@ const HolographicBody3D = ({ scanProgress }) => {
     </group>
   );
 };
+
+// ── NAV.JPG FAITHFUL ICONSAX VECTOR ICONS ─────────────────────────────────
+const RabbitIcon = ({ size = 22, color = '#ffffff' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <path
+      d="M6 3.5L8.5 10.5L12 6.5L15.5 10.5L18 3.5C19.2 6.8 20 11.2 18.2 15C16.8 18 14.5 20.5 12 20.5C9.5 20.5 7.2 18 5.8 15C4 11.2 4.8 6.8 6 3.5Z"
+      stroke={color}
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      fill={color}
+    />
+  </svg>
+);
+
+const HomeNavIcon = ({ size = 20, color = 'currentColor' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <path
+      d="M4.5 11.5C4.5 6.8 7.8 3 12 3C16.2 3 19.5 6.8 19.5 11.5V17.5C19.5 19.4 17.9 21 16 21H8C6.1 21 4.5 19.4 4.5 17.5V11.5Z"
+      stroke={color}
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M9 13.5C10.2 15.2 13.8 15.2 15 13.5"
+      stroke={color}
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+const ProjectsNavIcon = ({ size = 20, color = 'currentColor' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <path
+      d="M9 6V4.5C9 3.67 9.67 3 10.5 3H13.5C14.33 3 15 3.67 15 4.5V6"
+      stroke={color}
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <rect
+      x="3.5"
+      y="6"
+      width="17"
+      height="15"
+      rx="4"
+      stroke={color}
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M3.5 11.5H9C9.5 11.5 10 12 10 12.5V13C10 14.1 10.9 15 12 15C13.1 15 14 14.1 14 13V12.5C14 12 14.5 11.5 15 11.5H20.5"
+      stroke={color}
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+const MessagesNavIcon = ({ size = 20, color = 'currentColor' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <path
+      d="M8.5 19H16C19 19 21 17.5 21 14V8.5C21 5 19 3.5 16 3.5H8C5 3.5 3 5 3 8.5V16C3 17.7 4 19 5.8 19.5"
+      stroke={color}
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M3.2 16.5L3 20C3 20.6 3.5 21 4.1 20.8L7.5 19.5"
+      stroke={color}
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <circle cx="8" cy="11.5" r="1" fill={color} />
+    <circle cx="12" cy="11.5" r="1" fill={color} />
+    <circle cx="16" cy="11.5" r="1" fill={color} />
+  </svg>
+);
+
+const CalendarNavIcon = ({ size = 20, color = 'currentColor' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <rect
+      x="3.5"
+      y="5"
+      width="17"
+      height="16"
+      rx="4.5"
+      stroke={color}
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M8 2.5V6M16 2.5V6"
+      stroke={color}
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M3.5 9.5H20.5"
+      stroke={color}
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <rect x="7.5" y="12.5" width="1.8" height="1.8" rx="0.5" fill={color} />
+    <rect x="11.1" y="12.5" width="1.8" height="1.8" rx="0.5" fill={color} />
+    <rect x="14.7" y="12.5" width="1.8" height="1.8" rx="0.5" fill={color} />
+    <rect x="7.5" y="16" width="1.8" height="1.8" rx="0.5" fill={color} />
+    <rect x="11.1" y="16" width="1.8" height="1.8" rx="0.5" fill={color} />
+    <rect x="14.7" y="16" width="1.8" height="1.8" rx="0.5" fill={color} />
+  </svg>
+);
+
+const ArchiveNavIcon = ({ size = 20, color = 'currentColor' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <path
+      d="M4 5.5C4 4.4 4.9 3.5 6 3.5H18C19.1 3.5 20 4.4 20 5.5V9C20 10.1 19.1 11 18 11H6C4.9 11 4 10.1 4 9V5.5Z"
+      stroke={color}
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M4.5 11V17.5C4.5 19.4 6.1 21 8 21H16C17.9 21 19.5 19.4 19.5 17.5V11"
+      stroke={color}
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M10 14H14"
+      stroke={color}
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+const AnalyticsNavIcon = ({ size = 20, color = 'currentColor' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <circle
+      cx="12"
+      cy="12"
+      r="9"
+      stroke={color}
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M8.5 15.5V12.5M12 15.5V9M15.5 15.5V11"
+      stroke={color}
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+const AccountNavIcon = ({ size = 20, color = 'currentColor' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <circle
+      cx="12"
+      cy="12"
+      r="9"
+      stroke={color}
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <circle
+      cx="12"
+      cy="12"
+      r="3.2"
+      stroke={color}
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <circle cx="12" cy="12" r="1" fill={color} />
+  </svg>
+);
+
+const SettingsNavIcon = ({ size = 20, color = 'currentColor' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <path
+      d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z"
+      stroke={color}
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M12 3V5.5M12 18.5V21M3 12H5.5M18.5 12H21M5.6 5.6L7.4 7.4M16.6 16.6L18.4 18.4M5.6 18.4L7.4 16.6M16.6 7.4L18.4 5.6"
+      stroke={color}
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
 
 // ── SCREEN 1: Hohmann Transfer Particle Swarm (Intro) ─────────────────────
 const HohmannParticleSwarm = () => {
@@ -679,6 +891,67 @@ export default function InovavPortal({
                   3D VITALS OBSERVATORY 🧬
                 </button>
               </div>
+              
+              <div style={{ marginTop: '20px' }}>
+                <button
+                  type="button"
+                  onClick={() => setScreen('cross-domain')}
+                  className="tech-btn"
+                  style={{ cursor: 'pointer', background: 'rgba(10, 28, 63, 0.4)', color: '#9fb6da', border: '1px solid rgba(159, 182, 218, 0.3)', padding: '10px 24px', fontSize: '0.75rem', letterSpacing: '0.2em' }}
+                >
+                  CROSS-DOMAIN MISSIONS 🌊
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── NEW: CROSS-DOMAIN OPERATIONS SCREEN ── */}
+      {screen === 'cross-domain' && (
+        <div className="screen-fade" style={{ position: 'absolute', inset: 0, zIndex: 30, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#06132b', padding: '20px', overflowY: 'auto' }}>
+          <div style={{ position: 'fixed', inset: 0, backgroundImage: 'radial-gradient(circle at 50% 50%, rgba(14, 40, 89, 0.6) 0%, #06132b 80%)', pointerEvents: 'none' }} />
+
+          <div style={{ position: 'absolute', top: '40px', left: '40px', zIndex: 40 }}>
+            <button onClick={() => setScreen('intro')} className="tech-btn" style={{ padding: '8px 16px', fontSize: '0.75rem', letterSpacing: '0.15em' }}>
+              ← BACK TO SYSTEM BOOT
+            </button>
+          </div>
+
+          <div style={{ position: 'relative', zIndex: 10, maxWidth: '900px', width: '100%', textAlign: 'center', margin: 'auto' }}>
+            <span className="font-mono" style={{ fontSize: '0.85rem', color: '#9fb6da', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: '16px', display: 'block' }}>
+              RIDGE // MULTI-ENVIRONMENT SUPPORT
+            </span>
+            <h1 className="font-tech" style={{ fontSize: 'clamp(2.2rem, 5vw, 3.5rem)', fontWeight: 600, color: '#f6eedb', marginBottom: '40px', letterSpacing: '0.05em' }}>
+              Cross-Domain Operations
+            </h1>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '30px', textAlign: 'left' }}>
+              {/* Card 1: Submariners */}
+              <div style={{ background: 'rgba(10, 28, 63, 0.6)', border: '1px solid rgba(0, 229, 255, 0.3)', borderRadius: '16px', padding: '32px', backdropFilter: 'blur(12px)', boxShadow: '0 12px 32px rgba(0,0,0,0.4)' }}>
+                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+                    <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'rgba(0, 229, 255, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(0, 229, 255, 0.4)' }}>
+                      <Radio className="w-6 h-6 text-[#00e5ff]" />
+                    </div>
+                    <h3 style={{ fontSize: '1.4rem', color: '#f6eedb', margin: 0, fontWeight: 500 }}>Deep-Sea Submariners</h3>
+                 </div>
+                 <p style={{ color: '#9fb6da', fontSize: '0.9rem', lineHeight: 1.6, margin: 0 }}>
+                   Extreme pressure environments require continuous physiological monitoring. The RIDGE system tracks oxygen saturation, stress levels, and isolation fatigue for naval submarine crews during prolonged underwater deployments, ensuring operational readiness beneath the surface.
+                 </p>
+              </div>
+
+              {/* Card 2: HERA Analog */}
+              <div style={{ background: 'rgba(10, 28, 63, 0.6)', border: '1px solid rgba(255, 115, 0, 0.3)', borderRadius: '16px', padding: '32px', backdropFilter: 'blur(12px)', boxShadow: '0 12px 32px rgba(0,0,0,0.4)' }}>
+                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+                    <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'rgba(255, 115, 0, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(255, 115, 0, 0.4)' }}>
+                      <Activity className="w-6 h-6 text-[#ff7300]" />
+                    </div>
+                    <h3 style={{ fontSize: '1.4rem', color: '#f6eedb', margin: 0, fontWeight: 500 }}>HERA Analog Astronauts</h3>
+                 </div>
+                 <p style={{ color: '#9fb6da', fontSize: '0.9rem', lineHeight: 1.6, margin: 0 }}>
+                   Simulating deep-space isolation on Earth. RIDGE monitors behavioral health, team dynamics, and biometric baselines for crews in the Human Exploration Research Analog (HERA), preparing humanity for the psychological demands of Mars-bound missions.
+                 </p>
+              </div>
             </div>
           </div>
         </div>
@@ -733,20 +1006,21 @@ export default function InovavPortal({
             gap: '36px'
           }}
         >
-          {/* Animated Welcome Heading & Message Container */}
+         {/* Animated Welcome Heading & Message Container */}
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', width: '100%' }}>
             
+            {/* Small, subtle Welcome text */}
             <h1
-              className="welcome-title font-tech"
+              className="font-tech"
               style={{
                 margin: 0,
-                fontSize: 'clamp(3.5rem, 8vw, 5.5rem)',
-                fontWeight: 700,
-                color: '#f6eedb',
-                letterSpacing: '0.12em',
+                fontSize: 'clamp(1rem, 3vw, 1.4rem)',
+                fontWeight: 600,
+                color: '#9fb6da',
+                letterSpacing: '0.4em',
                 lineHeight: 1,
                 textTransform: 'uppercase',
-                textShadow: '0 0 40px rgba(246, 238, 219, 0.5)'
+                textShadow: '0 0 20px rgba(159, 182, 218, 0.4)'
               }}
             >
               Welcome
@@ -755,10 +1029,10 @@ export default function InovavPortal({
             {/* Daily Wishing Message (Glassmorphism Tech Card) */}
             <div
               style={{
-                marginTop: '28px',
-                maxWidth: '640px',
-                width: '90%',
-                padding: '24px 32px',
+                marginTop: '20px',
+                maxWidth: '760px', // Made wider to fit the big text beautifully
+                width: '92%',
+                padding: '40px 48px', // Increased padding for breathing room
                 background: 'linear-gradient(180deg, rgba(10, 28, 63, 0.4) 0%, rgba(6, 19, 43, 0.7) 100%)',
                 border: '1px solid rgba(246, 238, 219, 0.15)',
                 borderRadius: '16px',
@@ -767,7 +1041,7 @@ export default function InovavPortal({
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                gap: '14px',
+                gap: '24px',
                 pointerEvents: 'auto',
               }}
             >
@@ -778,28 +1052,34 @@ export default function InovavPortal({
                 </span>
               </div>
               
-              <h3 style={{ 
-                fontSize: '1.25rem', 
-                color: '#f6eedb', 
-                margin: 0, 
-                lineHeight: '1.6', 
-                fontWeight: '300',
-                fontStyle: 'italic',
-                letterSpacing: '0.02em',
-              }}>
+              {/* Massive, bold wishing message */}
+              <h2
+                className="font-tech"
+                style={{
+                  margin: 0,
+                  fontSize: 'clamp(1.6rem, 5vw, 2.8rem)',
+                  fontWeight: 700,
+                  color: '#f6eedb',
+                  letterSpacing: '0.06em',
+                  lineHeight: 1.3,
+                  textTransform: 'uppercase',
+                  textShadow: '0 0 35px rgba(246, 238, 219, 0.5)',
+                  textAlign: 'center'
+                }}
+              >
                 "{dailyGreeting.text}"
-              </h3>
+              </h2>
               
               {dailyGreeting.event && (
                 <div className="font-mono" style={{ 
-                  marginTop: '4px',
+                  marginTop: '8px',
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '8px',
-                  fontSize: '0.7rem', 
+                  fontSize: '0.75rem', 
                   color: '#ead9b2', 
                   background: 'rgba(234, 217, 178, 0.1)',
-                  padding: '4px 12px',
+                  padding: '6px 16px',
                   borderRadius: '20px',
                   border: '1px solid rgba(234, 217, 178, 0.25)',
                   letterSpacing: '0.1em', 
@@ -1656,16 +1936,19 @@ export default function InovavPortal({
           </main>
         </div>
 
-        {/* ── SECTION 2: MONITOR HEALTH PAGE (CONTINUING DOWNWARDS DIRECTLY ON THE SAME PAGE) ── */}
+       {/* ── SECTION 2: MONITOR HEALTH PAGE (CONTINUING DOWNWARDS DIRECTLY ON THE SAME PAGE) ── */}
         <div
           id="monitor-health-section"
           style={{
             position: 'relative',
             width: '100%',
+            height: '100vh', 
             minHeight: '960px',
             borderTop: '1px solid rgba(246, 238, 219, 0.18)',
             zIndex: 20,
             backgroundColor: '#06132b',
+            transform: 'translateZ(0)', // Traps the fixed 3D canvas inside this container
+            overflow: 'hidden',         // Prevents the 3D model from bleeding out of the section
           }}
         >
           {/* Section Header Anchor */}
@@ -1680,6 +1963,8 @@ export default function InovavPortal({
               borderBottom: '1px solid rgba(246, 238, 219, 0.12)',
               background: 'rgba(10, 28, 63, 0.8)',
               backdropFilter: 'blur(16px)',
+              position: 'relative',
+              zIndex: 30, // Keeps the header above the trapped 3D model
             }}
           >
             <div>
@@ -1708,6 +1993,7 @@ export default function InovavPortal({
                   padding: '8px 16px',
                   fontSize: '0.7rem',
                   letterSpacing: '0.14em',
+                  cursor: 'pointer',
                 }}
               >
                 ↑ SUIT TELEMETRY
@@ -1715,11 +2001,22 @@ export default function InovavPortal({
             </div>
           </div>
 
-          {/* Embedded 3D Vital Human Systems Observatory */}
-          <VitalObservatory
-            astronaut={activeAstronaut}
-            isEmbedded={true}
-          />
+        {/* Embedded 3D Vital Human Systems Observatory */}
+          <div 
+            style={{ position: 'relative', width: '100%', height: 'calc(100vh - 90px)' }}
+            onWheelCapture={(e) => {
+              // Force the parent container to scroll even if the 3D canvas intercepts the wheel event
+              const container = document.getElementById('suit-and-vitals-container');
+              if (container) {
+                container.scrollTop += e.deltaY;
+              }
+            }}
+          >
+            <VitalObservatory
+              astronaut={activeAstronaut}
+              isEmbedded={true}
+            />
+          </div>
         </div>
       </div>
     )}

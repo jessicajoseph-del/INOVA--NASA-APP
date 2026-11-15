@@ -166,7 +166,7 @@ export default function App() {
             </div>
             <div className="hidden sm:block">
               <span className="font-extrabold text-base tracking-tight text-white group-hover:text-cyan-300 transition-colors">
-                INOVA<span className="text-amber-400">.</span>
+                RIDGE<span className="text-amber-400">.</span>
               </span>
               <span className="ml-1.5 text-[10px] font-mono uppercase tracking-wider text-cyan-300/80">
                 NASA
