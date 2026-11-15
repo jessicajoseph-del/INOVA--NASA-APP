@@ -82,14 +82,14 @@ export default function VitalObservatoryApp({ astronaut, onClose, isEmbedded = f
         height: isEmbedded ? '980px' : '100%',
         minHeight: isEmbedded ? '850px' : '100vh',
         zIndex: isEmbedded ? 20 : 9999,
-        backgroundColor: '#06132b',
+        backgroundColor: '#f6eedb',
         backgroundImage: `
-          radial-gradient(circle at 50% 45%, rgba(14, 40, 89, 0.72) 0%, rgba(6, 19, 43, 0.98) 85%),
-          linear-gradient(rgba(246, 238, 219, 0.025) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(246, 238, 219, 0.025) 1px, transparent 1px)
+          radial-gradient(circle at 50% 45%, rgba(246, 238, 219, 0.95) 0%, rgba(238, 226, 202, 0.98) 85%),
+          linear-gradient(rgba(6, 19, 43, 0.04) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(6, 19, 43, 0.04) 1px, transparent 1px)
         `,
         backgroundSize: '100% 100%, 48px 48px, 48px 48px',
-        color: '#f6eedb',
+        color: '#06132b',
         overflow: 'hidden',
         userSelect: 'none',
         fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',

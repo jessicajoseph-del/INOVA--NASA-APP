@@ -23,17 +23,16 @@
 /* ============================================================================
    LUMINA ROADMAP GAME ANIMATIONS & STYLES
    ============================================================================ */
-/* Deep playful Ink-Blue starlight & atmospheric map backdrop */
+/* Luminous Oat Ivory canvas with subtle Ink-Blue architectural starlight grid */
 .ink-canvas-bg {
-  background-color: #06132b;
+  background-color: #f6eedb;
   background-image:
-    radial-gradient(circle at 20% 15%, rgba(56, 189, 248, 0.14) 0%, transparent 42%),
-    radial-gradient(circle at 82% 35%, rgba(250, 204, 21, 0.08) 0%, transparent 38%),
-    radial-gradient(ellipse 85% 65% at 50% 60%, rgba(16, 46, 107, 0.55) 0%, transparent 72%),
-    radial-gradient(rgba(247, 243, 233, 0.14) 1px, transparent 1px),
-    radial-gradient(rgba(125, 211, 252, 0.16) 1.2px, transparent 1.2px);
-  background-size: 100% 100%, 100% 100%, 100% 100%, 64px 64px, 96px 96px;
-  background-position: 0 0, 0 0, 0 0, 0 0, 32px 44px;
+    radial-gradient(circle at 20% 15%, rgba(6, 19, 43, 0.06) 0%, transparent 42%),
+    radial-gradient(circle at 82% 35%, rgba(14, 40, 89, 0.05) 0%, transparent 38%),
+    radial-gradient(ellipse 85% 65% at 50% 60%, rgba(246, 238, 219, 0.95) 0%, transparent 72%),
+    radial-gradient(rgba(6, 19, 43, 0.08) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 100% 100%, 48px 48px;
+  background-position: 0 0, 0 0, 0 0, 0 0;
 }
 
 /* Completed card sculptural oat.png background with bright luminous sheen */

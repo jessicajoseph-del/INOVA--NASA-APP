@@ -342,10 +342,10 @@ export default function RoadmapGame({ onBack, isEmbedded = false }: RoadmapGameP
   };
 
   return (
-    <div className={isEmbedded ? "w-full flex flex-col bg-[#06132B] text-[#F7F3E9] rounded-2xl border border-sky-400/20 shadow-2xl" : "min-h-screen flex flex-col bg-[#06132B] text-[#F7F3E9]"}>
+    <div className={isEmbedded ? "w-full flex flex-col bg-[#F6EEDB] text-[#06132B] rounded-2xl border border-[#06132B]/20 shadow-2xl" : "min-h-screen flex flex-col bg-[#F6EEDB] text-[#06132B]"}>
       <ConfettiBurst triggerKey={confettiTrigger} reducedMotion={reducedMotion} />
-      {/* 3-Zone Playful Game Top Bar */}
-      <header className={`${isEmbedded ? 'relative' : 'sticky top-0'} z-30 flex items-center justify-between gap-4 sm:gap-8 px-4 sm:px-6 h-16 border-b border-sky-300/15 bg-[#06132B]/94 backdrop-blur-md`}>
+      {/* 3-Zone Playful Game Top Bar (Ink Blue Header on Oat Ivory Canvas) */}
+      <header className={`${isEmbedded ? 'relative' : 'sticky top-0'} z-30 flex items-center justify-between gap-4 sm:gap-8 px-4 sm:px-6 h-16 border-b border-[#06132B]/20 bg-[#06132B] text-[#F6EEDB] backdrop-blur-md`}>
         {/* Zone 1: Game Wordmark & Optional Standalone Return Navigation */}
         <div className="flex items-center gap-3 shrink-0">
           {!isEmbedded && onBack && (
@@ -421,16 +421,16 @@ export default function RoadmapGame({ onBack, isEmbedded = false }: RoadmapGameP
           {/* Playful Header Banner */}
           <div className="mx-auto max-w-[900px] mb-5 flex flex-wrap items-center justify-between gap-3 px-2">
             <div>
-              <h1 className="font-display text-xl sm:text-2xl font-extrabold tracking-tight text-[#F7F3E9]">
+              <h1 className="font-display text-xl sm:text-2xl font-extrabold tracking-tight text-[#06132B]">
                 Starlight Circuit Map
               </h1>
-              <p className="mt-1 text-xs sm:text-sm text-sky-100/80">
+              <p className="mt-1 text-xs sm:text-sm text-[#1E3A8A]">
                 Start at the unlocked top stage and mark progress directly on the map to fire shooting fiber currents downward.
               </p>
             </div>
 
             {/* Crisp Luminous Key */}
-            <div className="flex items-center gap-4 text-xs font-semibold text-[#F7F3E9]/90">
+            <div className="flex items-center gap-4 text-xs font-semibold text-[#06132B]">
               <span className="inline-flex items-center gap-1.5">
                 <span className="h-3 w-4 rounded-[3px] border-2 border-[#FACC15] ring-1 ring-white bg-[#FFFDF7] shadow-[0_0_8px_rgba(255,255,255,0.5)]" />
                 Unlocked

@@ -1089,7 +1089,7 @@ export default function InovavPortal({
   }, [visorMouseX, activeAstronaut]);
 
   return (
-    <div style={{ position: 'relative', width: '100%', minHeight: '100vh', height: '100vh', background: '#06132b', overflow: 'hidden' }}>
+    <div style={{ position: 'relative', width: '100%', minHeight: '100vh', height: '100vh', background: '#f6eedb', color: '#06132b', overflow: 'hidden' }}>
 
       {/* Floating Back Navigation Bar */}
       {onBackToOverview && (
@@ -1102,11 +1102,11 @@ export default function InovavPortal({
               padding: '8px 18px',
               fontSize: '0.72rem',
               letterSpacing: '0.14em',
-              background: 'rgba(6, 19, 43, 0.92)',
-              border: '1px solid #f6eedb',
+              background: '#06132b',
+              border: '1px solid rgba(6, 19, 43, 0.4)',
               color: '#f6eedb',
               backdropFilter: 'blur(12px)',
-              boxShadow: '0 4px 24px rgba(0,0,0,0.6)',
+              boxShadow: '0 4px 24px rgba(6, 19, 43, 0.25)',
               display: 'inline-flex',
               alignItems: 'center',
               gap: '6px',
@@ -1159,19 +1159,19 @@ export default function InovavPortal({
             <span className="font-mono" style={{ fontSize: '0.8rem', letterSpacing: '0.3em', color: '#ead9b2', marginBottom: '12px' }}>
               // NASA BIO-TELEMETRY & ASTRONAUT SUIT PORTAL
             </span>
-            <h1 className="ridge-title font-tech" style={{ margin: 0, fontSize: 'clamp(2.8rem, 6.5vw, 5.2rem)', fontWeight: 600, color: '#f6eedb', textIndent: '0.4em', lineHeight: 1 }}>
+            <h1 className="ridge-title font-tech" style={{ margin: 0, fontSize: 'clamp(2.8rem, 6.5vw, 5.2rem)', fontWeight: 600, color: '#06132b', textIndent: '0.4em', lineHeight: 1 }}>
               INOVA
             </h1>
-            <p style={{ margin: '18px 0 28px', fontSize: '0.92rem', letterSpacing: '0.28em', color: 'rgba(246, 238, 219, 0.72)', textTransform: 'uppercase' }}>
+            <p style={{ margin: '18px 0 28px', fontSize: '0.92rem', letterSpacing: '0.28em', color: '#1e3a8a', textTransform: 'uppercase' }}>
               NASA ASTRONAUT HEALTH MONITORING & 3D VITALS SYSTEM
             </p>
 
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '14px', pointerEvents: 'auto', width: '100%' }}>
-              <div className="font-mono" style={{ fontSize: '0.85rem', color: 'rgba(234, 217, 178, 0.9)', letterSpacing: '0.15em' }}>
-                INITIALIZING IN <span style={{ fontWeight: 'bold', color: '#f6eedb' }}>{countdown}S</span>
+              <div className="font-mono" style={{ fontSize: '0.85rem', color: '#1e3a8a', letterSpacing: '0.15em' }}>
+                INITIALIZING IN <span style={{ fontWeight: 'bold', color: '#06132b' }}>{countdown}S</span>
               </div>
-              <div style={{ width: '220px', height: '3px', background: 'rgba(246, 238, 219, 0.16)', borderRadius: '2px', overflow: 'hidden' }}>
-                <div style={{ width: `${((8 - countdown) / 8) * 100}%`, height: '100%', background: 'linear-gradient(90deg, #ead9b2, #f6eedb)', transition: 'width 1s linear' }} />
+              <div style={{ width: '220px', height: '3px', background: 'rgba(6, 19, 43, 0.15)', borderRadius: '2px', overflow: 'hidden' }}>
+                <div style={{ width: `${((8 - countdown) / 8) * 100}%`, height: '100%', background: 'linear-gradient(90deg, #1e3a8a, #06132b)', transition: 'width 1s linear' }} />
               </div>
               
               <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '12px', marginTop: '12px' }}>
@@ -1273,7 +1273,7 @@ export default function InovavPortal({
                 margin: 0,
                 fontSize: 'clamp(2.8rem, 6vw, 4.8rem)',
                 fontWeight: 600,
-                color: '#f6eedb',
+                color: '#06132b',
                 textIndent: '0.34em',
                 lineHeight: 1.05,
                 textTransform: 'uppercase',
@@ -1355,17 +1355,17 @@ export default function InovavPortal({
             minHeight: '100vh',
             overflowY: 'auto',
             overflowX: 'hidden',
-            backgroundColor: '#06132b',
+            backgroundColor: '#f6eedb',
             scrollBehavior: 'smooth',
           }}
         >
-          {/* ── CLEAN INK BLUE SPACE BACKGROUND ── */}
+          {/* ── CLEAN OAT IVORY SPACE BACKGROUND WITH SUBTLE INK GRID ── */}
           <div
             style={{
               position: 'fixed',
               inset: 0,
               zIndex: 0,
-              backgroundImage: 'radial-gradient(circle at 65% 45%, rgba(14, 40, 89, 0.55) 0%, rgba(6, 19, 43, 0.96) 85%)',
+              backgroundImage: 'radial-gradient(circle at 65% 45%, rgba(246, 238, 219, 0.96) 0%, rgba(238, 226, 202, 0.98) 85%)',
               pointerEvents: 'none',
             }}
           />
@@ -1632,8 +1632,8 @@ export default function InovavPortal({
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#f6eedb', boxShadow: '0 0 10px #ead9b2' }} />
-                    <span className="font-mono" style={{ fontSize: '0.72rem', color: '#ead9b2', letterSpacing: '0.22em', textTransform: 'uppercase' }}>
+                    <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#06132b', boxShadow: '0 0 10px #1e3a8a' }} />
+                    <span className="font-mono" style={{ fontSize: '0.72rem', color: '#06132b', letterSpacing: '0.22em', textTransform: 'uppercase', fontWeight: 700 }}>
                       RIDGE // ALL SYSTEMS NOMINAL
                     </span>
                   </div>
@@ -1747,7 +1747,7 @@ export default function InovavPortal({
                 >
                   {suitTelemetryView === 'auth-log' ? 'Face auth log' : 'Suit telemetry'}
                 </h1>
-                <div className="font-mono" style={{ fontSize: '0.76rem', color: '#9fb6da', marginBottom: '30px', letterSpacing: '0.08em' }}>
+                <div className="font-mono" style={{ fontSize: '0.76rem', color: '#1e3a8a', marginBottom: '30px', letterSpacing: '0.08em', fontWeight: 600 }}>
                   {suitTelemetryView === 'auth-log'
                     ? 'EVA-04 / Biometric facial verification audit trail'
                     : 'EVA-04 / Live link established • 0.8 s latency'}
@@ -1996,10 +1996,10 @@ export default function InovavPortal({
                         padding: '16px 24px',
                         marginTop: '24px',
                         marginBottom: '24px',
-                        background: '#f6eedb',
-                        color: '#06132b',
-                        border: 'none',
-                        borderRadius: '4px',
+                        background: '#06132b',
+                        color: '#f6eedb',
+                        border: '1px solid rgba(6, 19, 43, 0.4)',
+                        borderRadius: '6px',
                         fontWeight: 700,
                         fontSize: '0.82rem',
                         letterSpacing: '0.22em',
@@ -2009,16 +2009,16 @@ export default function InovavPortal({
                         alignItems: 'center',
                         justifyContent: 'center',
                         gap: '12px',
-                        boxShadow: '0 0 25px rgba(246, 238, 219, 0.35)',
+                        boxShadow: '0 4px 25px rgba(6, 19, 43, 0.25)',
                         transition: 'all 0.2s ease',
                       }}
                       onMouseEnter={(e) => {
-                        e.currentTarget.style.background = '#ead9b2';
-                        e.currentTarget.style.boxShadow = '0 0 35px rgba(246, 238, 219, 0.55)';
+                        e.currentTarget.style.background = '#0e2454';
+                        e.currentTarget.style.boxShadow = '0 6px 30px rgba(6, 19, 43, 0.35)';
                       }}
                       onMouseLeave={(e) => {
-                        e.currentTarget.style.background = '#f6eedb';
-                        e.currentTarget.style.boxShadow = '0 0 25px rgba(246, 238, 219, 0.35)';
+                        e.currentTarget.style.background = '#06132b';
+                        e.currentTarget.style.boxShadow = '0 4px 25px rgba(6, 19, 43, 0.25)';
                       }}
                     >
                       <span>INSPECT ORGANS & SCAN HEALTH ↓</span>
@@ -2026,12 +2026,12 @@ export default function InovavPortal({
                     </button>
 
                     {/* Mission Status Summary (Clean Unboxed Editorial Typography) */}
-                    <div style={{ borderTop: '1px solid rgba(246, 238, 219, 0.14)', paddingTop: '20px' }}>
-                      <div className="font-mono" style={{ fontSize: '0.72rem', color: '#ead9b2', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: '8px' }}>
+                    <div style={{ borderTop: '1px solid rgba(6, 19, 43, 0.15)', paddingTop: '20px' }}>
+                      <div className="font-mono" style={{ fontSize: '0.72rem', color: '#1e3a8a', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: '8px', fontWeight: 700 }}>
                         CURRENT FLIGHT MISSION STATUS: {activeAstronaut.mission}
                       </div>
-                      <p style={{ fontSize: '0.84rem', color: '#9fb6da', lineHeight: 1.6, margin: 0 }}>
-                        Active crew member <strong style={{ color: '#f6eedb' }}>{activeAstronaut.name}</strong> is currently designated as <strong style={{ color: '#f6eedb' }}>{activeAstronaut.role}</strong>. Suit biometric telemetry channels 01–16 are transmitting in real-time. All zero-g autonomic reflexes, cardiac outputs, and metabolic oxygen consumption rates match baseline mission parameters.
+                      <p style={{ fontSize: '0.84rem', color: '#1e3a8a', lineHeight: 1.6, margin: 0 }}>
+                        Active crew member <strong style={{ color: '#06132b' }}>{activeAstronaut.name}</strong> is currently designated as <strong style={{ color: '#06132b' }}>{activeAstronaut.role}</strong>. Suit biometric telemetry channels 01–16 are transmitting in real-time. All zero-g autonomic reflexes, cardiac outputs, and metabolic oxygen consumption rates match baseline mission parameters.
                       </p>
                     </div>
                   </>
@@ -2042,10 +2042,10 @@ export default function InovavPortal({
             {/* TAB 2: PROJECTS / ASTRONAUT TO-DO LIST */}
             {activeTab === 'projects' && (
               <div style={{ maxWidth: '640px', marginLeft: 'auto', marginRight: 'auto' }}>
-                <div className="font-mono" style={{ fontSize: '0.72rem', color: '#ead9b2', letterSpacing: '0.22em', marginBottom: '8px', textTransform: 'uppercase' }}>
-                  INOVA // ASTRONAUT DAILY MISSION ROADMAP
+                <div className="font-mono" style={{ fontSize: '0.72rem', color: '#1e3a8a', letterSpacing: '0.22em', marginBottom: '8px', textTransform: 'uppercase', fontWeight: 700 }}>
+                  RIDGE // ASTRONAUT DAILY MISSION ROADMAP
                 </div>
-                <h2 style={{ fontSize: '2rem', fontWeight: 400, color: '#f6eedb', margin: '0 0 20px 0' }}>Daily Flight To-Do List</h2>
+                <h2 style={{ fontSize: '2rem', fontWeight: 600, color: '#06132b', margin: '0 0 20px 0' }}>Daily Flight To-Do List</h2>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                   {[
                     { time: '06:00 – 06:10 AM', title: 'Urine Test', status: 'Immediate Target', progress: 'Ready', desc: 'Collect midstream bio-specimen in UPA diagnostic pouch; record electrolyte osmolarity and specific gravity.', color: '#FACC15' },
@@ -2293,9 +2293,9 @@ export default function InovavPortal({
             position: 'relative',
             width: '100%',
             minHeight: '960px',
-            borderTop: '1px solid rgba(246, 238, 219, 0.18)',
+            borderTop: '1px solid rgba(6, 19, 43, 0.15)',
             zIndex: 20,
-            backgroundColor: '#06132b',
+            backgroundColor: '#f6eedb',
           }}
         >
           {/* Section Header Anchor */}
@@ -2307,9 +2307,10 @@ export default function InovavPortal({
               justifyContent: 'space-between',
               flexWrap: 'wrap',
               gap: '12px',
-              borderBottom: '1px solid rgba(246, 238, 219, 0.12)',
-              background: 'rgba(10, 28, 63, 0.8)',
-              backdropFilter: 'blur(16px)',
+              borderBottom: '1px solid rgba(6, 19, 43, 0.12)',
+              background: '#06132b',
+              color: '#f6eedb',
+              boxShadow: '0 4px 20px rgba(6, 19, 43, 0.18)',
             }}
           >
             <div>

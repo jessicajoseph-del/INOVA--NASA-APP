@@ -280,7 +280,7 @@ export default function BehavioralHealthPage({ onBack }: BehavioralHealthPagePro
   ];
 
   return (
-    <div className="min-h-screen flex flex-col text-[#F5EEDB] pb-20 lg:pb-10">
+    <div className="min-h-screen flex flex-col bg-[#F6EEDB] text-[#06132B] pb-20 lg:pb-10">
       {/* Three-Zone Top Bar on Shaded Ink Blue Canvas */}
       <header className="w-full border-b border-white/10 bg-[#0D1C33]/65 backdrop-blur-md sticky top-0 z-30">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between gap-4 lg:gap-8">

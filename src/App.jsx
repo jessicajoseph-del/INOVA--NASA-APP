@@ -145,15 +145,15 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-between bg-[#060D21] bg-[radial-gradient(ellipse_at_top,_#0F214D_0%,_#060D21_70%)] text-slate-100 selection:bg-[#FF7300] selection:text-white font-sans relative overflow-x-hidden">
+    <div className="min-h-screen flex flex-col justify-between bg-[#F6EEDB] text-[#06132B] selection:bg-[#06132B] selection:text-[#F6EEDB] font-sans relative overflow-x-hidden">
       
-      {/* Background Ambient Grid & Glow Effects */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#1E293B0a_1px,transparent_1px),linear-gradient(to_bottom,#1E293B0a_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none" />
+      {/* Background Ambient Oat Grid */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(6,19,43,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(6,19,43,0.04)_1px,transparent_1px)] bg-[size:4rem_4rem] pointer-events-none" />
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-blue-900/5 rounded-full blur-[120px] pointer-events-none" />
 
-      {/* 1. HEADER / FLOATING CAPSULE NAVIGATION BAR (INSPIRED BY side bar.jpg) */}
+      {/* 1. HEADER / FLOATING CAPSULE NAVIGATION BAR (INK BLUE CAPSULE ON OAT IVORY BACKDROP) */}
       <header className="sticky top-0 z-50 w-full px-3 py-2.5 sm:px-6 pointer-events-none">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-3 pointer-events-auto bg-[#06132b]/85 backdrop-blur-2xl border border-white/10 shadow-[0_12px_40px_rgba(0,0,0,0.6)] rounded-2xl sm:rounded-full px-3 sm:px-4 py-2">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-3 pointer-events-auto bg-[#06132B] text-[#F6EEDB] backdrop-blur-2xl border border-[#06132B]/30 shadow-[0_12px_40px_rgba(6,19,43,0.35)] rounded-2xl sm:rounded-full px-3 sm:px-4 py-2">
           
           {/* Brand Pill (Emblem pill inspired by side bar.jpg) */}
           <div 
@@ -172,7 +172,7 @@ export default function App() {
           </div>
 
           {/* Primary View Switcher Navigation Tabs (Pill cutout active state matching side bar.jpg) */}
-          <nav className="flex items-center p-1 rounded-xl sm:rounded-full bg-blue-950/60 border border-blue-800/40 backdrop-blur-md overflow-x-auto gap-1">
+          <nav className="flex items-center p-1 rounded-xl sm:rounded-full bg-blue-950/70 border border-blue-900/40 backdrop-blur-md overflow-x-auto gap-1">
             {/* Tab 1: Start / Suit & Vitals (Continuous Start -> Login/Signup -> Suit Telemetry -> Health Monitor below) */}
             <button
               type="button"
@@ -309,18 +309,18 @@ export default function App() {
             <div className="max-w-4xl space-y-4 text-left">
               
               {/* Eyebrow Badge */}
-              <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full border border-cyan-400/30 bg-cyan-400/10 text-cyan-300 font-mono text-xs uppercase tracking-wider shadow-sm shadow-cyan-950/50">
-                <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping"></span>
+              <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full border border-[#06132B]/20 bg-[#06132B]/8 text-[#06132B] font-mono text-xs uppercase tracking-wider shadow-sm">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#1E3A8A] animate-ping"></span>
                 <span>{TOPIC_DATA.eyebrow}</span>
               </div>
 
               {/* Main Topic Title */}
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white leading-[1.15]">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-[#06132B] leading-[1.15]">
                 {TOPIC_DATA.title}
               </h1>
 
               {/* Subtitle */}
-              <p className="text-base sm:text-lg text-slate-300 font-normal leading-relaxed max-w-3xl">
+              <p className="text-base sm:text-lg text-[#1E3A8A] font-normal leading-relaxed max-w-3xl">
                 {TOPIC_DATA.subtitle}
               </p>
             </div>
@@ -460,15 +460,15 @@ export default function App() {
           <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full my-8">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <span className="text-xs font-mono uppercase tracking-wider text-amber-300 font-semibold">
+                <span className="text-xs font-mono uppercase tracking-wider text-[#1E3A8A] font-semibold">
                   // RIDGE BIOMETRIC & 3D PHYSIOLOGY SUITE
                 </span>
-                <h3 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
+                <h3 className="text-xl sm:text-2xl font-extrabold text-[#06132B] tracking-tight">
                   Astronaut Portal & 3D Vital Observatory
                 </h3>
               </div>
-              <span className="text-xs text-slate-400 font-mono hidden sm:inline-block">
-                OAT YELLOW // INK BLUE TELEMETRY
+              <span className="text-xs text-[#1E3A8A] font-mono hidden sm:inline-block">
+                OAT IVORY // INK BLUE TELEMETRY
               </span>
             </div>
 
@@ -559,14 +559,14 @@ export default function App() {
           <section id="roadmap-section" className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full my-10 relative z-10">
             <div className="mb-6 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
               <div>
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-amber-400/30 bg-amber-400/10 text-amber-300 font-mono text-xs uppercase tracking-wider mb-2">
-                  <Compass className="w-3.5 h-3.5" />
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[#06132B]/20 bg-[#06132B]/8 text-[#06132B] font-mono text-xs uppercase tracking-wider mb-2">
+                  <Compass className="w-3.5 h-3.5 text-[#1E3A8A]" />
                   <span>Interactive Mission Circuit</span>
                 </div>
-                <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+                <h2 className="text-2xl sm:text-3xl font-extrabold text-[#06132B] tracking-tight">
                   Lumina Path — Interactive Road Map Game
                 </h2>
-                <p className="text-sm text-slate-300 mt-1 max-w-2xl leading-relaxed">
+                <p className="text-sm text-[#1E3A8A] mt-1 max-w-2xl leading-relaxed">
                   Start at the unlocked stage and mark progress directly on the circuit to trigger shooting fiber currents downward. Complete all mission checkpoints to unlock the Grand Trophy Vault!
                 </p>
               </div>
@@ -673,14 +673,14 @@ export default function App() {
         }}
       />
 
-      {/* 5. BOTTOM CREDITS / STATUS BAR */}
-      <footer className="w-full mt-auto relative z-10 border-t border-blue-900/30 bg-[#040816]/70 py-4">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-2">
-          <p>© {new Date().getFullYear()} INOVA Aerospace & Digital Sovereignty. All telemetry verified.</p>
+      {/* 5. BOTTOM CREDITS / STATUS BAR (INK BLUE BAR ON OAT IVORY PAGE) */}
+      <footer className="w-full mt-auto relative z-10 border-t border-[#06132B]/15 bg-[#06132B] text-[#F6EEDB] py-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between text-xs text-[#E2D8C0] gap-2">
+          <p>© {new Date().getFullYear()} Ridge Aerospace & Digital Sovereignty. All telemetry verified.</p>
           <div className="flex items-center space-x-6">
-            <a href="#privacy" className="hover:text-cyan-300 transition-colors">Security Policy</a>
-            <a href="#terms" className="hover:text-cyan-300 transition-colors">Mission Protocol</a>
-            <a href="#status" className="hover:text-cyan-300 transition-colors flex items-center gap-1.5">
+            <a href="#privacy" className="hover:text-[#FDE047] transition-colors">Security Policy</a>
+            <a href="#terms" className="hover:text-[#FDE047] transition-colors">Mission Protocol</a>
+            <a href="#status" className="hover:text-[#FDE047] transition-colors flex items-center gap-1.5">
               <span>Relay Mesh Active</span>
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
             </a>

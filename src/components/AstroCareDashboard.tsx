@@ -503,8 +503,8 @@ export default function AstroCareDashboard({
     <div
       className={
         isEmbedded
-          ? 'w-full flex flex-col bg-[#060D21] text-slate-100 rounded-2xl border border-blue-400/20 shadow-2xl overflow-hidden relative'
-          : 'min-h-screen flex flex-col bg-[#060D21] bg-[radial-gradient(ellipse_at_top,_#0F214D_0%,_#060D21_70%)] text-slate-100 font-sans relative'
+          ? 'w-full flex flex-col bg-[#F6EEDB] text-[#06132B] rounded-2xl border border-[#06132B]/20 shadow-2xl overflow-hidden relative'
+          : 'min-h-screen flex flex-col bg-[#F6EEDB] text-[#06132B] font-sans relative'
       }
     >
       {/* Toast Notification */}
