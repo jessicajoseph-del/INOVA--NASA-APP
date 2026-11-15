@@ -13,8 +13,8 @@ function loadImage(url) {
 }
 
 /**
- * Stitches center, left, and right face snapshots onto a single spherical UV canvas texture
- * so the 3D sphere displays all 3 captured angles seamlessly across its front hemisphere.
+ * Stitches center, left, and right face snapshots onto a high-definition spherical UV canvas texture
+ * so the 3D sphere displays the user's face with crystal clarity across the entire front hemisphere.
  */
 async function buildSphericalFaceTexture(faceSnaps, fallbackUrl) {
   const snaps = {
@@ -23,8 +23,6 @@ async function buildSphericalFaceTexture(faceSnaps, fallbackUrl) {
     right: faceSnaps?.right || null,
   };
 
-  if (!snaps.center && !snaps.left && !snaps.right) return null;
-
   const W = 1024;
   const H = 512;
   const canvas = document.createElement('canvas');
@@ -32,7 +30,7 @@ async function buildSphericalFaceTexture(faceSnaps, fallbackUrl) {
   canvas.height = H;
   const ctx = canvas.getContext('2d');
 
-  // Deep helmet-interior obsidian ink-blue backdrop for the rear of the sphere
+  // Deep helmet-interior obsidian ink-blue backdrop for the rear and perimeter of the helmet
   const bgGrad = ctx.createLinearGradient(0, 0, 0, H);
   bgGrad.addColorStop(0, '#040a18');
   bgGrad.addColorStop(0.5, '#07142b');
@@ -41,7 +39,7 @@ async function buildSphericalFaceTexture(faceSnaps, fallbackUrl) {
   ctx.fillRect(0, 0, W, H);
 
   // Subtle biometric grid on rear hemisphere
-  ctx.strokeStyle = 'rgba(246, 238, 219, 0.14)';
+  ctx.strokeStyle = 'rgba(246, 238, 219, 0.12)';
   ctx.lineWidth = 1;
   for (let x = 0; x <= W; x += 32) {
     ctx.beginPath();
@@ -56,13 +54,13 @@ async function buildSphericalFaceTexture(faceSnaps, fallbackUrl) {
     ctx.stroke();
   }
 
-  const drawFeathered = (img, destX, destY, destW, destH) => {
+  const drawFullFace = (img, destX, destY, destW, destH, isCenter = false) => {
     const off = document.createElement('canvas');
     off.width = destW;
     off.height = destH;
     const octx = off.getContext('2d');
 
-    // Cover-crop source image
+    // High quality cover-crop source image so face is centered & natural
     const sAspect = img.width / img.height;
     const dAspect = destW / destH;
     let sx = 0, sy = 0, sw = img.width, sh = img.height;
@@ -75,18 +73,22 @@ async function buildSphericalFaceTexture(faceSnaps, fallbackUrl) {
     }
     octx.drawImage(img, sx, sy, sw, sh, 0, 0, destW, destH);
 
-    // Radial feather mask so angles blend cleanly into each other & the helmet void
+    // Anatomical soft-edge mask preserving 100% of facial features (eyes, nose, mouth, chin, forehead)
+    // Only feathering outer hairline and neck into the dark helmet void
     octx.globalCompositeOperation = 'destination-in';
+    const cx = destW / 2;
+    const cy = destH / 2;
     const rad = octx.createRadialGradient(
-      destW / 2,
-      destH / 2,
-      destW * 0.22,
-      destW / 2,
-      destH / 2,
-      destW * 0.52
+      cx,
+      cy,
+      Math.min(destW, destH) * (isCenter ? 0.38 : 0.32),
+      cx,
+      cy,
+      Math.min(destW, destH) * (isCenter ? 0.50 : 0.48)
     );
     rad.addColorStop(0, 'rgba(0,0,0,1)');
-    rad.addColorStop(0.75, 'rgba(0,0,0,0.88)');
+    rad.addColorStop(0.85, 'rgba(0,0,0,0.98)');
+    rad.addColorStop(0.96, 'rgba(0,0,0,0.55)');
     rad.addColorStop(1, 'rgba(0,0,0,0)');
     octx.fillStyle = rad;
     octx.fillRect(0, 0, destW, destH);
@@ -94,27 +96,93 @@ async function buildSphericalFaceTexture(faceSnaps, fallbackUrl) {
     ctx.drawImage(off, destX, destY);
   };
 
-  // In Three.js SphereGeometry, u = 0.5 faces +Z (front) if sphere is rotated -PI/2 around Y.
-  // Draw left side (u ~ 0.34), right side (u ~ 0.66), and center (u ~ 0.50) on top.
-  const loaded = await Promise.all([
-    snaps.left ? loadImage(snaps.left).catch(() => null) : null,
-    snaps.right ? loadImage(snaps.right).catch(() => null) : null,
-    snaps.center ? loadImage(snaps.center).catch(() => null) : null,
-  ]);
+  // If no custom user snapshots exist yet, draw an astronaut commander biometric profile
+  if (!snaps.center && !snaps.left && !snaps.right) {
+    const faceW = 460;
+    const faceH = 460;
+    const faceX = (W - faceW) / 2;
+    const faceY = (H - faceH) / 2;
 
-  const [leftImg, rightImg, centerImg] = loaded;
-  const patchW = 290;
-  const patchH = 350;
-  const topY = (H - patchH) / 2;
+    // Stylized biometric crew commander face silhouette
+    const headGrad = ctx.createRadialGradient(W / 2, H / 2, 40, W / 2, H / 2, 210);
+    headGrad.addColorStop(0, '#e2d3b5');
+    headGrad.addColorStop(0.65, '#c9b38c');
+    headGrad.addColorStop(0.9, '#8c7754');
+    headGrad.addColorStop(1, 'rgba(6,19,43,0)');
+    ctx.fillStyle = headGrad;
+    ctx.beginPath();
+    ctx.ellipse(W / 2, H / 2, 175, 215, 0, 0, Math.PI * 2);
+    ctx.fill();
 
-  if (leftImg) drawFeathered(leftImg, W * 0.35 - patchW / 2, topY, patchW, patchH);
-  if (rightImg) drawFeathered(rightImg, W * 0.65 - patchW / 2, topY, patchW, patchH);
-  if (centerImg) drawFeathered(centerImg, W * 0.5 - patchW / 2, topY, patchW, patchH);
+    // Biometric optical scan lines over face
+    ctx.strokeStyle = 'rgba(246, 238, 219, 0.4)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.ellipse(W / 2, H / 2, 160, 200, 0, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Optical HUD crosshair
+    ctx.strokeStyle = 'rgba(56, 189, 248, 0.7)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(W / 2 - 40, H / 2);
+    ctx.lineTo(W / 2 + 40, H / 2);
+    ctx.moveTo(W / 2, H / 2 - 40);
+    ctx.lineTo(W / 2, H / 2 + 40);
+    ctx.stroke();
+
+    ctx.fillStyle = '#f6eedb';
+    ctx.font = 'bold 13px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('AWAITING 3D FACE CAPTURE', W / 2, H / 2 + 75);
+    ctx.font = '11px monospace';
+    ctx.fillStyle = '#9fb6da';
+    ctx.fillText('CLICK PROFILE SETTINGS TO ENROLL FACE', W / 2, H / 2 + 95);
+  } else {
+    // In Three.js SphereGeometry rotated -PI/2 around Y:
+    // u = 0.5 faces directly forward (+Z)
+    // u < 0.5 (W * 0.35) maps to the astronaut's right cheek (camera left)
+    // u > 0.5 (W * 0.65) maps to the astronaut's left cheek (camera right)
+    const loaded = await Promise.all([
+      snaps.left ? loadImage(snaps.left).catch(() => null) : null,
+      snaps.right ? loadImage(snaps.right).catch(() => null) : null,
+      snaps.center ? loadImage(snaps.center).catch(() => null) : null,
+    ]);
+
+    const [leftImg, rightImg, centerImg] = loaded;
+    const sideW = 380;
+    const sideH = 440;
+    const sideY = (H - sideH) / 2;
+
+    const centerW = 490;
+    const centerH = 470;
+    const centerY = (H - centerH) / 2;
+
+    // Draw side angles first so center face cleanly overlays with full priority
+    if (rightImg) {
+      drawFullFace(rightImg, W * 0.33 - sideW / 2, sideY, sideW, sideH, false);
+    }
+    if (leftImg) {
+      drawFullFace(leftImg, W * 0.67 - sideW / 2, sideY, sideW, sideH, false);
+    }
+
+    // Center face covers the entire front 170° with edge-to-edge clarity
+    if (centerImg) {
+      drawFullFace(centerImg, (W - centerW) / 2, centerY, centerW, centerH, true);
+    } else if (leftImg || rightImg) {
+      // Fallback: if only left or right exists, mirror to center
+      const fallback = leftImg || rightImg;
+      drawFullFace(fallback, (W - centerW) / 2, centerY, centerW, centerH, true);
+    }
+  }
 
   const tex = new THREE.CanvasTexture(canvas);
   tex.colorSpace = THREE.SRGBColorSpace;
   tex.wrapS = THREE.ClampToEdgeWrapping;
   tex.wrapT = THREE.ClampToEdgeWrapping;
+  tex.minFilter = THREE.LinearFilter;
+  tex.magFilter = THREE.LinearFilter;
+  tex.generateMipmaps = false;
   tex.needsUpdate = true;
   return tex;
 }
@@ -268,7 +336,7 @@ function FaceSphereMesh({
         />
       </mesh>
 
-      {/* Biometric Landmark Nodes */}
+      {/* Biometric Landmark Nodes (shown in hologram & wireframe modes, or very subtly in textured mode) */}
       <points>
         <bufferGeometry>
           <bufferAttribute
@@ -279,10 +347,10 @@ function FaceSphereMesh({
           />
         </bufferGeometry>
         <pointsMaterial
-          size={0.045}
+          size={mode === 'textured' ? 0.015 : 0.042}
           color="#f6eedb"
           transparent
-          opacity={0.78}
+          opacity={mode === 'textured' ? 0.22 : 0.78}
           blending={THREE.AdditiveBlending}
         />
       </points>
@@ -306,7 +374,7 @@ export default function ThreeDFaceMesh({
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%', ...style }}>
       <Canvas
-        camera={{ position: [0, 0, 2.75], fov: 44 }}
+        camera={{ position: [0, 0, 2.15], fov: 42 }}
         gl={{ antialias: true, alpha: true }}
         style={{ width: '100%', height: '100%', background: 'transparent' }}
       >
