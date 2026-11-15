@@ -214,6 +214,20 @@ export function ObservatoryIcon({ size = 20, color = 'currentColor' }) {
   );
 }
 
+export function AstriBotNavIcon({ size = 20, color = 'currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <rect x="3.5" y="6" width="17" height="14" rx="4.5" stroke={color} strokeWidth="1.8" />
+      <path d="M12 2V6" stroke={color} strokeWidth="1.8" strokeLinecap="round" />
+      <circle cx="12" cy="2" r="1" fill={color} />
+      <circle cx="8.5" cy="12" r="1.5" fill={color} />
+      <circle cx="15.5" cy="12" r="1.5" fill={color} />
+      <path d="M9 16C10.2 17.2 13.8 17.2 15 16" stroke={color} strokeWidth="1.8" strokeLinecap="round" />
+      <path d="M2 11H3.5M20.5 11H22" stroke={color} strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 export function LogoutIcon({ size = 18, color = 'currentColor' }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
@@ -253,6 +267,12 @@ export default function IconsaxNav({
       id: 'projects',
       label: 'Projects',
       icon: ProjectsBriefcaseIcon,
+    },
+    {
+      id: 'astri',
+      label: 'ASTRI AI',
+      icon: AstriBotNavIcon,
+      badge: 'AI',
     },
     {
       id: 'divider-1',

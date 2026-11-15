@@ -39,6 +39,7 @@ import InovavPortal from './inovav/App';
 import VitalObservatory from './inovav/VitalObservatory';
 import JarvisTouchlessHud from './inovav/JarvisTouchlessHud';
 import ThreeDFaceStudioModal from './inovav/components/ThreeDFaceStudioModal';
+import AstriChatbot from './components/AstriChatbot';
 
 /**
  * TOPIC & EXECUTIVE KPI DATA CONFIGURATION:
@@ -257,6 +258,24 @@ export default function App() {
             >
               <Gamepad2 className="w-3.5 h-3.5 text-amber-400" />
               <span>Road Map</span>
+            </button>
+
+            {/* Tab 6: ASTRI AI Chatbot */}
+            <button
+              type="button"
+              onClick={() => {
+                setActiveView('astri');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-full transition-all cursor-pointer whitespace-nowrap ${
+                activeView === 'astri'
+                  ? 'bg-[#f6eedb] text-[#06132b] shadow-md shadow-white/20 font-bold scale-[1.02]'
+                  : 'text-slate-300 hover:text-cyan-300 hover:bg-white/10'
+              }`}
+            >
+              <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+              <span>ASTRI AI</span>
+              <span className={`h-1.5 w-1.5 rounded-full ${activeView === 'astri' ? 'bg-cyan-600' : 'bg-cyan-400 animate-pulse'} hidden md:inline-block`} />
             </button>
           </nav>
 
@@ -636,6 +655,17 @@ export default function App() {
       {activeView === 'behavioral' && (
         <main className="flex-1 w-full relative z-10">
           <BehavioralHealthPage onBack={() => setActiveView('overview')} />
+        </main>
+      )}
+
+      {/* ASTRI AI CHATBOT VIEW WITH 3D ASTRONAUT IN THE MIDDLE */}
+      {activeView === 'astri' && (
+        <main className="flex-1 w-full relative z-10">
+          <AstriChatbot
+            onBackToOverview={() => setActiveView('overview')}
+            astronautName={activeAstronaut.name}
+            astronautRole={activeAstronaut.role}
+          />
         </main>
       )}
 

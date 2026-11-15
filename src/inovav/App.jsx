@@ -38,6 +38,7 @@ import HeartRateTelemetryChart from './components/HeartRateTelemetryChart';
 import FaceAuthLogView from './components/FaceAuthLogView';
 import { buildAstronautFaceDescriptors } from './utils/faceRecognition';
 import { getFaceAuthLogs, clearFaceAuthLogs } from './utils/faceAuthLog';
+import AstriChatbot from '../components/AstriChatbot';
 
 extend({ UnrealBloomPass, ShaderPass });
 
@@ -1730,6 +1731,35 @@ export default function InovavPortal({
                     >
                       ⇄ {telemetrySide === 'left' ? 'Astronaut Left' : 'Telemetry Left'}
                     </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (onNavigateView) onNavigateView('astri');
+                        else setActiveTab('astri');
+                      }}
+                      style={{
+                        background: '#06132b',
+                        border: '1px solid rgba(56, 189, 248, 0.4)',
+                        color: '#38bdf8',
+                        fontSize: '0.66rem',
+                        fontFamily: 'monospace',
+                        padding: '6px 12px',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        fontWeight: 700,
+                        letterSpacing: '0.1em',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '5px',
+                        boxShadow: '0 2px 10px rgba(6, 19, 43, 0.25)',
+                        transition: 'all 0.15s ease',
+                      }}
+                      title="Launch ASTRI Gemini AI Chatbot with 3D Astronaut"
+                    >
+                      <span>✨</span>
+                      <span>ASTRI AI</span>
+                    </button>
                   </div>
                 </div>
 
@@ -2077,7 +2107,61 @@ export default function InovavPortal({
                 <div className="font-mono" style={{ fontSize: '0.72rem', color: '#1e3a8a', letterSpacing: '0.22em', marginBottom: '8px', textTransform: 'uppercase', fontWeight: 700 }}>
                   RIDGE // ORBITAL RELAYS
                 </div>
-                <h2 style={{ fontSize: '2.2rem', fontWeight: 600, color: '#06132b', margin: '0 0 24px 0' }}>Comms & Transmissions</h2>
+                <h2 style={{ fontSize: '2.2rem', fontWeight: 600, color: '#06132b', margin: '0 0 20px 0' }}>Comms & Transmissions</h2>
+
+                {/* ASTRI AI Chatbot Quick Access Card */}
+                <div
+                  style={{
+                    background: '#06132b',
+                    border: '1px solid rgba(56, 189, 248, 0.4)',
+                    borderRadius: '12px',
+                    padding: '16px 20px',
+                    marginBottom: '24px',
+                    boxShadow: '0 8px 24px rgba(6, 19, 43, 0.25)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    flexWrap: 'wrap',
+                    gap: '12px',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <div style={{ width: '38px', height: '38px', borderRadius: '10px', background: 'linear-gradient(135deg, #00e5ff, #3b82f6)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '1.2rem', boxShadow: '0 0 15px rgba(0, 229, 255, 0.4)' }}>
+                      ✨
+                    </div>
+                    <div>
+                      <div className="font-mono" style={{ fontSize: '0.68rem', color: '#38bdf8', letterSpacing: '0.14em', fontWeight: 700 }}>
+                        ONBOARD AI FLIGHT COMPANION // GEMINI N4
+                      </div>
+                      <div style={{ fontSize: '0.98rem', fontWeight: 600, color: '#f6eedb', marginTop: '2px' }}>
+                        Chat with ASTRI & 3D Astronaut
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (onNavigateView) onNavigateView('astri');
+                      else setActiveTab('astri');
+                    }}
+                    style={{
+                      background: '#38bdf8',
+                      color: '#06132b',
+                      border: 'none',
+                      borderRadius: '6px',
+                      padding: '9px 16px',
+                      fontWeight: 700,
+                      fontSize: '0.74rem',
+                      letterSpacing: '0.1em',
+                      cursor: 'pointer',
+                      boxShadow: '0 3px 12px rgba(56, 189, 248, 0.35)',
+                      textTransform: 'uppercase',
+                    }}
+                  >
+                    LAUNCH ASTRI AI →
+                  </button>
+                </div>
+
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                   {[
                     { sender: 'HOUSTON FLIGHT DYNAMICS (CAPCOM)', time: '02:14 UTC', unread: true, subject: 'Telemetry verification confirmed on all 16 biometric channels.', body: 'Alex, telemetry locks look pristine from Johnson Space Center. Solar radiation levels remain below threshold. Next orbital burn scheduled at T+14:20:00.' },
@@ -2289,6 +2373,17 @@ export default function InovavPortal({
                     </button>
                   </div>
                 </div>
+              </div>
+            )}
+
+            {/* TAB 9: ASTRI AI CHATBOT WITH 3D ASTRONAUT IN THE MIDDLE */}
+            {activeTab === 'astri' && (
+              <div style={{ maxWidth: '1100px', marginLeft: 'auto', marginRight: 'auto', width: '100%', paddingBottom: '40px' }}>
+                <AstriChatbot
+                  onBackToOverview={() => setActiveTab('home')}
+                  astronautName={activeAstronaut.name}
+                  astronautRole={activeAstronaut.role}
+                />
               </div>
             )}
           </main>
