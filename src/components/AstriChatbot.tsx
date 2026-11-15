@@ -144,7 +144,7 @@ export default function AstriChatbot({
         sender: 'astri',
         text: responseText,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        telemetryRef: 'GEMINI 1.5 // AUTONOMOUS SYNC',
+        telemetryRef: activeApiKey ? 'GEMINI 2.0 // NEURAL LINK ACTIVE' : 'ASTRI N4 // ONBOARD ENGINE ACTIVE',
       };
 
       setMessages((prev) => [...prev, astriMsg]);
@@ -160,6 +160,9 @@ export default function AstriChatbot({
       setMessages((prev) => [...prev, errorMsg]);
     } finally {
       setIsGenerating(false);
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 100);
     }
   };
 
@@ -378,8 +381,8 @@ export default function AstriChatbot({
               3D ASTRONAUT // ZERO-G TELEMETRY
             </span>
             <div className="flex items-center gap-1.5 bg-[#06132B] text-[#F6EEDB] px-2.5 py-1 rounded-md text-[10px] font-mono font-semibold shadow">
-              <span className={`w-2 h-2 rounded-full ${isThinking ? 'bg-amber-400 animate-ping' : isSpeaking ? 'bg-cyan-400 animate-pulse' : 'bg-emerald-400'}`} />
-              <span>{isThinking ? 'SYNTHESIZING' : isSpeaking ? 'SPEAKING' : 'READY'}</span>
+              <span className={`w-2 h-2 rounded-full ${isGenerating ? 'bg-amber-400 animate-ping' : isSpeaking ? 'bg-cyan-400 animate-pulse' : 'bg-emerald-400'}`} />
+              <span>{isGenerating ? 'SYNTHESIZING' : isSpeaking ? 'SPEAKING' : 'READY'}</span>
             </div>
           </div>
 
@@ -520,6 +523,26 @@ export default function AstriChatbot({
 
           {/* Chat Input Field & Send Controls */}
           <div className="p-3 border-t border-white/10 bg-[#0a1c3f]/90">
+            {/* Quick Prompt Chips */}
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-2.5 mb-1 custom-scroll" style={{ scrollbarWidth: 'none' }}>
+              {[
+                { label: '🫀 Heart & Vitals', prompt: 'ASTRI, analyze my heart rate, HRV, and blood pressure.' },
+                { label: '🧑‍🚀 Suit O₂ & Pressure', prompt: 'Run a diagnostic on my EVA suit pressure seal and oxygen reserves.' },
+                { label: '🗓️ Today Schedule', prompt: 'What is my flight roadmap and exercise schedule for today?' },
+                { label: '🛰️ ISS Orbit', prompt: 'What is the current space station altitude, speed, and inclination?' },
+                { label: '🧘 Zero-G Breathing', prompt: 'Guide me through a zero-G calming mindfulness breath cycle.' },
+              ].map((chip, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => handleSendMessage(chip.prompt)}
+                  className="px-2.5 py-1 rounded-full text-[11px] font-mono bg-white/5 hover:bg-cyan-500/20 text-[#ead9b2] hover:text-cyan-200 border border-white/10 hover:border-cyan-400/40 whitespace-nowrap transition-all cursor-pointer shrink-0 active:scale-95"
+                >
+                  {chip.label}
+                </button>
+              ))}
+            </div>
+
             <form
               onSubmit={(e) => {
                 e.preventDefault();

@@ -1,8 +1,50 @@
-import React, { useRef, useMemo, useEffect } from 'react';
+import React, { useRef, useMemo, useEffect, Suspense, Component, ReactNode } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { useGLTF, useAnimations, Float, OrbitControls } from '@react-three/drei';
 import { SkeletonUtils } from 'three-stdlib';
 import * as THREE from 'three';
+
+class CanvasErrorBoundary extends Component<{ children: ReactNode; fallback: ReactNode }, { hasError: boolean }> {
+  constructor(props: any) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  componentDidCatch(err: any) {
+    console.warn('Astronaut 3D Canvas error caught, rendering fallback:', err);
+  }
+  render() {
+    if (this.state.hasError) return this.props.fallback;
+    return this.props.children;
+  }
+}
+
+function Astronaut3DFallback({ isThinking }: { isThinking: boolean }) {
+  const meshRef = useRef<THREE.Mesh>(null);
+  useFrame((_, delta) => {
+    if (meshRef.current) {
+      meshRef.current.rotation.y += delta * 0.8;
+      meshRef.current.rotation.x += delta * 0.3;
+    }
+  });
+
+  return (
+    <group position={[0, -0.2, 0]}>
+      {/* Outer Hologram Wireframe Sphere */}
+      <mesh ref={meshRef}>
+        <sphereGeometry args={[0.9, 16, 16]} />
+        <meshBasicMaterial color={isThinking ? '#38bdf8' : '#06132b'} wireframe transparent opacity={0.5} />
+      </mesh>
+      {/* Inner Visor Core */}
+      <mesh>
+        <sphereGeometry args={[0.45, 24, 24]} />
+        <meshStandardMaterial color="#fde047" roughness={0.2} metalness={0.8} />
+      </mesh>
+    </group>
+  );
+}
 
 interface AstriAstronautModelProps {
   mouseX: number;
@@ -151,12 +193,16 @@ export default function AstriAstronaut3D({
         <pointLight position={[0, -4, 2]} intensity={0.9} color="#1e3a8a" />
 
         <Float speed={1.2} rotationIntensity={0.2} floatIntensity={0.3}>
-          <AstronautMesh
-            mouseX={mouseX}
-            mouseY={mouseY}
-            isThinking={isThinking}
-            isSpeaking={isSpeaking}
-          />
+          <CanvasErrorBoundary fallback={<Astronaut3DFallback isThinking={isThinking} />}>
+            <Suspense fallback={<Astronaut3DFallback isThinking={isThinking} />}>
+              <AstronautMesh
+                mouseX={mouseX}
+                mouseY={mouseY}
+                isThinking={isThinking}
+                isSpeaking={isSpeaking}
+              />
+            </Suspense>
+          </CanvasErrorBoundary>
         </Float>
 
         <OrbitControls
