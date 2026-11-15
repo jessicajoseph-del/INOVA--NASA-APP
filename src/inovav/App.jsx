@@ -1360,32 +1360,25 @@ export default function InovavPortal({
             }}
           />
 
-          {/* ── SECTION 1: SUIT TELEMETRY & ASTRONAUT 3D FACE VISOR ── */}
+          {/* ── SECTION 1: SUIT TELEMETRY & ASTRONAUT 3D FACE VISOR (ALIGNED ON THE EXACT SAME LEVEL) ── */}
           <div
+            className="w-full grid grid-cols-1 lg:grid-cols-2 items-start"
             style={{
               position: 'relative',
               width: '100%',
               minHeight: '100vh',
-              display: 'flex',
-              flexDirection: telemetrySide === 'left' ? 'row-reverse' : 'row',
-              flexWrap: 'wrap',
               zIndex: 10,
-              transition: 'flex-direction 0.3s ease',
             }}
           >
             {/* ── ASTRONAUT SIDE: /astro.jpg HELMET + 3D SPHERE FACE MESH OVER BLACK VISOR ── */}
             <div
+              className={`w-full flex flex-col items-center justify-start ${
+                telemetrySide === 'left' ? 'order-2 lg:order-2' : 'order-1 lg:order-1'
+              }`}
               style={{
                 position: 'relative',
-                width: '50vw',
-                minWidth: '320px',
-                height: '100vh',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: '30px 24px',
-                overflow: 'hidden',
+                padding: '36px 24px 40px 24px',
+                overflow: 'visible',
                 pointerEvents: 'auto',
                 zIndex: 20,
               }}
@@ -1405,11 +1398,12 @@ export default function InovavPortal({
               <div
                 style={{
                   width: '100%',
-                  maxWidth: '760px',
+                  maxWidth: '560px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  marginBottom: '10px',
+                  marginBottom: '14px',
+                  minHeight: '38px',
                   padding: '8px 14px',
                   background: 'rgba(10, 28, 63, 0.76)',
                   border: '1px solid rgba(246, 238, 219, 0.22)',
@@ -1474,10 +1468,11 @@ export default function InovavPortal({
                 style={{
                   position: 'relative',
                   width: '100%',
-                  maxWidth: '760px',
+                  maxWidth: '560px',
                   aspectRatio: '3 / 2',
                   borderRadius: '16px',
                   overflow: 'hidden',
+                  boxShadow: '0 12px 40px rgba(0, 0, 0, 0.5)',
                 }}
               >
                 <img
@@ -1551,11 +1546,11 @@ export default function InovavPortal({
               <div
                 style={{
                   width: '100%',
-                  maxWidth: '760px',
+                  maxWidth: '560px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  marginTop: '10px',
+                  marginTop: '14px',
                   padding: '8px 14px',
                   background: 'rgba(10, 28, 63, 0.65)',
                   border: '1px solid rgba(246, 238, 219, 0.16)',
@@ -1601,16 +1596,14 @@ export default function InovavPortal({
               </div>
             </div>
 
-            {/* ── SUIT TELEMETRY VIEWPORT (ON THE OTHER SIDE OF ASTRONAUT) ── */}
+            {/* ── SUIT TELEMETRY VIEWPORT (ON THE EXACT SAME LEVEL BESIDE ASTRONAUT) ── */}
             <main
-              className="custom-scroll"
+              className={`custom-scroll w-full ${
+                telemetrySide === 'left' ? 'order-1 lg:order-1' : 'order-2 lg:order-2'
+              }`}
               style={{
                 position: 'relative',
-                width: '50vw',
-                minWidth: '320px',
-                height: '100vh',
-                overflowY: 'auto',
-                padding: '60px 24px 40px 24px',
+                padding: '36px 24px 40px 24px',
                 zIndex: 25,
               }}
             >
