@@ -9,6 +9,7 @@ export const STATUS_CARDS = [
     id: 1,
     topLabel: 'Heart Rate',
     src: '/holter_recorder.jpg',
+    fallbackSrc: '/holtar_monitor.png',
     alt: 'Heart Rate Holter Recorder',
     bottomLabel: 'Daily',
   },
@@ -16,6 +17,7 @@ export const STATUS_CARDS = [
     id: 2,
     topLabel: 'Blood pressure',
     src: '/istat-system.png',
+    fallbackSrc: '/blood_presure.png',
     alt: 'Blood Pressure i-STAT System',
     bottomLabel: 'Weekly',
   },
@@ -23,6 +25,7 @@ export const STATUS_CARDS = [
     id: 3,
     topLabel: 'Blood sugar',
     src: '/images.jpeg',
+    fallbackSrc: '/blood_sugar.png',
     alt: 'Blood Sugar Glucose Monitor',
     bottomLabel: 'Weekly',
   },
@@ -30,6 +33,7 @@ export const STATUS_CARDS = [
     id: 4,
     topLabel: 'Body temperature',
     src: '/thernmzl.jpg',
+    fallbackSrc: '/thermal.jpg',
     alt: 'Body Temperature Thermal Sensor',
     bottomLabel: 'Weekly',
   },
@@ -79,8 +83,13 @@ export default function LogoMarquee() {
                     src={card.src}
                     alt={card.alt}
                     title={card.topLabel}
-                    className="h-16 md:h-20 w-auto object-contain my-1"
+                    className="h-16 md:h-20 w-auto object-contain my-1 rounded-md"
                     loading="lazy"
+                    onError={(e) => {
+                      if (card.fallbackSrc && e.currentTarget.src !== card.fallbackSrc) {
+                        e.currentTarget.src = card.fallbackSrc;
+                      }
+                    }}
                   />
 
                   {/* Bottom Label */}
@@ -111,8 +120,13 @@ export default function LogoMarquee() {
                     src={card.src}
                     alt={card.alt}
                     title={card.topLabel}
-                    className="h-16 md:h-20 w-auto object-contain my-1"
+                    className="h-16 md:h-20 w-auto object-contain my-1 rounded-md"
                     loading="lazy"
+                    onError={(e) => {
+                      if (card.fallbackSrc && e.currentTarget.src !== card.fallbackSrc) {
+                        e.currentTarget.src = card.fallbackSrc;
+                      }
+                    }}
                   />
 
                   {/* Bottom Label */}
