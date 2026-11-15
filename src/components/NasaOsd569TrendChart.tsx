@@ -105,59 +105,59 @@ export const NasaOsd569TrendChart: React.FC<NasaOsd569TrendChartProps> = ({
   }, [viewMode, continuousDataset]);
 
   return (
-    <div className={`w-full bg-[#FCFBF7] border border-[#DCD5C7] rounded-3xl p-5 sm:p-7 shadow-sm transition-all ${className}`}>
+    <div className={`w-full bg-[#FCFBF7] border border-[#DCD5C7] rounded-3xl p-4 sm:p-5 shadow-sm transition-all ${className}`}>
       {/* 1. HEADER & NASA OSDR API STREAM BANNER */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 border-b border-[#E7E2D6]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3.5 border-b border-[#E7E2D6]">
         <div>
-          <div className="flex flex-wrap items-center gap-2.5">
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-mono font-bold bg-[#0B1736] text-[#F5B82E] shadow-sm">
-              <Database className="w-3.5 h-3.5 text-[#F5B82E]" />
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-[#0B1736] text-[#F5B82E] shadow-sm">
+              <Database className="w-3 h-3 text-[#F5B82E]" />
               NASA OSDR // OSD-569
             </span>
-            <span className="px-2.5 py-1 rounded-full text-[11px] font-mono font-semibold bg-[#EDE8DE] text-[#0B1736] border border-[#DCD5C7]">
+            <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-[#EDE8DE] text-[#0B1736] border border-[#DCD5C7]">
               GLDS-561
             </span>
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-mono font-semibold bg-emerald-500/15 text-emerald-800 border border-emerald-500/30">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              API Status: {meta?.isLiveApi ? 'Live Connected' : 'OSDR Certified Feed'}
+            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-emerald-500/15 text-emerald-800 border border-emerald-500/30">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              API: {meta?.isLiveApi ? 'Live Connected' : 'OSDR Certified'}
             </span>
           </div>
 
-          <h2 className="text-xl sm:text-2xl font-black text-[#0B1736] tracking-tight mt-2 font-sans flex items-center gap-2">
-            Astronaut C001 Physiological Trend & Telemetry
-            <span className="text-xs px-2 py-0.5 rounded font-mono font-medium bg-[#EFECE6] text-[#5A657D] border border-[#DCD5C7]">
+          <h2 className="text-base sm:text-lg font-black text-[#0B1736] tracking-tight mt-1.5 font-sans flex items-center gap-2">
+            Astronaut C001 Physiological Trend
+            <span className="text-[10px] px-1.5 py-0.5 rounded font-mono font-medium bg-[#EFECE6] text-[#5A657D] border border-[#DCD5C7]">
               Inspiration4
             </span>
           </h2>
-          <p className="text-xs sm:text-sm text-[#5A657D] mt-1 max-w-3xl leading-relaxed">
-            Directly extracted from NASA Open Science Data Repository (OSDR Study OSD-569) and companion clinical laboratory panels. Tracking cardiovascular, thermal, and glycemic dynamics across pre-flight, in-flight orbit, and splashdown readaptation.
+          <p className="text-[11px] text-[#5A657D] mt-0.5 max-w-2xl leading-snug">
+            Extracted from NASA OSDR OSD-569 whole-blood & companion clinical panels (LSDS-8 CMP).
           </p>
         </div>
 
         {/* View Mode & NASA OSDR Deep Link */}
-        <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 self-start lg:self-center">
-          <div className="bg-[#EDE8DE] p-1 rounded-xl border border-[#DCD5C7] flex items-center gap-1 text-xs font-mono">
+        <div className="flex flex-wrap sm:flex-nowrap items-center gap-1.5 self-start sm:self-center">
+          <div className="bg-[#EDE8DE] p-0.5 rounded-xl border border-[#DCD5C7] flex items-center gap-0.5 text-[11px] font-mono">
             <button
               type="button"
               onClick={() => setViewMode('milestones')}
-              className={`px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
+              className={`px-2.5 py-1 rounded-lg font-bold transition-all cursor-pointer ${
                 viewMode === 'milestones'
                   ? 'bg-[#0B1736] text-white shadow-sm'
                   : 'text-[#5A657D] hover:text-[#0B1736]'
               }`}
             >
-              Assay Milestones
+              Milestones
             </button>
             <button
               type="button"
               onClick={() => setViewMode('continuous')}
-              className={`px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
+              className={`px-2.5 py-1 rounded-lg font-bold transition-all cursor-pointer ${
                 viewMode === 'continuous'
                   ? 'bg-[#0B1736] text-white shadow-sm'
                   : 'text-[#5A657D] hover:text-[#0B1736]'
               }`}
             >
-              Continuous Spline
+              Spline
             </button>
           </div>
 
@@ -165,59 +165,51 @@ export const NasaOsd569TrendChart: React.FC<NasaOsd569TrendChartProps> = ({
             href="https://osdr.nasa.gov/bio/repo/data/studies/OSD-569"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-mono font-semibold bg-white border border-[#DCD5C7] text-[#0B1736] hover:bg-[#F3EFE6] transition-all shadow-sm"
+            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-[11px] font-mono font-semibold bg-white border border-[#DCD5C7] text-[#0B1736] hover:bg-[#F3EFE6] transition-all shadow-sm"
           >
-            NASA OSDR Repo
-            <ExternalLink className="w-3.5 h-3.5 text-[#5A657D]" />
+            Repo
+            <ExternalLink className="w-3 h-3 text-[#5A657D]" />
           </a>
         </div>
       </div>
 
-      {/* 2. THE 4 MANDATORY PHYSIOLOGICAL METRICS CARDS */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 my-6">
+      {/* 2. THE 4 MANDATORY PHYSIOLOGICAL METRICS CARDS (COMPACT 2x2 or 4x1 GRID) */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 my-3.5">
         {/* Metric 1: Heart Rate */}
         <div
           onClick={() => setActiveMetrics((p) => ({ ...p, hr: !p.hr }))}
-          className={`p-4 rounded-2xl border transition-all cursor-pointer select-none ${
+          className={`p-3 rounded-xl border transition-all cursor-pointer select-none ${
             activeMetrics.hr
-              ? 'bg-white border-cyan-400/80 shadow-sm ring-1 ring-cyan-400/40'
+              ? 'bg-white border-cyan-400/80 shadow-xs ring-1 ring-cyan-400/40'
               : 'bg-white/60 border-[#DCD5C7] opacity-60'
           }`}
         >
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-xl bg-cyan-500/10 flex items-center justify-center text-cyan-600">
-                <Heart className="w-4 h-4 fill-cyan-500/20" />
+            <div className="flex items-center gap-1.5">
+              <div className="w-6 h-6 rounded-lg bg-cyan-500/10 flex items-center justify-center text-cyan-600">
+                <Heart className="w-3.5 h-3.5 fill-cyan-500/20" />
               </div>
-              <div>
-                <span className="text-[11px] font-mono uppercase tracking-wider font-bold text-[#5A657D]">
-                  Heart Rate
-                </span>
-                <p className="text-[10px] text-cyan-700 font-mono">BPM (Resting/Active)</p>
-              </div>
+              <span className="text-[10px] font-mono uppercase tracking-wider font-bold text-[#5A657D]">
+                Heart Rate
+              </span>
             </div>
-            <span className={`w-2.5 h-2.5 rounded-full ${activeMetrics.hr ? 'bg-cyan-500' : 'bg-slate-300'}`} />
+            <span className={`w-2 h-2 rounded-full ${activeMetrics.hr ? 'bg-cyan-500' : 'bg-slate-300'}`} />
           </div>
 
-          <div className="mt-3 flex items-baseline justify-between">
-            <h3 className="text-3xl font-black text-[#0B1736] font-sans tracking-tight">
+          <div className="mt-2 flex items-baseline justify-between">
+            <h3 className="text-2xl font-black text-[#0B1736] font-sans tracking-tight">
               {currentMilestone.heartRate}{' '}
-              <span className="text-sm font-mono text-[#5A657D] font-medium">BPM</span>
+              <span className="text-xs font-mono text-[#5A657D] font-medium">BPM</span>
             </h3>
-            <span className="inline-flex items-center text-xs font-mono font-bold text-cyan-700 bg-cyan-50 px-2 py-0.5 rounded">
-              {currentMilestone.heartRate > 75 ? (
-                <ArrowUpRight className="w-3.5 h-3.5 mr-0.5" />
-              ) : (
-                <ArrowDownRight className="w-3.5 h-3.5 mr-0.5" />
-              )}
+            <span className="text-[10px] font-mono font-bold text-cyan-700 bg-cyan-50 px-1.5 py-0.5 rounded">
               {currentMilestone.heartRate >= 68
-                ? `+${currentMilestone.heartRate - 68} vs base`
-                : `${currentMilestone.heartRate - 68} vs base`}
+                ? `+${currentMilestone.heartRate - 68}`
+                : `${currentMilestone.heartRate - 68}`}
             </span>
           </div>
 
-          <div className="mt-2 text-[11px] text-[#5A657D] font-mono flex items-center justify-between border-t border-[#F0EBE0] pt-2">
-            <span>Baseline: 68 BPM</span>
+          <div className="mt-1.5 text-[10px] text-[#5A657D] font-mono flex items-center justify-between border-t border-[#F0EBE0] pt-1.5">
+            <span>Base: 68 BPM</span>
             <span className="text-cyan-800 font-semibold">{currentMilestone.timelineLabel}</span>
           </div>
         </div>
@@ -225,40 +217,36 @@ export const NasaOsd569TrendChart: React.FC<NasaOsd569TrendChartProps> = ({
         {/* Metric 2: Blood Pressure */}
         <div
           onClick={() => setActiveMetrics((p) => ({ ...p, bp: !p.bp }))}
-          className={`p-4 rounded-2xl border transition-all cursor-pointer select-none ${
+          className={`p-3 rounded-xl border transition-all cursor-pointer select-none ${
             activeMetrics.bp
-              ? 'bg-white border-amber-400/90 shadow-sm ring-1 ring-amber-400/40'
+              ? 'bg-white border-amber-400/90 shadow-xs ring-1 ring-amber-400/40'
               : 'bg-white/60 border-[#DCD5C7] opacity-60'
           }`}
         >
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-600">
-                <Activity className="w-4 h-4" />
+            <div className="flex items-center gap-1.5">
+              <div className="w-6 h-6 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-600">
+                <Activity className="w-3.5 h-3.5" />
               </div>
-              <div>
-                <span className="text-[11px] font-mono uppercase tracking-wider font-bold text-[#5A657D]">
-                  Blood Pressure
-                </span>
-                <p className="text-[10px] text-amber-700 font-mono">Systolic / Diastolic</p>
-              </div>
+              <span className="text-[10px] font-mono uppercase tracking-wider font-bold text-[#5A657D]">
+                BP (mmHg)
+              </span>
             </div>
-            <span className={`w-2.5 h-2.5 rounded-full ${activeMetrics.bp ? 'bg-amber-500' : 'bg-slate-300'}`} />
+            <span className={`w-2 h-2 rounded-full ${activeMetrics.bp ? 'bg-amber-500' : 'bg-slate-300'}`} />
           </div>
 
-          <div className="mt-3 flex items-baseline justify-between">
-            <h3 className="text-3xl font-black text-[#0B1736] font-sans tracking-tight">
+          <div className="mt-2 flex items-baseline justify-between">
+            <h3 className="text-2xl font-black text-[#0B1736] font-sans tracking-tight">
               {currentMilestone.systolic}
-              <span className="text-xl text-[#5A657D] font-normal">/{currentMilestone.diastolic}</span>{' '}
-              <span className="text-xs font-mono text-[#5A657D] font-medium">mmHg</span>
+              <span className="text-base text-[#5A657D] font-normal">/{currentMilestone.diastolic}</span>
             </h3>
-            <span className="inline-flex items-center text-xs font-mono font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded">
-              {currentMilestone.systolic >= 130 ? 'Pre-launch Peak' : 'Cardio Nom'}
+            <span className="text-[10px] font-mono font-bold text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded">
+              {currentMilestone.systolic >= 130 ? 'Peak' : 'Nom'}
             </span>
           </div>
 
-          <div className="mt-2 text-[11px] text-[#5A657D] font-mono flex items-center justify-between border-t border-[#F0EBE0] pt-2">
-            <span>Baseline: 120/78 mmHg</span>
+          <div className="mt-1.5 text-[10px] text-[#5A657D] font-mono flex items-center justify-between border-t border-[#F0EBE0] pt-1.5">
+            <span>Base: 120/78</span>
             <span className="text-amber-800 font-semibold">{currentMilestone.bloodPressure}</span>
           </div>
         </div>
@@ -266,41 +254,38 @@ export const NasaOsd569TrendChart: React.FC<NasaOsd569TrendChartProps> = ({
         {/* Metric 3: Body Temperature */}
         <div
           onClick={() => setActiveMetrics((p) => ({ ...p, temp: !p.temp }))}
-          className={`p-4 rounded-2xl border transition-all cursor-pointer select-none ${
+          className={`p-3 rounded-xl border transition-all cursor-pointer select-none ${
             activeMetrics.temp
-              ? 'bg-white border-rose-400/80 shadow-sm ring-1 ring-rose-400/40'
+              ? 'bg-white border-rose-400/80 shadow-xs ring-1 ring-rose-400/40'
               : 'bg-white/60 border-[#DCD5C7] opacity-60'
           }`}
         >
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-xl bg-rose-500/10 flex items-center justify-center text-rose-600">
-                <Thermometer className="w-4 h-4" />
+            <div className="flex items-center gap-1.5">
+              <div className="w-6 h-6 rounded-lg bg-rose-500/10 flex items-center justify-center text-rose-600">
+                <Thermometer className="w-3.5 h-3.5" />
               </div>
-              <div>
-                <span className="text-[11px] font-mono uppercase tracking-wider font-bold text-[#5A657D]">
-                  Body Temperature
-                </span>
-                <p className="text-[10px] text-rose-700 font-mono">Core Thermoregulation</p>
-              </div>
+              <span className="text-[10px] font-mono uppercase tracking-wider font-bold text-[#5A657D]">
+                Body Temp
+              </span>
             </div>
-            <span className={`w-2.5 h-2.5 rounded-full ${activeMetrics.temp ? 'bg-rose-500' : 'bg-slate-300'}`} />
+            <span className={`w-2 h-2 rounded-full ${activeMetrics.temp ? 'bg-rose-500' : 'bg-slate-300'}`} />
           </div>
 
-          <div className="mt-3 flex items-baseline justify-between">
-            <h3 className="text-3xl font-black text-[#0B1736] font-sans tracking-tight">
+          <div className="mt-2 flex items-baseline justify-between">
+            <h3 className="text-2xl font-black text-[#0B1736] font-sans tracking-tight">
               {currentMilestone.bodyTemperature.toFixed(1)}{' '}
-              <span className="text-sm font-mono text-[#5A657D] font-medium">°C</span>
+              <span className="text-xs font-mono text-[#5A657D] font-medium">°C</span>
             </h3>
-            <span className="inline-flex items-center text-xs font-mono font-bold text-rose-700 bg-rose-50 px-2 py-0.5 rounded">
+            <span className="text-[10px] font-mono font-bold text-rose-700 bg-rose-50 px-1.5 py-0.5 rounded">
               {((currentMilestone.bodyTemperature * 9) / 5 + 32).toFixed(1)}°F
             </span>
           </div>
 
-          <div className="mt-2 text-[11px] text-[#5A657D] font-mono flex items-center justify-between border-t border-[#F0EBE0] pt-2">
+          <div className="mt-1.5 text-[10px] text-[#5A657D] font-mono flex items-center justify-between border-t border-[#F0EBE0] pt-1.5">
             <span>Norm: 36.6 °C</span>
             <span className="text-rose-800 font-semibold">
-              {currentMilestone.bodyTemperature > 36.8 ? 'Thermal Shift' : 'Nominal'}
+              {currentMilestone.bodyTemperature > 36.8 ? 'Shift' : 'Nominal'}
             </span>
           </div>
         </div>
@@ -308,116 +293,108 @@ export const NasaOsd569TrendChart: React.FC<NasaOsd569TrendChartProps> = ({
         {/* Metric 4: Blood Sugar (Glucose) */}
         <div
           onClick={() => setActiveMetrics((p) => ({ ...p, sugar: !p.sugar }))}
-          className={`p-4 rounded-2xl border transition-all cursor-pointer select-none ${
+          className={`p-3 rounded-xl border transition-all cursor-pointer select-none ${
             activeMetrics.sugar
-              ? 'bg-white border-emerald-400/90 shadow-sm ring-1 ring-emerald-400/40'
+              ? 'bg-white border-emerald-400/90 shadow-xs ring-1 ring-emerald-400/40'
               : 'bg-white/60 border-[#DCD5C7] opacity-60'
           }`}
         >
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-600">
-                <Droplet className="w-4 h-4" />
+            <div className="flex items-center gap-1.5">
+              <div className="w-6 h-6 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-600">
+                <Droplet className="w-3.5 h-3.5" />
               </div>
-              <div>
-                <span className="text-[11px] font-mono uppercase tracking-wider font-bold text-[#5A657D]">
-                  Blood Sugar (Glucose)
-                </span>
-                <p className="text-[10px] text-emerald-700 font-mono">Fasting Serum Panel</p>
-              </div>
+              <span className="text-[10px] font-mono uppercase tracking-wider font-bold text-[#5A657D]">
+                Blood Sugar
+              </span>
             </div>
-            <span className={`w-2.5 h-2.5 rounded-full ${activeMetrics.sugar ? 'bg-emerald-500' : 'bg-slate-300'}`} />
+            <span className={`w-2 h-2 rounded-full ${activeMetrics.sugar ? 'bg-emerald-500' : 'bg-slate-300'}`} />
           </div>
 
-          <div className="mt-3 flex items-baseline justify-between">
-            <h3 className="text-3xl font-black text-[#0B1736] font-sans tracking-tight">
+          <div className="mt-2 flex items-baseline justify-between">
+            <h3 className="text-2xl font-black text-[#0B1736] font-sans tracking-tight">
               {currentMilestone.bloodSugar}{' '}
               <span className="text-xs font-mono text-[#5A657D] font-medium">mg/dL</span>
             </h3>
-            <span className="inline-flex items-center text-xs font-mono font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
-              LSDS-8 Lab
+            <span className="text-[10px] font-mono font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded">
+              LSDS-8
             </span>
           </div>
 
-          <div className="mt-2 text-[11px] text-[#5A657D] font-mono flex items-center justify-between border-t border-[#F0EBE0] pt-2">
-            <span>Ref: 70 - 99 mg/dL</span>
+          <div className="mt-1.5 text-[10px] text-[#5A657D] font-mono flex items-center justify-between border-t border-[#F0EBE0] pt-1.5">
+            <span>Ref: 70-99</span>
             <span className="text-emerald-800 font-semibold font-mono">
               {currentMilestone.bloodSugar < 70
-                ? 'Low Pre-Launch'
+                ? 'Low'
                 : currentMilestone.bloodSugar > 100
-                ? 'Microgravity In-Flight'
-                : 'Optimal Fasting'}
+                ? 'Orbit Peak'
+                : 'Optimal'}
             </span>
           </div>
         </div>
       </div>
 
-      {/* 3. RECHARTS MULTI-METRIC TREND GRAPH */}
-      <div className="bg-white border border-[#DCD5C7] rounded-2xl p-5 shadow-sm">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
-          <div>
-            <h3 className="text-sm font-bold text-[#0B1736] font-sans tracking-wide flex items-center gap-2">
-              NASA OSD-569 Multi-Parameter Trajectory Curve
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#EDE8DE] text-[#0B1736]">
-                Subject C001
-              </span>
-            </h3>
-            <p className="text-xs text-[#5A657D] mt-0.5">
-              Click any point to inspect laboratory assay records, mission phase conditions, and sample identifiers.
-            </p>
-          </div>
+      {/* 3. RECHARTS MULTI-METRIC TREND GRAPH (COMPACT HEIGHT & WIDTH) */}
+      <div className="bg-white border border-[#DCD5C7] rounded-2xl p-4 shadow-xs">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-2.5">
+          <h3 className="text-xs sm:text-sm font-bold text-[#0B1736] font-sans tracking-wide flex items-center gap-1.5">
+            OSD-569 Multi-Parameter Trajectory
+            <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-[#EDE8DE] text-[#0B1736]">
+              C001
+            </span>
+          </h3>
 
           {/* Metric Toggle Filter Chips */}
-          <div className="flex flex-wrap items-center gap-1.5 text-xs font-mono">
+          <div className="flex flex-wrap items-center gap-1 text-[11px] font-mono">
             <button
               type="button"
               onClick={() => setActiveMetrics((p) => ({ ...p, hr: !p.hr }))}
-              className={`px-2.5 py-1 rounded-lg border font-semibold transition-all cursor-pointer ${
+              className={`px-2 py-0.5 rounded-md border font-semibold transition-all cursor-pointer ${
                 activeMetrics.hr
-                  ? 'bg-cyan-50 border-cyan-400 text-cyan-800 shadow-xs'
+                  ? 'bg-cyan-50 border-cyan-400 text-cyan-800'
                   : 'bg-slate-100 border-slate-300 text-slate-400'
               }`}
             >
-              ● Heart Rate (BPM)
+              ● HR
             </button>
             <button
               type="button"
               onClick={() => setActiveMetrics((p) => ({ ...p, bp: !p.bp }))}
-              className={`px-2.5 py-1 rounded-lg border font-semibold transition-all cursor-pointer ${
+              className={`px-2 py-0.5 rounded-md border font-semibold transition-all cursor-pointer ${
                 activeMetrics.bp
-                  ? 'bg-amber-50 border-amber-400 text-amber-800 shadow-xs'
+                  ? 'bg-amber-50 border-amber-400 text-amber-800'
                   : 'bg-slate-100 border-slate-300 text-slate-400'
               }`}
             >
-              ● Blood Pressure (mmHg)
+              ● BP
             </button>
             <button
               type="button"
               onClick={() => setActiveMetrics((p) => ({ ...p, temp: !p.temp }))}
-              className={`px-2.5 py-1 rounded-lg border font-semibold transition-all cursor-pointer ${
+              className={`px-2 py-0.5 rounded-md border font-semibold transition-all cursor-pointer ${
                 activeMetrics.temp
-                  ? 'bg-rose-50 border-rose-400 text-rose-800 shadow-xs'
+                  ? 'bg-rose-50 border-rose-400 text-rose-800'
                   : 'bg-slate-100 border-slate-300 text-slate-400'
               }`}
             >
-              ● Body Temp (°C)
+              ● Temp
             </button>
             <button
               type="button"
               onClick={() => setActiveMetrics((p) => ({ ...p, sugar: !p.sugar }))}
-              className={`px-2.5 py-1 rounded-lg border font-semibold transition-all cursor-pointer ${
+              className={`px-2 py-0.5 rounded-md border font-semibold transition-all cursor-pointer ${
                 activeMetrics.sugar
-                  ? 'bg-emerald-50 border-emerald-400 text-emerald-800 shadow-xs'
+                  ? 'bg-emerald-50 border-emerald-400 text-emerald-800'
                   : 'bg-slate-100 border-slate-300 text-slate-400'
               }`}
             >
-              ● Blood Sugar (mg/dL)
+              ● Glucose
             </button>
           </div>
         </div>
 
-        {/* Chart Canvas */}
-        <div className="h-64 sm:h-72 w-full">
+        {/* Compact Chart Canvas (Reduced height) */}
+        <div className="h-44 sm:h-48 w-full">
           <ResponsiveContainer width="100%" height="100%">
             <ComposedChart
               data={chartData}
