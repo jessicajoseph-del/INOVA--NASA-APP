@@ -51,7 +51,7 @@ export default function HealthMetricsPanel({ isVisible = true }) {
             style={{
               width: i % 8 === 0 ? '10px' : i % 4 === 0 ? '6px' : '3px',
               height: '1px',
-              backgroundColor: 'rgba(246, 238, 219, 0.55)',
+              backgroundColor: 'rgba(6, 19, 43, 0.35)',
             }}
           />
         ))}
@@ -64,15 +64,15 @@ export default function HealthMetricsPanel({ isVisible = true }) {
             key={index}
             style={{
               padding: '14px 0',
-              borderBottom: '1px solid rgba(246, 238, 219, 0.14)',
+              borderBottom: '1px solid rgba(6, 19, 43, 0.12)',
             }}
           >
             <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px' }}>
               <span
                 style={{
                   fontSize: '2.1rem',
-                  fontWeight: 400,
-                  color: '#f6eedb',
+                  fontWeight: 600,
+                  color: '#06132b',
                   fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
                   letterSpacing: '-0.02em',
                   lineHeight: 1.1,
@@ -84,7 +84,8 @@ export default function HealthMetricsPanel({ isVisible = true }) {
                 <span
                   style={{
                     fontSize: '0.9rem',
-                    color: '#ead9b2',
+                    color: '#1e3a8a',
+                    fontWeight: 600,
                     fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
                   }}
                 >
@@ -95,10 +96,10 @@ export default function HealthMetricsPanel({ isVisible = true }) {
             <div
               style={{
                 fontSize: '0.64rem',
-                color: '#9fb6da',
+                color: '#1e3a8a',
                 letterSpacing: '0.18em',
                 fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-                fontWeight: 500,
+                fontWeight: 600,
                 marginTop: '4px',
               }}
             >
@@ -113,8 +114,8 @@ export default function HealthMetricsPanel({ isVisible = true }) {
         <h2
           style={{
             fontSize: '2.3rem',
-            fontWeight: 400,
-            color: '#f6eedb',
+            fontWeight: 600,
+            color: '#06132b',
             lineHeight: 1.12,
             letterSpacing: '-0.02em',
             margin: '0 0 6px 0',
@@ -126,7 +127,7 @@ export default function HealthMetricsPanel({ isVisible = true }) {
         <p
           style={{
             fontSize: '0.84rem',
-            color: '#9fb6da',
+            color: '#1e3a8a',
             margin: 0,
             letterSpacing: '0.01em',
             fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',

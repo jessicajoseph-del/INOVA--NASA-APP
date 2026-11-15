@@ -34,9 +34,10 @@ export default function SystemLabels({ isVisible = true, onSelectSystem, activeS
           <div
             style={{
               fontSize: '0.72rem',
-              color: hoveredLabel === 'cardiovascular' ? '#f6eedb' : '#9fb6da',
+              color: hoveredLabel === 'cardiovascular' ? '#2563eb' : '#1e3a8a',
               letterSpacing: '0.12em',
               fontFamily: 'monospace',
+              fontWeight: 700,
               transition: 'color 0.2s',
             }}
           >
@@ -45,8 +46,8 @@ export default function SystemLabels({ isVisible = true, onSelectSystem, activeS
           <div
             style={{
               fontSize: '1.05rem',
-              fontWeight: 400,
-              color: hoveredLabel === 'cardiovascular' ? '#f6eedb' : '#ead9b2',
+              fontWeight: 600,
+              color: hoveredLabel === 'cardiovascular' ? '#2563eb' : '#06132b',
               letterSpacing: '0.02em',
               fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
               transition: 'color 0.2s',
@@ -57,7 +58,7 @@ export default function SystemLabels({ isVisible = true, onSelectSystem, activeS
         </div>
 
         {/* Thin horizontal indicator line connecting to Heart */}
-        <div style={{ position: 'relative', width: '130px', height: '1px', backgroundColor: hoveredLabel === 'cardiovascular' ? '#f6eedb' : 'rgba(246, 238, 219, 0.4)', transition: 'background-color 0.2s' }}>
+        <div style={{ position: 'relative', width: '130px', height: '1.5px', backgroundColor: hoveredLabel === 'cardiovascular' ? '#2563eb' : 'rgba(6, 19, 43, 0.4)', transition: 'background-color 0.2s' }}>
           {/* Dot Anchor on Heart */}
           <div
             style={{
@@ -68,8 +69,8 @@ export default function SystemLabels({ isVisible = true, onSelectSystem, activeS
               width: '6px',
               height: '6px',
               borderRadius: '50%',
-              backgroundColor: '#f6eedb',
-              boxShadow: hoveredLabel === 'cardiovascular' ? '0 0 12px #f6eedb' : '0 0 6px #ead9b2',
+              backgroundColor: hoveredLabel === 'cardiovascular' ? '#2563eb' : '#06132b',
+              boxShadow: hoveredLabel === 'cardiovascular' ? '0 0 12px #2563eb' : '0 0 6px rgba(6, 19, 43, 0.4)',
               transition: 'box-shadow 0.2s',
             }}
           />
@@ -92,7 +93,7 @@ export default function SystemLabels({ isVisible = true, onSelectSystem, activeS
         onClick={() => onSelectSystem('skeletal')}
       >
         {/* Angled indicator line from shoulder */}
-        <div style={{ position: 'relative', width: '45px', height: '1px', transform: 'rotate(-35deg)', transformOrigin: 'left center', backgroundColor: hoveredLabel === 'skeletal' ? '#f6eedb' : 'rgba(246, 238, 219, 0.4)', marginRight: '18px' }}>
+        <div style={{ position: 'relative', width: '45px', height: '1.5px', transform: 'rotate(-35deg)', transformOrigin: 'left center', backgroundColor: hoveredLabel === 'skeletal' ? '#2563eb' : 'rgba(6, 19, 43, 0.4)', marginRight: '18px' }}>
           {/* Dot Anchor on Shoulder */}
           <div
             style={{
@@ -103,8 +104,8 @@ export default function SystemLabels({ isVisible = true, onSelectSystem, activeS
               width: '5px',
               height: '5px',
               borderRadius: '50%',
-              backgroundColor: '#f6eedb',
-              boxShadow: hoveredLabel === 'skeletal' ? '0 0 12px #f6eedb' : '0 0 6px #ead9b2',
+              backgroundColor: hoveredLabel === 'skeletal' ? '#2563eb' : '#06132b',
+              boxShadow: hoveredLabel === 'skeletal' ? '0 0 12px #2563eb' : '0 0 6px rgba(6, 19, 43, 0.4)',
             }}
           />
         </div>
@@ -113,9 +114,10 @@ export default function SystemLabels({ isVisible = true, onSelectSystem, activeS
           <div
             style={{
               fontSize: '0.72rem',
-              color: hoveredLabel === 'skeletal' ? '#f6eedb' : '#9fb6da',
+              color: hoveredLabel === 'skeletal' ? '#2563eb' : '#1e3a8a',
               letterSpacing: '0.12em',
               fontFamily: 'monospace',
+              fontWeight: 700,
               transition: 'color 0.2s',
             }}
           >
@@ -124,8 +126,8 @@ export default function SystemLabels({ isVisible = true, onSelectSystem, activeS
           <div
             style={{
               fontSize: '1.05rem',
-              fontWeight: 400,
-              color: hoveredLabel === 'skeletal' ? '#f6eedb' : '#ead9b2',
+              fontWeight: 600,
+              color: hoveredLabel === 'skeletal' ? '#2563eb' : '#06132b',
               letterSpacing: '0.02em',
               fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
               transition: 'color 0.2s',
@@ -152,7 +154,7 @@ export default function SystemLabels({ isVisible = true, onSelectSystem, activeS
         onClick={() => onSelectSystem('metabolic')}
       >
         {/* Horizontal line from abdomen */}
-        <div style={{ position: 'relative', width: '150px', height: '1px', backgroundColor: hoveredLabel === 'metabolic' ? '#f6eedb' : 'rgba(246, 238, 219, 0.4)', marginRight: '16px', transition: 'background-color 0.2s' }}>
+        <div style={{ position: 'relative', width: '150px', height: '1.5px', backgroundColor: hoveredLabel === 'metabolic' ? '#2563eb' : 'rgba(6, 19, 43, 0.4)', marginRight: '16px', transition: 'background-color 0.2s' }}>
           {/* Dot Anchor on Abdomen */}
           <div
             style={{
@@ -163,8 +165,8 @@ export default function SystemLabels({ isVisible = true, onSelectSystem, activeS
               width: '5px',
               height: '5px',
               borderRadius: '50%',
-              backgroundColor: '#f6eedb',
-              boxShadow: hoveredLabel === 'metabolic' ? '0 0 12px #f6eedb' : '0 0 6px #ead9b2',
+              backgroundColor: hoveredLabel === 'metabolic' ? '#2563eb' : '#06132b',
+              boxShadow: hoveredLabel === 'metabolic' ? '0 0 12px #2563eb' : '0 0 6px rgba(6, 19, 43, 0.4)',
             }}
           />
         </div>
@@ -173,9 +175,10 @@ export default function SystemLabels({ isVisible = true, onSelectSystem, activeS
           <div
             style={{
               fontSize: '0.72rem',
-              color: hoveredLabel === 'metabolic' ? '#f6eedb' : '#9fb6da',
+              color: hoveredLabel === 'metabolic' ? '#2563eb' : '#1e3a8a',
               letterSpacing: '0.12em',
               fontFamily: 'monospace',
+              fontWeight: 700,
               transition: 'color 0.2s',
             }}
           >
@@ -184,8 +187,8 @@ export default function SystemLabels({ isVisible = true, onSelectSystem, activeS
           <div
             style={{
               fontSize: '1.05rem',
-              fontWeight: 400,
-              color: hoveredLabel === 'metabolic' ? '#f6eedb' : '#ead9b2',
+              fontWeight: 600,
+              color: hoveredLabel === 'metabolic' ? '#2563eb' : '#06132b',
               letterSpacing: '0.02em',
               fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
               transition: 'color 0.2s',

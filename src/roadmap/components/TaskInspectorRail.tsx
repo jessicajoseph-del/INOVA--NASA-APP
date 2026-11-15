@@ -147,13 +147,13 @@ export const TaskInspectorRail: React.FC<TaskInspectorRailProps> = ({
               ? 'bg-[#FFFDF7] border-2 border-[#FACC15] ring-2 ring-white/95 shadow-[0_0_24px_rgba(255,255,255,0.45),0_0_32px_rgba(250,204,21,0.4)] text-[#07142E]'
               : isSelectedCompleted
                 ? 'oat-completed-surface border-2 border-white/95 shadow-[0_0_24px_rgba(255,255,255,0.45)] text-[#07142E]'
-                : 'bg-white/[0.11] backdrop-blur-md bg-gradient-to-br from-white/[0.18] via-white/[0.07] to-white/[0.03] border-[1.5px] border-white/85 shadow-[0_0_22px_rgba(255,255,255,0.3)] text-white'
+                : 'bg-[#FFFDF7] border-[1.5px] border-[#06132B]/20 shadow-[0_4px_20px_rgba(6,19,43,0.08)] text-[#06132B]'
           }`}
         >
           <div className="flex items-center justify-between gap-2">
             <span
               className={`font-mono text-xs font-extrabold ${
-                isSelectedLocked ? 'text-[#FDE047]' : 'text-[#B45309]'
+                isSelectedLocked ? 'text-[#1E3A8A]' : 'text-[#B45309]'
               }`}
             >
               STAGE {String(selectedIndex + 1).padStart(2, '0')}
@@ -161,7 +161,7 @@ export const TaskInspectorRail: React.FC<TaskInspectorRailProps> = ({
 
             <span
               className={`font-mono text-xs font-bold ${
-                isSelectedLocked ? 'text-sky-100' : 'text-[#334155]'
+                isSelectedLocked ? 'text-[#1E3A8A]' : 'text-[#334155]'
               }`}
             >
               {selectedTask.status === 'unlocked'
@@ -174,7 +174,7 @@ export const TaskInspectorRail: React.FC<TaskInspectorRailProps> = ({
 
           <h3
             className={`mt-1.5 font-display text-lg font-extrabold ${
-              isSelectedLocked ? 'text-white' : 'text-[#07142E]'
+              isSelectedLocked ? 'text-[#06132B]' : 'text-[#07142E]'
             }`}
           >
             {selectedTask.title}
@@ -182,7 +182,7 @@ export const TaskInspectorRail: React.FC<TaskInspectorRailProps> = ({
 
           <p
             className={`mt-1.5 text-xs leading-relaxed ${
-              isSelectedLocked ? 'text-white/85' : 'text-[#1E293B]'
+              isSelectedLocked ? 'text-[#1E3A8A]' : 'text-[#1E293B]'
             }`}
           >
             {selectedTask.description}
@@ -198,20 +198,20 @@ export const TaskInspectorRail: React.FC<TaskInspectorRailProps> = ({
           {/* Clickable Game Objectives */}
           <div
             className={`mt-4 pt-3.5 border-t ${
-              isSelectedLocked ? 'border-white/25' : 'border-[#07142E]/15'
+              isSelectedLocked ? 'border-[#06132B]/15' : 'border-[#07142E]/15'
             }`}
           >
             <div className="flex items-center justify-between mb-2">
               <span
                 className={`text-xs font-extrabold ${
-                  isSelectedLocked ? 'text-white' : 'text-[#07142E]'
+                  isSelectedLocked ? 'text-[#06132B]' : 'text-[#07142E]'
                 }`}
               >
                 Stage Objectives
               </span>
               <span
                 className={`font-mono text-[11px] font-bold ${
-                  isSelectedLocked ? 'text-sky-100' : 'text-[#334155]'
+                  isSelectedLocked ? 'text-[#1E3A8A]' : 'text-[#334155]'
                 }`}
               >
                 {(selectedTask.subtasks || []).filter((s) => s.done).length}/
@@ -228,7 +228,7 @@ export const TaskInspectorRail: React.FC<TaskInspectorRailProps> = ({
                   onClick={() => onToggleSubtask(selectedTask.id, sub.id)}
                   className={`flex w-full items-center gap-2.5 rounded-[5px] border px-3 py-2 text-left text-xs font-semibold transition-colors ${
                     isSelectedLocked
-                      ? 'bg-white/10 border-white/30 text-white/75 cursor-not-allowed'
+                      ? 'bg-[#06132B]/8 border-[#06132B]/20 text-[#06132B]/80 cursor-not-allowed'
                       : sub.done
                         ? 'bg-[#EFE8D6]/90 border-[#D4C8AE] text-[#334155] cursor-pointer'
                         : 'bg-[#FFFDF8]/95 border-[#D8CEB8] text-[#07142E] hover:border-[#EAB308] cursor-pointer'
@@ -239,7 +239,7 @@ export const TaskInspectorRail: React.FC<TaskInspectorRailProps> = ({
                       sub.done
                         ? 'border-[#B45309] bg-[#F5B82E] text-[#06132B]'
                         : isSelectedLocked
-                          ? 'border-white/50 bg-white/10'
+                          ? 'border-[#06132B]/30 bg-[#06132B]/10'
                           : 'border-[#94A3B8] bg-white'
                     }`}
                   >
@@ -247,7 +247,7 @@ export const TaskInspectorRail: React.FC<TaskInspectorRailProps> = ({
                       <Check className="h-3 w-3 stroke-[3]" aria-hidden="true" />
                     )}
                   </span>
-                  <span className={sub.done ? 'line-through' : ''}>{sub.title}</span>
+                  <span className={sub.done ? 'line-through text-[#64748B]' : 'text-[#07142E]'}>{sub.title}</span>
                 </button>
               ))}
             </div>
@@ -264,8 +264,8 @@ export const TaskInspectorRail: React.FC<TaskInspectorRailProps> = ({
                 }}
                 className={`flex w-full items-center justify-center gap-2 rounded-[5px] border px-4 py-2.5 text-sm font-extrabold transition-all whitespace-nowrap ${
                   freeUnlockMode
-                    ? 'bg-white/20 border-white/80 text-white hover:bg-white/30 cursor-pointer'
-                    : 'bg-white/10 border-white/35 text-white/80 cursor-not-allowed'
+                    ? 'bg-[#06132B]/15 border-[#06132B]/40 text-[#06132B] hover:bg-[#06132B]/25 cursor-pointer'
+                    : 'bg-[#06132B]/10 border-[#06132B]/25 text-[#06132B]/80 cursor-not-allowed'
                 }`}
               >
                 <Lock className="h-4 w-4" aria-hidden="true" />

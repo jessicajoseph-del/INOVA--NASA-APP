@@ -1716,9 +1716,9 @@ export default function InovavPortal({
                       type="button"
                       onClick={() => setTelemetrySide((prev) => (prev === 'left' ? 'right' : 'left'))}
                       style={{
-                        background: 'rgba(246, 238, 219, 0.12)',
-                        border: '1px solid rgba(246, 238, 219, 0.25)',
-                        color: '#ead9b2',
+                        background: '#06132b',
+                        border: '1px solid rgba(6, 19, 43, 0.3)',
+                        color: '#f6eedb',
                         fontSize: '0.66rem',
                         fontFamily: 'monospace',
                         padding: '6px 10px',
@@ -1737,8 +1737,8 @@ export default function InovavPortal({
                 <h1
                   style={{
                     fontSize: '2.8rem',
-                    fontWeight: 400,
-                    color: '#f6eedb',
+                    fontWeight: 600,
+                    color: '#06132b',
                     margin: '0 0 6px 0',
                     fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
                     letterSpacing: '-0.02em',
@@ -2048,23 +2048,23 @@ export default function InovavPortal({
                 <h2 style={{ fontSize: '2rem', fontWeight: 600, color: '#06132b', margin: '0 0 20px 0' }}>Daily Flight To-Do List</h2>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                   {[
-                    { time: '06:00 – 06:10 AM', title: 'Urine Test', status: 'Immediate Target', progress: 'Ready', desc: 'Collect midstream bio-specimen in UPA diagnostic pouch; record electrolyte osmolarity and specific gravity.', color: '#FACC15' },
-                    { time: '06:10 – 06:40 AM', title: 'Blood Test Planner', status: 'Next Up', progress: 'Calibrated', desc: 'i-STAT clinical cartridge run for venous pH, lactate, and hematocrit metabolic panel baseline.', color: '#38BDF8' },
-                    { time: '06:40 – 07:00 AM', title: 'Plan Your Breakfast', status: 'Scheduled', progress: 'Galley', desc: 'Rehydrate lyophilized oat meal pack with 250 mL hot water; log vitamin D3 & calcium supplements.', color: '#ead9b2' },
-                    { time: '07:00 – 08:30 AM', title: 'Physical Exercise (Morning)', status: 'Active Circuit', progress: 'ARED Load', desc: '1200 kg musculoskeletal squat & deadlift resistance protocol; telemetry heart rate tracking.', color: '#FB7185' },
-                    { time: '12:00 – 13:00', title: 'Plan Your Lunch', status: 'Scheduled', progress: 'Mid-Day', desc: 'Nutritional rebalancing in Unity module; vacuum-sealed entrée & 500 mL mineral hydration pack.', color: '#ead9b2' },
-                    { time: '13:30 – 15:30', title: 'Wet Clean (Station Maintenance)', status: 'Scheduled', progress: 'Sanitation', desc: 'Antimicrobial wipe-down of Columbus & Destiny handrails; vacuum return air grill mesh filters.', color: '#38BDF8' },
-                    { time: '16:15 – 18:15', title: 'Afternoon Exercise', status: 'Countermeasure', progress: 'T2 / CEVIS', desc: '45-minute T2 Colbert treadmill run + 30-minute CEVIS ergometer cool-down @ 135 BPM.', color: '#FACC15' },
-                    { time: '18:45 – 19:36 PM', title: 'ODF Medical Support Analysis', status: 'Medical Sync', progress: 'Houston Link', desc: 'Operations Data File Checklist 4.2 review with Flight Surgeon; transmit bio-telemetry audit packet.', color: '#FB7185' },
-                    { time: '19:45 – 20:30', title: 'Dinner & Crew Debrief', status: 'Evening', progress: 'Reflection', desc: 'Hot meal reconstitution, daily behavioral wellness score logging, and Day +1 manifest review.', color: '#f6eedb' },
+                    { time: '06:00 – 06:10 AM', title: 'Urine Test', status: 'Immediate Target', progress: 'Ready', desc: 'Collect midstream bio-specimen in UPA diagnostic pouch; record electrolyte osmolarity and specific gravity.', color: '#0284c7' },
+                    { time: '06:10 – 06:40 AM', title: 'Blood Test Planner', status: 'Next Up', progress: 'Calibrated', desc: 'i-STAT clinical cartridge run for venous pH, lactate, and hematocrit metabolic panel baseline.', color: '#2563eb' },
+                    { time: '06:40 – 07:00 AM', title: 'Plan Your Breakfast', status: 'Scheduled', progress: 'Galley', desc: 'Rehydrate lyophilized oat meal pack with 250 mL hot water; log vitamin D3 & calcium supplements.', color: '#1e3a8a' },
+                    { time: '07:00 – 08:30 AM', title: 'Physical Exercise (Morning)', status: 'Active Circuit', progress: 'ARED Load', desc: '1200 kg musculoskeletal squat & deadlift resistance protocol; telemetry heart rate tracking.', color: '#b91c1c' },
+                    { time: '12:00 – 13:00', title: 'Plan Your Lunch', status: 'Scheduled', progress: 'Mid-Day', desc: 'Nutritional rebalancing in Unity module; vacuum-sealed entrée & 500 mL mineral hydration pack.', color: '#1e3a8a' },
+                    { time: '13:30 – 15:30', title: 'Wet Clean (Station Maintenance)', status: 'Scheduled', progress: 'Sanitation', desc: 'Antimicrobial wipe-down of Columbus & Destiny handrails; vacuum return air grill mesh filters.', color: '#0284c7' },
+                    { time: '16:15 – 18:15', title: 'Afternoon Exercise', status: 'Countermeasure', progress: 'T2 / CEVIS', desc: '45-minute T2 Colbert treadmill run + 30-minute CEVIS ergometer cool-down @ 135 BPM.', color: '#b45309' },
+                    { time: '18:45 – 19:36 PM', title: 'ODF Medical Support Analysis', status: 'Medical Sync', progress: 'Houston Link', desc: 'Operations Data File Checklist 4.2 review with Flight Surgeon; transmit bio-telemetry audit packet.', color: '#b91c1c' },
+                    { time: '19:45 – 20:30', title: 'Dinner & Crew Debrief', status: 'Evening', progress: 'Reflection', desc: 'Hot meal reconstitution, daily behavioral wellness score logging, and Day +1 manifest review.', color: '#06132b' },
                   ].map((p, i) => (
-                    <div key={i} style={{ borderBottom: '1px solid rgba(246,238,219,0.12)', paddingBottom: '14px' }}>
+                    <div key={i} style={{ borderBottom: '1px solid rgba(6, 19, 43, 0.12)', paddingBottom: '14px' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
                         <span className="font-mono" style={{ fontSize: '0.72rem', color: p.color, letterSpacing: '0.12em', fontWeight: 600 }}>{p.time} // {p.status}</span>
-                        <span className="font-mono" style={{ fontSize: '0.72rem', color: '#f6eedb' }}>{p.progress}</span>
+                        <span className="font-mono" style={{ fontSize: '0.72rem', color: '#1e3a8a', fontWeight: 600 }}>{p.progress}</span>
                       </div>
-                      <h3 style={{ fontSize: '1rem', color: '#f6eedb', margin: '0 0 4px 0', fontWeight: 600 }}>{p.title}</h3>
-                      <p style={{ fontSize: '0.8rem', color: '#9fb6da', lineHeight: 1.45, margin: 0 }}>{p.desc}</p>
+                      <h3 style={{ fontSize: '1rem', color: '#06132b', margin: '0 0 4px 0', fontWeight: 600 }}>{p.title}</h3>
+                      <p style={{ fontSize: '0.8rem', color: '#1e3a8a', lineHeight: 1.45, margin: 0 }}>{p.desc}</p>
                     </div>
                   ))}
                 </div>
@@ -2074,23 +2074,23 @@ export default function InovavPortal({
             {/* TAB 3: MESSAGES */}
             {activeTab === 'messages' && (
               <div style={{ maxWidth: '620px', marginLeft: 'auto', marginRight: 'auto' }}>
-                <div className="font-mono" style={{ fontSize: '0.72rem', color: '#ead9b2', letterSpacing: '0.22em', marginBottom: '8px', textTransform: 'uppercase' }}>
+                <div className="font-mono" style={{ fontSize: '0.72rem', color: '#1e3a8a', letterSpacing: '0.22em', marginBottom: '8px', textTransform: 'uppercase', fontWeight: 700 }}>
                   RIDGE // ORBITAL RELAYS
                 </div>
-                <h2 style={{ fontSize: '2.2rem', fontWeight: 400, color: '#f6eedb', margin: '0 0 24px 0' }}>Comms & Transmissions</h2>
+                <h2 style={{ fontSize: '2.2rem', fontWeight: 600, color: '#06132b', margin: '0 0 24px 0' }}>Comms & Transmissions</h2>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                   {[
                     { sender: 'HOUSTON FLIGHT DYNAMICS (CAPCOM)', time: '02:14 UTC', unread: true, subject: 'Telemetry verification confirmed on all 16 biometric channels.', body: 'Alex, telemetry locks look pristine from Johnson Space Center. Solar radiation levels remain below threshold. Next orbital burn scheduled at T+14:20:00.' },
                     { sender: 'CREW MEDICAL OFFICER (DR. S. CHEN)', time: '01:45 UTC', unread: true, subject: '3D Full Body Scan sync complete.', body: 'Your latest zero-gravity cardiovascular adaptation readings show 0.02% bone mass change, well within optimal tolerances. Continue daily 45-minute resistance workout protocol.' },
                     { sender: 'STARLINK DEEP-SPACE RELAY NODE 09', time: '00:12 UTC', unread: true, subject: 'Laser optical link synchronized.', body: 'Continuous 1.2 Gbps downlink established via Lunar Orbital Gateway optical terminal. High-bandwidth HD video feed ready for EVA mission sequence.' },
                   ].map((m, i) => (
-                    <div key={i} style={{ borderBottom: '1px solid rgba(246,238,219,0.12)', paddingBottom: '16px' }}>
+                    <div key={i} style={{ borderBottom: '1px solid rgba(6, 19, 43, 0.12)', paddingBottom: '16px' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                        <span className="font-mono" style={{ fontSize: '0.75rem', color: '#ead9b2', fontWeight: 600 }}>{m.sender}</span>
-                        <span className="font-mono" style={{ fontSize: '0.7rem', color: '#9fb6da' }}>{m.time}</span>
+                        <span className="font-mono" style={{ fontSize: '0.75rem', color: '#06132b', fontWeight: 700 }}>{m.sender}</span>
+                        <span className="font-mono" style={{ fontSize: '0.7rem', color: '#1e3a8a' }}>{m.time}</span>
                       </div>
-                      <div style={{ fontSize: '0.95rem', color: '#f6eedb', fontWeight: 500, marginBottom: '6px' }}>{m.subject}</div>
-                      <div style={{ fontSize: '0.82rem', color: '#9fb6da', lineHeight: 1.5 }}>{m.body}</div>
+                      <div style={{ fontSize: '0.95rem', color: '#06132b', fontWeight: 600, marginBottom: '6px' }}>{m.subject}</div>
+                      <div style={{ fontSize: '0.82rem', color: '#1e3a8a', lineHeight: 1.5 }}>{m.body}</div>
                     </div>
                   ))}
                 </div>
@@ -2100,10 +2100,10 @@ export default function InovavPortal({
             {/* TAB 4: CALENDAR / DAILY SCHEDULE */}
             {activeTab === 'calendar' && (
               <div style={{ maxWidth: '640px', marginLeft: 'auto', marginRight: 'auto' }}>
-                <div className="font-mono" style={{ fontSize: '0.72rem', color: '#ead9b2', letterSpacing: '0.22em', marginBottom: '8px', textTransform: 'uppercase' }}>
+                <div className="font-mono" style={{ fontSize: '0.72rem', color: '#1e3a8a', letterSpacing: '0.22em', marginBottom: '8px', textTransform: 'uppercase', fontWeight: 700 }}>
                   INOVA // ASTRONAUT CHRONO SCHEDULE
                 </div>
-                <h2 style={{ fontSize: '2rem', fontWeight: 400, color: '#f6eedb', margin: '0 0 20px 0' }}>Daily Mission Schedule</h2>
+                <h2 style={{ fontSize: '2rem', fontWeight: 600, color: '#06132b', margin: '0 0 20px 0' }}>Daily Mission Schedule</h2>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                   {[
                     { date: 'TODAY // 06:00 – 06:10 AM', event: 'Urine Test', type: 'Biomarkers & Electrolytes', status: 'Immediate' },
@@ -2116,10 +2116,10 @@ export default function InovavPortal({
                     { date: 'TODAY // 18:45 – 19:36 PM', event: 'ODF Medical Support Analysis', type: 'Operations Data File Review', status: 'Scheduled' },
                     { date: 'TODAY // 19:45 – 20:30 PM', event: 'Dinner & Behavioral Journaling', type: 'Crew Debrief & Sleep Prep', status: 'Scheduled' },
                   ].map((c, i) => (
-                    <div key={i} style={{ borderBottom: '1px solid rgba(246,238,219,0.12)', paddingBottom: '12px' }}>
-                      <div className="font-mono" style={{ fontSize: '0.72rem', color: '#ead9b2', marginBottom: '3px' }}>{c.date}</div>
-                      <h4 style={{ fontSize: '1rem', color: '#f6eedb', margin: '0 0 3px 0', fontWeight: 500 }}>{c.event}</h4>
-                      <div className="font-mono" style={{ fontSize: '0.72rem', color: '#9fb6da' }}>{c.type} // <span style={{ color: '#FACC15' }}>{c.status}</span></div>
+                    <div key={i} style={{ borderBottom: '1px solid rgba(6, 19, 43, 0.12)', paddingBottom: '12px' }}>
+                      <div className="font-mono" style={{ fontSize: '0.72rem', color: '#1e3a8a', marginBottom: '3px', fontWeight: 600 }}>{c.date}</div>
+                      <h4 style={{ fontSize: '1rem', color: '#06132b', margin: '0 0 3px 0', fontWeight: 600 }}>{c.event}</h4>
+                      <div className="font-mono" style={{ fontSize: '0.72rem', color: '#1e3a8a' }}>{c.type} // <span style={{ color: '#06132b', fontWeight: 700 }}>{c.status}</span></div>
                     </div>
                   ))}
                 </div>
@@ -2129,22 +2129,22 @@ export default function InovavPortal({
             {/* TAB 5: ARCHIVE */}
             {activeTab === 'archive' && (
               <div style={{ maxWidth: '620px', marginLeft: 'auto', marginRight: 'auto' }}>
-                <div className="font-mono" style={{ fontSize: '0.72rem', color: '#ead9b2', letterSpacing: '0.22em', marginBottom: '8px', textTransform: 'uppercase' }}>
+                <div className="font-mono" style={{ fontSize: '0.72rem', color: '#1e3a8a', letterSpacing: '0.22em', marginBottom: '8px', textTransform: 'uppercase', fontWeight: 700 }}>
                   RIDGE // STORAGE
                 </div>
-                <h2 style={{ fontSize: '2.2rem', fontWeight: 400, color: '#f6eedb', margin: '0 0 24px 0' }}>Blackbox & Biometric Archives</h2>
+                <h2 style={{ fontSize: '2.2rem', fontWeight: 600, color: '#06132b', margin: '0 0 24px 0' }}>Blackbox & Biometric Archives</h2>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                   {[
                     { id: 'LOG-78901', title: 'Suit Biometric Calibration #14', size: '24.5 MB', date: '2026-11-12' },
                     { id: 'LOG-78899', title: 'Zero-G Autonomic Reflex Waveforms', size: '112.8 MB', date: '2026-11-11' },
                     { id: 'LOG-78850', title: 'Orbital Insertion Blackbox Telemetry', size: '1.4 GB', date: '2026-11-10' },
                   ].map((a, i) => (
-                    <div key={i} style={{ borderBottom: '1px solid rgba(246,238,219,0.12)', paddingBottom: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div key={i} style={{ borderBottom: '1px solid rgba(6, 19, 43, 0.12)', paddingBottom: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <div>
-                        <span className="font-mono" style={{ fontSize: '0.72rem', color: '#ead9b2' }}>{a.id}</span>
-                        <div style={{ fontSize: '0.95rem', color: '#f6eedb', fontWeight: 500 }}>{a.title}</div>
+                        <span className="font-mono" style={{ fontSize: '0.72rem', color: '#1e3a8a', fontWeight: 600 }}>{a.id}</span>
+                        <div style={{ fontSize: '0.95rem', color: '#06132b', fontWeight: 600 }}>{a.title}</div>
                       </div>
-                      <div className="font-mono" style={{ fontSize: '0.74rem', color: '#9fb6da' }}>
+                      <div className="font-mono" style={{ fontSize: '0.74rem', color: '#1e3a8a' }}>
                         {a.size} • {a.date}
                       </div>
                     </div>
@@ -2156,35 +2156,35 @@ export default function InovavPortal({
             {/* TAB 6: ANALYTICS */}
             {activeTab === 'analytics' && (
               <div style={{ maxWidth: '620px', marginLeft: 'auto', marginRight: 'auto' }}>
-                <div className="font-mono" style={{ fontSize: '0.72rem', color: '#ead9b2', letterSpacing: '0.22em', marginBottom: '8px', textTransform: 'uppercase' }}>
+                <div className="font-mono" style={{ fontSize: '0.72rem', color: '#1e3a8a', letterSpacing: '0.22em', marginBottom: '8px', textTransform: 'uppercase', fontWeight: 700 }}>
                   RIDGE // DIAGNOSTICS
                 </div>
-                <h2 style={{ fontSize: '2.2rem', fontWeight: 400, color: '#f6eedb', margin: '0 0 24px 0' }}>Sensor Telemetry Trends</h2>
+                <h2 style={{ fontSize: '2.2rem', fontWeight: 600, color: '#06132b', margin: '0 0 24px 0' }}>Sensor Telemetry Trends</h2>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
                   <div>
-                    <div className="font-mono" style={{ fontSize: '0.75rem', color: '#f6eedb', marginBottom: '14px', letterSpacing: '0.12em' }}>CARDIOVASCULAR VARIABILITY TRENDS</div>
-                    <div style={{ height: '120px', display: 'flex', alignItems: 'flex-end', gap: '10px', paddingBottom: '10px', borderBottom: '1px solid rgba(246,238,219,0.14)' }}>
+                    <div className="font-mono" style={{ fontSize: '0.75rem', color: '#06132b', marginBottom: '14px', letterSpacing: '0.12em', fontWeight: 700 }}>CARDIOVASCULAR VARIABILITY TRENDS</div>
+                    <div style={{ height: '120px', display: 'flex', alignItems: 'flex-end', gap: '10px', paddingBottom: '10px', borderBottom: '1px solid rgba(6, 19, 43, 0.15)' }}>
                       {[65, 72, 70, 74, 76, 74, 78, 74, 72, 74].map((h, i) => (
                         <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
-                          <div style={{ width: '100%', height: `${h * 1.3}px`, background: 'linear-gradient(180deg, #f6eedb, #112957)', borderRadius: '2px' }} />
-                          <span className="font-mono" style={{ fontSize: '0.6rem', color: '#9fb6da' }}>T-{10 - i}</span>
+                          <div style={{ width: '100%', height: `${h * 1.3}px`, background: 'linear-gradient(180deg, #1e3a8a, #06132b)', borderRadius: '2px' }} />
+                          <span className="font-mono" style={{ fontSize: '0.6rem', color: '#1e3a8a', fontWeight: 600 }}>T-{10 - i}</span>
                         </div>
                       ))}
                     </div>
-                    <div className="font-mono" style={{ fontSize: '0.72rem', color: '#9fb6da', marginTop: '8px' }}>Average: 73.9 BPM // Sinus rhythm stable</div>
+                    <div className="font-mono" style={{ fontSize: '0.72rem', color: '#1e3a8a', marginTop: '8px' }}>Average: 73.9 BPM // Sinus rhythm stable</div>
                   </div>
 
                   <div>
-                    <div className="font-mono" style={{ fontSize: '0.75rem', color: '#ead9b2', marginBottom: '14px', letterSpacing: '0.12em' }}>O2 CONSUMPTION & METABOLIC LOAD</div>
-                    <div style={{ height: '120px', display: 'flex', alignItems: 'flex-end', gap: '10px', paddingBottom: '10px', borderBottom: '1px solid rgba(246,238,219,0.14)' }}>
+                    <div className="font-mono" style={{ fontSize: '0.75rem', color: '#06132b', marginBottom: '14px', letterSpacing: '0.12em', fontWeight: 700 }}>O2 CONSUMPTION & METABOLIC LOAD</div>
+                    <div style={{ height: '120px', display: 'flex', alignItems: 'flex-end', gap: '10px', paddingBottom: '10px', borderBottom: '1px solid rgba(6, 19, 43, 0.15)' }}>
                       {[0.24, 0.28, 0.26, 0.31, 0.25, 0.27, 0.29, 0.26, 0.25, 0.26].map((o, i) => (
                         <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
-                          <div style={{ width: '100%', height: `${o * 320}px`, background: 'linear-gradient(180deg, #ead9b2, #0a1c3f)', borderRadius: '2px' }} />
-                          <span className="font-mono" style={{ fontSize: '0.6rem', color: '#9fb6da' }}>T-{10 - i}</span>
+                          <div style={{ width: '100%', height: `${o * 320}px`, background: 'linear-gradient(180deg, #38bdf8, #06132b)', borderRadius: '2px' }} />
+                          <span className="font-mono" style={{ fontSize: '0.6rem', color: '#1e3a8a', fontWeight: 600 }}>T-{10 - i}</span>
                         </div>
                       ))}
                     </div>
-                    <div className="font-mono" style={{ fontSize: '0.72rem', color: '#9fb6da', marginTop: '8px' }}>Mean O2 Burn: 0.26 L/min // Optimal EVA reserve</div>
+                    <div className="font-mono" style={{ fontSize: '0.72rem', color: '#1e3a8a', marginTop: '8px' }}>Mean O2 Burn: 0.26 L/min // Optimal EVA reserve</div>
                   </div>
                 </div>
               </div>
@@ -2193,29 +2193,29 @@ export default function InovavPortal({
             {/* TAB 7: ACCOUNT */}
             {activeTab === 'account' && (
               <div style={{ maxWidth: '620px', marginLeft: 'auto', marginRight: 'auto' }}>
-                <div className="font-mono" style={{ fontSize: '0.72rem', color: '#ead9b2', letterSpacing: '0.22em', marginBottom: '8px', textTransform: 'uppercase' }}>
+                <div className="font-mono" style={{ fontSize: '0.72rem', color: '#1e3a8a', letterSpacing: '0.22em', marginBottom: '8px', textTransform: 'uppercase', fontWeight: 700 }}>
                   RIDGE // ASTRONAUT PROFILE
                 </div>
-                <h2 style={{ fontSize: '2.2rem', fontWeight: 400, color: '#f6eedb', margin: '0 0 24px 0' }}>Crew Dossier</h2>
+                <h2 style={{ fontSize: '2.2rem', fontWeight: 600, color: '#06132b', margin: '0 0 24px 0' }}>Crew Dossier</h2>
                 <div style={{ display: 'flex', gap: '20px', alignItems: 'center', marginBottom: '24px' }}>
                   {activeAstronaut.faceSnaps?.center ? (
-                    <img src={activeAstronaut.faceSnaps.center} alt="Avatar" style={{ width: '80px', height: '80px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #f6eedb' }} />
+                    <img src={activeAstronaut.faceSnaps.center} alt="Avatar" style={{ width: '80px', height: '80px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #06132b' }} />
                   ) : (
-                    <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: '#0a1c3f', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', border: '2px solid #f6eedb' }}>
+                    <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: '#06132b', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', border: '2px solid #06132b' }}>
                       👨‍🚀
                     </div>
                   )}
                   <div>
-                    <h3 style={{ fontSize: '1.4rem', color: '#f6eedb', margin: 0, fontWeight: 500 }}>{activeAstronaut.name}</h3>
-                    <div className="font-mono" style={{ fontSize: '0.78rem', color: '#ead9b2', marginTop: '4px' }}>ID: {activeAstronaut.id} // {activeAstronaut.role}</div>
-                    <div className="font-mono" style={{ fontSize: '0.74rem', color: '#9fb6da' }}>MISSION: {activeAstronaut.mission}</div>
+                    <h3 style={{ fontSize: '1.4rem', color: '#06132b', margin: 0, fontWeight: 600 }}>{activeAstronaut.name}</h3>
+                    <div className="font-mono" style={{ fontSize: '0.78rem', color: '#1e3a8a', marginTop: '4px', fontWeight: 600 }}>ID: {activeAstronaut.id} // {activeAstronaut.role}</div>
+                    <div className="font-mono" style={{ fontSize: '0.74rem', color: '#1e3a8a' }}>MISSION: {activeAstronaut.mission}</div>
                   </div>
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '14px', marginBottom: '24px' }}>
                   {['center', 'left', 'right'].map((ang) => (
-                    <div key={ang} style={{ background: 'rgba(10, 28, 63, 0.72)', padding: '10px', borderRadius: '4px', textAlign: 'center', border: '1px solid rgba(246,238,219,0.16)' }}>
-                      <div className="font-mono" style={{ fontSize: '0.65rem', color: '#ead9b2', marginBottom: '6px', textTransform: 'uppercase' }}>Face Scan: {ang}</div>
+                    <div key={ang} style={{ background: '#06132b', padding: '10px', borderRadius: '6px', textAlign: 'center', border: '1px solid rgba(6, 19, 43, 0.25)', boxShadow: '0 4px 14px rgba(6, 19, 43, 0.15)' }}>
+                      <div className="font-mono" style={{ fontSize: '0.65rem', color: '#f6eedb', marginBottom: '6px', textTransform: 'uppercase', fontWeight: 600 }}>Face Scan: {ang}</div>
                       {activeAstronaut.faceSnaps?.[ang] ? (
                         <img src={activeAstronaut.faceSnaps[ang]} alt={ang} style={{ width: '100%', height: '85px', objectFit: 'cover', borderRadius: '2px' }} />
                       ) : (
@@ -2225,8 +2225,8 @@ export default function InovavPortal({
                   ))}
                 </div>
 
-                <div className="font-mono" style={{ fontSize: '0.78rem', color: '#9fb6da', lineHeight: 1.6, borderTop: '1px solid rgba(246,238,219,0.12)', paddingTop: '16px' }}>
-                  Blood Type: <strong style={{ color: '#f6eedb' }}>{activeAstronaut.bloodType || 'O-Positive'}</strong> • Fingerprint Hash: <strong style={{ color: '#f6eedb' }}>{activeAstronaut.fingerprint || 'FP-SYNTH-89012'}</strong> • Clearance: <strong style={{ color: '#ead9b2' }}>ORBITAL CLEARANCE A-1</strong>
+                <div className="font-mono" style={{ fontSize: '0.78rem', color: '#1e3a8a', lineHeight: 1.6, borderTop: '1px solid rgba(6, 19, 43, 0.15)', paddingTop: '16px' }}>
+                  Blood Type: <strong style={{ color: '#06132b' }}>{activeAstronaut.bloodType || 'O-Positive'}</strong> • Fingerprint Hash: <strong style={{ color: '#06132b' }}>{activeAstronaut.fingerprint || 'FP-SYNTH-89012'}</strong> • Clearance: <strong style={{ color: '#06132b' }}>ORBITAL CLEARANCE A-1</strong>
                 </div>
               </div>
             )}
@@ -2234,25 +2234,25 @@ export default function InovavPortal({
             {/* TAB 8: SETTINGS */}
             {activeTab === 'settings' && (
               <div style={{ maxWidth: '620px', marginLeft: 'auto', marginRight: 'auto' }}>
-                <div className="font-mono" style={{ fontSize: '0.72rem', color: '#ead9b2', letterSpacing: '0.22em', marginBottom: '8px', textTransform: 'uppercase' }}>
+                <div className="font-mono" style={{ fontSize: '0.72rem', color: '#1e3a8a', letterSpacing: '0.22em', marginBottom: '8px', textTransform: 'uppercase', fontWeight: 700 }}>
                   RIDGE // SYSTEM PREFERENCES
                 </div>
-                <h2 style={{ fontSize: '2.2rem', fontWeight: 400, color: '#f6eedb', margin: '0 0 24px 0' }}>Configuration</h2>
+                <h2 style={{ fontSize: '2.2rem', fontWeight: 600, color: '#06132b', margin: '0 0 24px 0' }}>Configuration</h2>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 0', borderBottom: '1px solid rgba(246,238,219,0.12)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 0', borderBottom: '1px solid rgba(6, 19, 43, 0.12)' }}>
                     <div>
-                      <div style={{ fontSize: '0.9rem', color: '#f6eedb', fontWeight: 500 }}>Zero-G Touch Avoidance Sensors</div>
-                      <div className="font-mono" style={{ fontSize: '0.72rem', color: '#9fb6da' }}>Astronaut cursor evasion in welcome screen</div>
+                      <div style={{ fontSize: '0.9rem', color: '#06132b', fontWeight: 600 }}>Zero-G Touch Avoidance Sensors</div>
+                      <div className="font-mono" style={{ fontSize: '0.72rem', color: '#1e3a8a' }}>Astronaut cursor evasion in welcome screen</div>
                     </div>
-                    <span className="font-mono" style={{ color: '#f6eedb', fontSize: '0.78rem' }}>ACTIVE [100%]</span>
+                    <span className="font-mono" style={{ color: '#06132b', fontSize: '0.78rem', fontWeight: 700 }}>ACTIVE [100%]</span>
                   </div>
 
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 0', borderBottom: '1px solid rgba(246,238,219,0.12)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 0', borderBottom: '1px solid rgba(6, 19, 43, 0.12)' }}>
                     <div>
-                      <div style={{ fontSize: '0.9rem', color: '#f6eedb', fontWeight: 500 }}>Helmet Visor Reticle Tracking</div>
-                      <div className="font-mono" style={{ fontSize: '0.72rem', color: '#9fb6da' }}>Interactive 3D angle parallax on mouse move</div>
+                      <div style={{ fontSize: '0.9rem', color: '#06132b', fontWeight: 600 }}>Helmet Visor Reticle Tracking</div>
+                      <div className="font-mono" style={{ fontSize: '0.72rem', color: '#1e3a8a' }}>Interactive 3D angle parallax on mouse move</div>
                     </div>
-                    <span className="font-mono" style={{ color: '#f6eedb', fontSize: '0.78rem' }}>ONLINE [30°]</span>
+                    <span className="font-mono" style={{ color: '#06132b', fontSize: '0.78rem', fontWeight: 700 }}>ONLINE [30°]</span>
                   </div>
 
                   <div style={{ marginTop: '20px' }}>
@@ -2264,17 +2264,25 @@ export default function InovavPortal({
                         if (onLogout) onLogout();
                       }}
                       style={{
-                        background: 'rgba(246, 238, 219, 0.12)',
-                        border: '1px solid rgba(246, 238, 219, 0.4)',
+                        background: '#06132b',
+                        border: '1px solid rgba(6, 19, 43, 0.4)',
                         color: '#f6eedb',
                         width: '100%',
                         padding: '14px',
-                        borderRadius: '4px',
+                        borderRadius: '6px',
                         cursor: 'pointer',
-                        fontWeight: 600,
+                        fontWeight: 700,
                         letterSpacing: '0.12em',
                         textTransform: 'uppercase',
                         fontSize: '0.8rem',
+                        boxShadow: '0 4px 20px rgba(6, 19, 43, 0.25)',
+                        transition: 'all 0.2s ease',
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = '#0e2454';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = '#06132b';
                       }}
                     >
                       LOG OUT OF RIDGE HUD

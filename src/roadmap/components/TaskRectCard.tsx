@@ -117,7 +117,7 @@ export const TaskRectCard: React.FC<TaskRectCardProps> = ({
                   ? 'text-[#B45309]'
                   : isCompleted
                     ? 'text-[#07142E]'
-                    : 'text-white'
+                    : 'text-[#06132B]'
               }`}
             >
               STAGE {stageNumber}
@@ -147,7 +147,7 @@ export const TaskRectCard: React.FC<TaskRectCardProps> = ({
                         filled
                           ? 'fill-[#F59E0B] text-[#B45309]'
                           : isLocked
-                            ? 'fill-white/15 text-white/70'
+                            ? 'fill-[#06132B]/15 text-[#06132B]/50'
                             : 'fill-[#EFE8D5] text-[#9A8B6F]'
                       }`}
                     />
@@ -160,7 +160,7 @@ export const TaskRectCard: React.FC<TaskRectCardProps> = ({
           {/* Row 2: Task Title */}
           <h3
             className={`mt-1.5 font-display text-[13px] sm:text-[15px] font-bold leading-snug line-clamp-2 ${
-              isLocked ? 'text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.45)]' : 'text-[#07142E]'
+              isLocked ? 'text-[#06132B]' : 'text-[#07142E]'
             }`}
           >
             {task.title}
@@ -169,7 +169,7 @@ export const TaskRectCard: React.FC<TaskRectCardProps> = ({
           {/* Row 3: Step Count */}
           <div
             className={`mt-1 font-mono text-[11px] font-semibold ${
-              isLocked ? 'text-sky-100/85' : 'text-[#2C3C5B]'
+              isLocked ? 'text-[#1E3A8A]' : 'text-[#2C3C5B]'
             }`}
           >
             {completedSubtasks}/{totalSubtasks} steps
@@ -208,8 +208,8 @@ export const TaskRectCard: React.FC<TaskRectCardProps> = ({
                 }}
                 className={`flex w-full items-center justify-center gap-1.5 rounded-[5px] border px-3 py-1.5 text-xs font-bold transition-colors duration-150 whitespace-nowrap ${
                   freeUnlockMode
-                    ? 'bg-white/20 border-white/75 text-white hover:bg-white/30 cursor-pointer'
-                    : 'bg-white/10 border-white/40 text-white/85 cursor-not-allowed'
+                    ? 'bg-[#06132B]/15 border-[#06132B]/40 text-[#06132B] hover:bg-[#06132B]/25 cursor-pointer'
+                    : 'bg-[#06132B]/10 border-[#06132B]/25 text-[#06132B]/80 cursor-not-allowed'
                 }`}
               >
                 {freeUnlockMode ? (

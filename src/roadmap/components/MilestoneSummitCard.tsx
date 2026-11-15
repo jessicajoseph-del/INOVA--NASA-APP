@@ -96,7 +96,7 @@ export const MilestoneSummitCard: React.FC<MilestoneSummitCardProps> = ({
                   ? 'border-[#B45309] bg-[#F5B82E] text-[#06132B]'
                   : isHalfway
                     ? 'border-[#FDE047]/80 bg-amber-300/20 text-[#FEF08A]'
-                    : 'border-white/70 bg-white/15 text-white'
+                    : 'border-[#06132B]/30 bg-[#06132B]/10 text-[#06132B]'
               }`}
             >
               {allCompleted ? (
@@ -115,14 +115,14 @@ export const MilestoneSummitCard: React.FC<MilestoneSummitCardProps> = ({
                     ? 'text-[#B45309]'
                     : isHalfway
                       ? 'text-[#FDE047]'
-                      : 'text-sky-100'
+                      : 'text-[#1E3A8A]'
                 }`}
               >
                 {completedCount}/{totalCount} CLEARED
               </div>
               <h2
                 className={`font-display text-sm sm:text-base font-extrabold truncate ${
-                  allCompleted ? 'text-[#07142E]' : 'text-white'
+                  allCompleted ? 'text-[#07142E]' : 'text-[#06132B]'
                 }`}
               >
                 Grand Trophy Vault
@@ -132,7 +132,7 @@ export const MilestoneSummitCard: React.FC<MilestoneSummitCardProps> = ({
 
           <p
             className={`mt-2 text-xs leading-relaxed ${
-              allCompleted ? 'text-[#07142E] font-semibold' : 'text-white/85'
+              allCompleted ? 'text-[#07142E] font-semibold' : 'text-[#1E3A8A]'
             }`}
           >
             {allCompleted
