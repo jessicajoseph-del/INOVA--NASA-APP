@@ -373,7 +373,7 @@ export default function App() {
                       <span>Interactive Mission Circuit</span>
                     </div>
                     <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0B1736] tracking-tight">
-                      Lumina Path — Interactive Road Map Game
+                      Road Map Game
                     </h2>
                     <p className="text-sm text-[#5A657D] mt-1 max-w-2xl leading-relaxed">
                       Start at the unlocked stage and mark progress directly on the circuit to trigger shooting fiber currents downward. Complete all mission checkpoints to unlock the Grand Trophy Vault!
