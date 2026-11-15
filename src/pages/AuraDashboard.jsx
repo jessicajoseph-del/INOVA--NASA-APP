@@ -1,4 +1,4 @@
-import React, { useRef, Suspense, useState, useEffect, useMemo } from 'react';
+import React, { useCallback, useRef, Suspense, useState, useEffect, useMemo } from 'react';
 import * as THREE from 'three';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Text, useGLTF, Stars, Sphere, Sparkles } from '@react-three/drei';
@@ -264,18 +264,23 @@ function buildSmoothPath(coords) {
     return d;
 }
 
-export default function AuraDashboard({ onBackToHome }) {
+export default function AuraDashboard({
+    onBackToHome,
+    arEnabled = false,
+    onToggleAR,
+    onGlobalHandUpdate,
+    onHandError,
+    handSessionKey = 0,
+}) {
     const [isCritical, setIsCritical] = useState(false);
     const { streamStatus, stationMode, atmosphere, oxygenGenerator } = useNasaIssTelemetry();
 
     // AR States
-    const [arEnabled, setArEnabled] = useState(false);
     const [cursor, setCursor] = useState({ x: 0, y: 0, isPinching: false, active: false });
 
     const globalRotation = useRef(0);
     const speIntensity = useRef(0);
     const lastPinch = useRef({ x: 0, y: 0, active: false });
-    const lastClickTime = useRef(0);
 
     // Orbital & Module States
     const [issPosition, setIssPosition] = useState(null);
@@ -416,7 +421,8 @@ export default function AuraDashboard({ onBackToHome }) {
         return () => clearInterval(interval);
     }, []);
 
-    const handleHandUpdate = (data) => {
+    const handleHandUpdate = useCallback((data) => {
+        onGlobalHandUpdate?.(data);
         if (!data.active) {
             setCursor((prev) => ({ ...prev, active: false }));
             lastPinch.current.active = false;
@@ -425,16 +431,7 @@ export default function AuraDashboard({ onBackToHome }) {
         setCursor({ x: data.x, y: data.y, isPinching: data.isPinching, active: true });
 
         if (data.isPinching) {
-            if (!lastPinch.current.active) {
-                const now = Date.now();
-                if (now - lastClickTime.current > 500) {
-                    const element = document.elementFromPoint(data.x, data.y);
-                    if (element && (element.tagName === 'BUTTON' || element.closest('button'))) {
-                        element.click();
-                        lastClickTime.current = now;
-                    }
-                }
-            } else {
+            if (lastPinch.current.active) {
                 const deltaX = data.x - lastPinch.current.x;
                 globalRotation.current += deltaX * 0.008;
             }
@@ -442,7 +439,7 @@ export default function AuraDashboard({ onBackToHome }) {
         } else {
             lastPinch.current.active = false;
         }
-    };
+    }, [onGlobalHandUpdate]);
 
     const directives = isCritical ? EVACUATION_PLANS.CRITICAL : EVACUATION_PLANS.NOMINAL;
 
@@ -454,7 +451,13 @@ export default function AuraDashboard({ onBackToHome }) {
 
     return (
         <div className="h-[100vh] w-[100vw] bg-[#040914] text-slate-100 flex flex-col font-sans overflow-hidden">
-            {arEnabled && <HandTracker onHandUpdate={handleHandUpdate} />}
+            {arEnabled && (
+                <HandTracker
+                    key={handSessionKey}
+                    onHandUpdate={handleHandUpdate}
+                    onError={onHandError}
+                />
+            )}
 
             <header className="shrink-0 px-6 py-3.5 border-b border-stone-200/80 bg-[#FFFFF0] flex flex-col gap-3.5 relative z-20">
                 {/* Top Row: Brand Left, Visor/Mode Center, Back & User Avatar Right */}
@@ -488,7 +491,7 @@ export default function AuraDashboard({ onBackToHome }) {
                     {/* Center: AR Visor Button + Vertical Divider + Station Mode Pill */}
                     <div className="flex items-center gap-3.5">
                         <button
-                            onClick={() => setArEnabled(!arEnabled)}
+                            onClick={onToggleAR}
                             className={`px-4 py-2 text-[11px] rounded-xl font-bold uppercase tracking-wider border transition-all cursor-pointer flex items-center gap-2 ${
                                 arEnabled
                                     ? 'bg-blue-950 border-blue-950 text-[#FFFFF0] shadow-sm'

@@ -11,6 +11,7 @@ export default function TopNavigation({
   onOpenMissionHUD,
   palmActive = false,
   onTogglePalm,
+  globalArEnabled = false,
 }) {
   const isZoomed = activeSystem !== null;
 
@@ -212,6 +213,8 @@ export default function TopNavigation({
               <button
                 type="button"
                 onClick={onTogglePalm}
+                disabled={globalArEnabled}
+                title={globalArEnabled ? 'Global hand controls are active' : 'Toggle local palm controls'}
                 style={{
                   background: palmActive ? '#f6eedb' : 'rgba(10, 28, 63, 0.72)',
                   border: `1px solid ${palmActive ? '#f6eedb' : 'rgba(246, 238, 219, 0.28)'}`,
@@ -222,7 +225,8 @@ export default function TopNavigation({
                   fontFamily: 'monospace',
                   fontWeight: palmActive ? 700 : 500,
                   letterSpacing: '0.12em',
-                  cursor: 'pointer',
+                  cursor: globalArEnabled ? 'not-allowed' : 'pointer',
+                  opacity: globalArEnabled ? 0.65 : 1,
                   display: 'flex',
                   alignItems: 'center',
                   gap: '4px',
@@ -230,7 +234,7 @@ export default function TopNavigation({
                 }}
               >
                 <span>🖐️</span>
-                <span>AR PALM: {palmActive ? 'ONLINE' : 'OFF'}</span>
+                <span>AR PALM: {globalArEnabled ? 'GLOBAL' : palmActive ? 'ONLINE' : 'OFF'}</span>
               </button>
             )}
 

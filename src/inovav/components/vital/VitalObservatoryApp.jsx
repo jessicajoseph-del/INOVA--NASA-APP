@@ -8,7 +8,12 @@ import BottomNavigation from './BottomNavigation';
 import PalmMouse from '../ar/PalmMouse';
 import MissionHUD from '../experience/MissionHUD';
 
-export default function VitalObservatoryApp({ astronaut, onClose, isEmbedded = false }) {
+export default function VitalObservatoryApp({
+  astronaut,
+  onClose,
+  isEmbedded = false,
+  globalArEnabled = false,
+}) {
   // activeSystem: null represents Initial Overview Screen (frame_0.5s.jpg)
   // 'cardiovascular' | 'skeletal' | 'immune' | 'nutrition' | 'sleep'
   const [activeSystem, setActiveSystem] = useState(null);
@@ -18,6 +23,10 @@ export default function VitalObservatoryApp({ astronaut, onClose, isEmbedded = f
   const demoTimerRef = useRef(null);
 
   const systems = ['cardiovascular', 'skeletal', 'immune', 'nutrition', 'sleep'];
+
+  useEffect(() => {
+    if (globalArEnabled) setPalmActive(false);
+  }, [globalArEnabled]);
 
   const handleSwipeNext = () => {
     setActiveSystem((current) => {
@@ -112,6 +121,7 @@ export default function VitalObservatoryApp({ astronaut, onClose, isEmbedded = f
         onOpenMissionHUD={() => setShowMissionHUD(true)}
         palmActive={palmActive}
         onTogglePalm={() => setPalmActive((prev) => !prev)}
+        globalArEnabled={globalArEnabled}
       />
 
       {/* ── 2. LEFT-SIDE HEALTH METRICS PANEL (SHOWN IN OVERVIEW) ── */}
@@ -145,7 +155,7 @@ export default function VitalObservatoryApp({ astronaut, onClose, isEmbedded = f
 
       {/* ── 7. OFFLINE AR PALM SENSOR NAVIGATION ── */}
       <PalmMouse
-        enabled={palmActive}
+        enabled={palmActive && !globalArEnabled}
         onSwipeNext={handleSwipeNext}
         onSwipePrev={handleSwipePrev}
       />
@@ -154,6 +164,7 @@ export default function VitalObservatoryApp({ astronaut, onClose, isEmbedded = f
       {showMissionHUD && (
         <MissionHUD
           astronaut={astronaut}
+          globalArEnabled={globalArEnabled}
           onClose={() => setShowMissionHUD(false)}
         />
       )}

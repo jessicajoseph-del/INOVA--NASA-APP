@@ -20,6 +20,8 @@ interface ExpressionMonitorProps {
   onSample: (sample: ExpressionSample) => void;
   onMonitoringChange: (active: boolean) => void;
   onError: (message: string) => void;
+  onStreamChange?: (stream: MediaStream | null) => void;
+  onCameraStateChange?: (state: 'starting' | 'active' | 'stopped' | 'error') => void;
 }
 
 let faceApiLoadPromise: Promise<any> | null = null;
@@ -106,6 +108,8 @@ export function ExpressionMonitor({
   onSample,
   onMonitoringChange,
   onError,
+  onStreamChange,
+  onCameraStateChange,
 }: ExpressionMonitorProps) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
@@ -116,6 +120,8 @@ export function ExpressionMonitor({
     let stream: MediaStream | null = null;
     let analysisTimer: number | null = null;
     let reportedActive = false;
+    let reportedStream = false;
+    onCameraStateChange?.('starting');
 
     const setMonitoring = (active: boolean) => {
       if (reportedActive === active) return;
@@ -133,8 +139,13 @@ export function ExpressionMonitor({
       console.error('On-device expression analysis failed.', error);
       if (analysisTimer !== null) window.clearTimeout(analysisTimer);
       stopStream();
+      if (reportedStream) {
+        reportedStream = false;
+        onStreamChange?.(null);
+      }
       if (videoRef.current) videoRef.current.srcObject = null;
       setMonitoring(false);
+      onCameraStateChange?.('error');
       onError(getCameraErrorMessage(error));
     };
 
@@ -160,12 +171,15 @@ export function ExpressionMonitor({
           stopStream();
           return;
         }
+        reportedStream = true;
+        onStreamChange?.(stream);
 
         const video = videoRef.current;
         if (!video) throw new Error('The local camera capture could not be initialized.');
         video.srcObject = stream;
         await video.play();
         setMonitoring(true);
+        onCameraStateChange?.('active');
 
         const analyzeFrame = async () => {
           if (cancelled || !stream?.active) return;
@@ -215,10 +229,12 @@ export function ExpressionMonitor({
       cancelled = true;
       if (analysisTimer !== null) window.clearTimeout(analysisTimer);
       stopStream();
+      if (reportedStream) onStreamChange?.(null);
       if (videoRef.current) videoRef.current.srcObject = null;
       if (reportedActive) onMonitoringChange(false);
+      onCameraStateChange?.('stopped');
     };
-  }, [enabled, onError, onMonitoringChange, onSample]);
+  }, [enabled, onCameraStateChange, onError, onMonitoringChange, onSample, onStreamChange]);
 
   return (
     <video

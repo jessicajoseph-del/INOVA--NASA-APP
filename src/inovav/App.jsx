@@ -665,6 +665,8 @@ export default function InovavPortal({
   onCloseARVisor,
   showProfileSettings = false,
   onCloseProfileSettings,
+  globalArEnabled = false,
+  onDisableGlobalAR,
 }) {
   const [screen, setScreen] = useState(initialScreen);
   const [loginMode, setLoginMode] = useState('signin');
@@ -1204,7 +1206,10 @@ export default function InovavPortal({
             if (onAstronautChange) onAstronautChange(newAstro);
             setScreen('dashboard');
           }}
-          onOpen3DFaceStudio={() => setShow3DFaceStudio(true)}
+          onOpen3DFaceStudio={() => {
+            onDisableGlobalAR?.();
+            setShow3DFaceStudio(true);
+          }}
           onBackToIntro={() => setScreen('astronaut')}
         />
       )}
@@ -1302,7 +1307,10 @@ export default function InovavPortal({
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <button
                     type="button"
-                    onClick={() => setShow3DFaceStudio(true)}
+                    onClick={() => {
+                      onDisableGlobalAR?.();
+                      setShow3DFaceStudio(true);
+                    }}
                     style={{
                       background: 'rgba(246, 238, 219, 0.12)',
                       border: '1px solid rgba(246, 238, 219, 0.3)',
@@ -1652,7 +1660,10 @@ export default function InovavPortal({
                   <FaceAuthLogView
                     logs={faceAuthLogs}
                     onClearLogs={() => setFaceAuthLogs(clearFaceAuthLogs())}
-                    onOpenFaceStudio={() => setShow3DFaceStudio(true)}
+                    onOpenFaceStudio={() => {
+                      onDisableGlobalAR?.();
+                      setShow3DFaceStudio(true);
+                    }}
                   />
                 ) : (
                   <>
@@ -2334,6 +2345,7 @@ export default function InovavPortal({
             <VitalObservatory
               astronaut={activeAstronaut}
               isEmbedded={true}
+              globalArEnabled={globalArEnabled}
             />
           </div>
         </div>
@@ -2344,6 +2356,7 @@ export default function InovavPortal({
       {showBodyScanModal && (
         <VitalObservatory
           astronaut={activeAstronaut}
+          globalArEnabled={globalArEnabled}
           onClose={() => {
             setShowBodyScanModal(false);
             if (initialShowBodyScan && onBackToOverview) {
@@ -2368,6 +2381,7 @@ export default function InovavPortal({
       {showMissionHUD && (
         <MissionHUD
           astronaut={activeAstronaut}
+          globalArEnabled={globalArEnabled}
           onClose={() => setShowMissionHUD(false)}
         />
       )}

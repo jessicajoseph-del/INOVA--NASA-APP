@@ -26,7 +26,7 @@ export const CollapsedRoadmapView: React.FC<CollapsedRoadmapViewProps> = ({ task
 
   return (
     <div className="mx-auto w-full max-w-[900px] relative z-10 flex flex-col items-center">
-      <h2 className="font-display text-[22px] font-extrabold text-[#12233B] mb-12 tracking-wide text-center">
+      <h2 className="font-display text-[22px] font-extrabold text-white mb-12 tracking-wide text-center">
         Task Deck
       </h2>
 

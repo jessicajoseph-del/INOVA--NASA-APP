@@ -113,12 +113,16 @@ const BRIEFING_STEPS = [
   },
 ];
 
-export default function MissionHUD({ astronaut, onClose }) {
+export default function MissionHUD({ astronaut, onClose, globalArEnabled = false }) {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
-  const [palmEnabled, setPalmEnabled] = useState(true);
+  const [palmEnabled, setPalmEnabled] = useState(false);
   const [showGestureGuide, setShowGestureGuide] = useState(false);
 
   const currentStep = BRIEFING_STEPS[currentStepIndex];
+
+  useEffect(() => {
+    if (globalArEnabled) setPalmEnabled(false);
+  }, [globalArEnabled]);
 
   // Step navigation
   const handleNextStep = useCallback(() => {
@@ -184,14 +188,20 @@ export default function MissionHUD({ astronaut, onClose }) {
             type="button"
             id="btn-toggle-palm"
             onClick={() => setPalmEnabled((prev) => !prev)}
+            disabled={globalArEnabled}
+            title={globalArEnabled ? 'Global hand controls are active' : 'Toggle local palm controls'}
             className={`btn btn-sm gap-2 font-mono tracking-wider transition-all duration-200 ${
-              palmEnabled
+              globalArEnabled
+                ? 'btn-outline border-primary/40 text-primary opacity-70'
+                : palmEnabled
                 ? 'btn-primary shadow-[0_0_18px_rgba(246,238,219,0.35)] border-primary'
                 : 'btn-outline border-primary/40 text-primary hover:bg-primary/20'
             }`}
           >
-            <Hand size={16} className={palmEnabled ? 'animate-bounce' : ''} />
-            <span>AR PALM GESTURES: {palmEnabled ? 'ONLINE' : 'OFFLINE'}</span>
+            <Hand size={16} className={palmEnabled && !globalArEnabled ? 'animate-bounce' : ''} />
+            <span>
+              AR PALM GESTURES: {globalArEnabled ? 'GLOBAL' : palmEnabled ? 'ONLINE' : 'OFFLINE'}
+            </span>
           </button>
 
           {/* Gesture Guide Quick Button */}
@@ -425,7 +435,7 @@ export default function MissionHUD({ astronaut, onClose }) {
 
       {/* ── 4. OFFLINE AR PALM MOUSE RETICLE & OPTICAL SENSOR ── */}
       <PalmMouse
-        enabled={palmEnabled}
+        enabled={palmEnabled && !globalArEnabled}
         onSwipeNext={handleNextStep}
         onSwipePrev={handlePrevStep}
       />

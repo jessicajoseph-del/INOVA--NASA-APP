@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import {
   ArrowRight,
   Layers,
@@ -28,7 +28,7 @@ import {
   Settings,
   Glasses,
   User,
-  Clock
+  Clock,
 } from 'lucide-react';
 import TrendAnalytics from './components/TrendAnalytics';
 import LogoMarquee from './components/LogoMarquee';
@@ -113,7 +113,6 @@ export default function App() {
   const [showARVisor, setShowARVisor] = useState(false);
   const [showProfileSettings, setShowProfileSettings] = useState(false);
   const [isARHandActive, setIsARHandActive] = useState(false);
-  const [handCursor, setHandCursor] = useState({ x: 0, y: 0, isPinching: false, active: false });
 
   // Banking-grade Authentication & Route Visibility State
   const [currentUser, setCurrentUser] = useState(() => getCurrentUser());
@@ -121,6 +120,79 @@ export default function App() {
   const [sessionExpiredMessage, setSessionExpiredMessage] = useState(null);
   const [showLogoutConfirmModal, setShowLogoutConfirmModal] = useState(false);
 
+  const [gestureArError, setGestureArError] = useState('');
+  const [handSessionKey, setHandSessionKey] = useState(0);
+  const [behavioralCameraStream, setBehavioralCameraStream] = useState(null);
+  const [behavioralCameraState, setBehavioralCameraState] = useState('stopped');
+  const handCursorRef = useRef(null);
+  const lastHandStateRef = useRef(null);
+  const lastHandClickRef = useRef(0);
+  const activeViewRef = useRef(activeView);
+  activeViewRef.current = activeView;
+
+  const handleGlobalHandUpdate = useCallback((data) => {
+    const cursor = handCursorRef.current;
+    if (!data.active) {
+      if (cursor) cursor.style.display = 'none';
+      lastHandStateRef.current = null;
+      return;
+    }
+
+    if (cursor && activeViewRef.current !== 'aura') {
+      cursor.style.display = 'block';
+      cursor.style.left = `${data.x}px`;
+      cursor.style.top = `${data.y}px`;
+    } else if (cursor) {
+      cursor.style.display = 'none';
+    }
+
+    const previous = lastHandStateRef.current;
+    if (data.isPinching && !previous?.isPinching && Date.now() - lastHandClickRef.current > 450) {
+      const target = document.elementFromPoint(data.x, data.y);
+      const clickable = target?.closest(
+        'button, a[href], input:not([type="hidden"]), select, textarea, [role="button"], [data-ar-clickable]'
+      );
+      if (
+        clickable &&
+        clickable.getAttribute('aria-disabled') !== 'true' &&
+        !('disabled' in clickable && clickable.disabled)
+      ) {
+        clickable.click();
+        lastHandClickRef.current = Date.now();
+      }
+    }
+
+    if (data.isOpenPalm && previous?.isOpenPalm && !data.isPinching) {
+      const deltaY = data.y - previous.y;
+      if (Math.abs(deltaY) > 0.5) {
+        const target = document.elementFromPoint(data.x, data.y);
+        let scrollable = target instanceof HTMLElement ? target : null;
+        while (scrollable && scrollable !== document.body && scrollable !== document.documentElement) {
+          const overflowY = window.getComputedStyle(scrollable).overflowY;
+          if (
+            (overflowY === 'auto' || overflowY === 'scroll') &&
+            scrollable.scrollHeight > scrollable.clientHeight
+          ) {
+            break;
+          }
+          scrollable = scrollable.parentElement;
+        }
+
+        if (scrollable && scrollable !== document.body && scrollable !== document.documentElement) {
+          scrollable.scrollTop += deltaY * 2;
+        } else {
+          window.scrollBy(0, deltaY * 2);
+        }
+      }
+    }
+
+    lastHandStateRef.current = {
+      isPinching: data.isPinching,
+      isOpenPalm: data.isOpenPalm,
+      x: data.x,
+      y: data.y,
+    };
+  }, []);
   const [activeAstronaut, setActiveAstronaut] = useState(() => {
     const user = getCurrentUser();
     if (user) {
@@ -165,6 +237,8 @@ export default function App() {
 
   // Inactivity timeout handler
   const handleSessionTimeout = React.useCallback(() => {
+    setIsARHandActive(false);
+    setGestureArError('');
     signOutUser();
     setCurrentUser(null);
     setAuthScreen('login');
@@ -184,6 +258,8 @@ export default function App() {
   };
 
   const handleConfirmLogout = () => {
+    setIsARHandActive(false);
+    setGestureArError('');
     signOutUser();
     setCurrentUser(null);
     setShowLogoutConfirmModal(false);
@@ -222,7 +298,6 @@ export default function App() {
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-blue-900/5 rounded-full blur-[120px] pointer-events-none" />
 
 
-
       {/* ── PRE-AUTH BANKING-GRADE ENTRY FLOW (NAVBAR & DASHBOARDS STRICTLY HIDDEN) ── */}
       {(!currentUser || authScreen !== 'dashboard') && (
         <main className="flex-1 w-full relative z-10 flex flex-col justify-center">
@@ -259,13 +334,20 @@ export default function App() {
         <AppShell
           activeModuleId={activeView}
           onSelectModule={(id) => {
+            if (id === 'behavioral') setBehavioralCameraState('starting');
             setActiveView(id);
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
           isARHandActive={isARHandActive}
-          onToggleARHand={() => setIsARHandActive((prev) => !prev)}
+          onToggleARHand={() => {
+            setGestureArError('');
+            setIsARHandActive((prev) => !prev);
+          }}
           activeAstronaut={activeAstronaut}
-          onOpenProfile={() => setShowProfileSettings(true)}
+          onOpenProfile={() => {
+            setIsARHandActive(false);
+            setShowProfileSettings(true);
+          }}
           onLogoutClick={handleLogout}
         >
           {/* 2. DYNAMIC PAGE CONTENT: OVERVIEW, ROADMAP GAME, OR BEHAVIORAL HEALTH */}
@@ -332,7 +414,10 @@ export default function App() {
               <InovavPortal
                 initialScreen={portalInitialScreen}
                 onBackToOverview={() => setActiveView('overview')}
-                onNavigateView={(view) => setActiveView(view)}
+                onNavigateView={(view) => {
+                  if (view === 'behavioral') setBehavioralCameraState('starting');
+                  setActiveView(view);
+                }}
                 activeAstronaut={activeAstronaut}
                 onAstronautChange={setActiveAstronaut}
                 onLogout={handleLogout}
@@ -340,6 +425,8 @@ export default function App() {
                 onCloseARVisor={() => setShowARVisor(false)}
                 showProfileSettings={showProfileSettings}
                 onCloseProfileSettings={() => setShowProfileSettings(false)}
+                globalArEnabled={isARHandActive}
+                onDisableGlobalAR={() => setIsARHandActive(false)}
               />
             </main>
           )}
@@ -347,7 +434,17 @@ export default function App() {
           {/* AURA 3D ISS DASHBOARD VIEW */}
           {activeView === 'aura' && (
             <main className="flex-1 w-full relative z-10">
-              <AuraDashboard onBackToHome={() => setActiveView('overview')} />
+              <AuraDashboard
+                onBackToHome={() => setActiveView('overview')}
+                arEnabled={isARHandActive}
+                onToggleAR={() => {
+                  setGestureArError('');
+                  setIsARHandActive((enabled) => !enabled);
+                }}
+                onGlobalHandUpdate={handleGlobalHandUpdate}
+                onHandError={setGestureArError}
+                handSessionKey={handSessionKey}
+              />
             </main>
           )}
 
@@ -374,7 +471,11 @@ export default function App() {
           {/* BEHAVIORAL HEALTH VIEW */}
           {activeView === 'behavioral' && (
             <main className="flex-1 w-full relative z-10">
-              <BehavioralHealthPage onBack={() => setActiveView('overview')} />
+              <BehavioralHealthPage
+                onBack={() => setActiveView('overview')}
+                onExpressionCameraStreamChange={setBehavioralCameraStream}
+                onExpressionCameraStateChange={setBehavioralCameraState}
+              />
             </main>
           )}
 
@@ -462,34 +563,74 @@ export default function App() {
         </AppShell>
       )}
 
-      {/* GLOBAL AR HAND GESTURE RETICLE CURSOR */}
+      {isARHandActive &&
+        activeView !== 'aura' &&
+        (activeView !== 'behavioral' ||
+          behavioralCameraStream ||
+          behavioralCameraState === 'stopped' ||
+          behavioralCameraState === 'error') && (
+          <HandTracker
+            key={handSessionKey}
+            stream={activeView === 'behavioral' ? behavioralCameraStream : undefined}
+            onHandUpdate={handleGlobalHandUpdate}
+            onError={setGestureArError}
+          />
+        )}
+
       {isARHandActive && (
-        <>
-          <HandTracker onHandUpdate={setHandCursor} />
-          {handCursor.active && (
-            <div
-              className="fixed z-[9999] pointer-events-none transition-transform duration-75 ease-out select-none"
-              style={{
-                left: `${handCursor.x}px`,
-                top: `${handCursor.y}px`,
-                transform: 'translate(-50%, -50%)',
-              }}
-            >
-              <div
-                className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all ${handCursor.isPinching
-                    ? 'border-[#0284C7] bg-[#0284C7]/30 scale-125 shadow-[0_0_20px_#0284C7]'
-                    : 'border-[#0284C7] bg-white/50 scale-100 shadow-[0_0_10px_rgba(2,132,199,0.5)]'
-                  }`}
-              >
-                <div className="w-1.5 h-1.5 rounded-full bg-[#0284C7]" />
-              </div>
-              <span className="absolute -bottom-5 left-1/2 -translate-x-1/2 text-[9px] font-mono font-bold text-[#0284C7] bg-white/95 px-1.5 py-0.5 rounded shadow-xs border border-[#0284C7]/30">
-                {handCursor.isPinching ? 'PINCH' : 'PALM'}
-              </span>
-            </div>
-          )}
-        </>
+        <div
+          className="fixed bottom-4 left-4 z-[9997] flex items-center gap-3 rounded-xl border border-[#DCD5C7] bg-white/95 px-4 py-2 text-xs font-medium text-[#0B1736] shadow-lg"
+          aria-live="polite"
+        >
+          <span>
+            {activeView === 'behavioral' &&
+            !behavioralCameraStream &&
+            (behavioralCameraState === 'starting' || behavioralCameraState === 'active')
+              ? 'Hand AR is waiting for the assessment camera.'
+              : 'Hand AR: pinch to click · open palm and move vertically to scroll'}
+          </span>
+          <button
+            type="button"
+            className="rounded-full bg-[#0B1736] px-3 py-1.5 text-xs font-semibold text-white"
+            onClick={() => {
+              setIsARHandActive(false);
+              setGestureArError('');
+            }}
+          >
+            Stop
+          </button>
+        </div>
       )}
+
+      {gestureArError && (
+        <div
+          className="fixed bottom-4 right-4 z-[10000] flex max-w-sm items-center gap-3 rounded-xl border border-red-300 bg-white px-4 py-3 text-sm text-red-900 shadow-xl"
+          role="alert"
+        >
+          <span>{gestureArError}</span>
+          <button
+            type="button"
+            className="shrink-0 rounded-full bg-[#0B1736] px-3 py-1.5 text-xs font-semibold text-white"
+            onClick={() => {
+              setGestureArError('');
+              setHandSessionKey((key) => key + 1);
+            }}
+          >
+            Retry
+          </button>
+        </div>
+      )}
+
+      <div
+        ref={handCursorRef}
+        aria-hidden="true"
+        className="pointer-events-none fixed z-[9998] -translate-x-1/2 -translate-y-1/2"
+        style={{ display: 'none' }}
+      >
+        <div className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-cyan-500 bg-cyan-400/15 shadow-[0_0_18px_rgba(34,211,238,0.75)]">
+          <div className="h-1.5 w-1.5 rounded-full bg-cyan-700" />
+        </div>
+      </div>
 
       {/* 30-SECOND INACTIVITY TIMEOUT WARNING BANNER */}
       {currentUser && authScreen === 'dashboard' && isWarning && (
