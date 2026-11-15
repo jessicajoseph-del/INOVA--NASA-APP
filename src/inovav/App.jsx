@@ -1761,94 +1761,48 @@ export default function InovavPortal({
                   />
                 ) : (
                   <>
-                    {/* ── 4 REAL-TIME VITALS CARDS (HEART RATE, BLOOD PRESSURE, CORE TEMP, BLOOD OXYGEN) ── */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
-                      {/* Card 1: Heart Rate */}
-                      <div className="bg-[#0B1736]/90 border border-blue-400/20 rounded-xl p-3.5 shadow-lg">
-                        <div className="flex items-center justify-between text-slate-400">
-                          <span className="text-[10px] font-mono uppercase tracking-wider font-semibold">
-                            Heart Rate (HR)
-                          </span>
-                          <Heart className="w-3.5 h-3.5 text-rose-400" />
-                        </div>
-                        <div className="flex items-baseline justify-between mt-1.5">
-                          <h3 className="text-2xl font-black text-cyan-300 font-sans tracking-tight">
-                            {liveHeartRate || 62}
-                          </h3>
-                          <span className="text-[11px] font-mono text-slate-400 font-bold">BPM</span>
-                        </div>
-                        <div className="mt-2 flex items-center justify-between text-[10px]">
-                          <span className="text-emerald-400 font-mono flex items-center gap-1 font-semibold">
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-                            <span>Resting Pace</span>
-                          </span>
-                          <span className="text-slate-400 font-mono text-[9px]">Baseline: 64 BPM</span>
-                        </div>
+                    {/* ── 1. EVA SUIT PRIMARY SYSTEMS & PRESSURE SEAL (SUIT KPIS: O2, PRESSURE, BATTERY) ── */}
+                    <div className="bg-[#0B1736]/70 border border-blue-400/15 rounded-xl p-4 mb-4">
+                      <div className="font-mono text-[11px] text-[#ead9b2] uppercase tracking-wider mb-3 flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                        <span>EVA Suit Primary Systems & Pressure Seal</span>
                       </div>
-
-                      {/* Card 2: Blood Pressure */}
-                      <div className="bg-[#0B1736]/90 border border-amber-400/35 rounded-xl p-3.5 shadow-lg">
-                        <div className="flex items-center justify-between text-slate-400">
-                          <span className="text-[10px] font-mono uppercase tracking-wider font-semibold">
-                            Blood Pressure
-                          </span>
-                          <Activity className="w-3.5 h-3.5 text-[#F5B82E]" />
+                      <div className="flex flex-col gap-3.5">
+                        {/* Oxygen */}
+                        <div>
+                          <div className="flex justify-between items-baseline text-xs font-mono">
+                            <span className="text-slate-400">OXYGEN RESERVE</span>
+                            <span className="text-sm font-bold text-[#f6eedb]">99.4%</span>
+                          </div>
+                          <div className="hairline-bar-track mt-1">
+                            <div className="hairline-bar-fill" style={{ width: '99.4%' }} />
+                          </div>
                         </div>
-                        <div className="flex items-baseline justify-between mt-1.5">
-                          <h3 className="text-2xl font-black text-[#FDE047] font-sans tracking-tight">
-                            112/71
-                          </h3>
-                          <span className="text-[11px] font-mono text-slate-400 font-bold">mmHg</span>
+                        {/* Suit Pressure */}
+                        <div>
+                          <div className="flex justify-between items-baseline text-xs font-mono">
+                            <span className="text-slate-400">SUIT PRESSURE (INTERNAL)</span>
+                            <span className="text-sm font-bold text-[#f6eedb]">4.3 <span className="text-slate-400 text-xs">psi</span></span>
+                          </div>
+                          <div className="hairline-bar-track mt-1">
+                            <div className="hairline-bar-fill" style={{ width: '86%' }} />
+                          </div>
                         </div>
-                        <div className="mt-2 flex items-center justify-between text-[10px]">
-                          <span className="text-cyan-300 font-mono font-semibold">Microgravity Reg.</span>
-                          <span className="text-slate-400 font-mono text-[9px]">Sys/Dia</span>
-                        </div>
-                      </div>
-
-                      {/* Card 3: Core Temperature */}
-                      <div className="bg-[#0B1736]/90 border border-blue-400/20 rounded-xl p-3.5 shadow-lg">
-                        <div className="flex items-center justify-between text-slate-400">
-                          <span className="text-[10px] font-mono uppercase tracking-wider font-semibold">
-                            Core Temperature
-                          </span>
-                          <Thermometer className="w-3.5 h-3.5 text-amber-300" />
-                        </div>
-                        <div className="flex items-baseline justify-between mt-1.5">
-                          <h3 className="text-2xl font-black text-amber-300 font-sans tracking-tight">
-                            36.8
-                          </h3>
-                          <span className="text-[11px] font-mono text-slate-400 font-bold">°C</span>
-                        </div>
-                        <div className="mt-2 flex items-center justify-between text-[10px]">
-                          <span className="text-emerald-400 font-mono font-semibold">Thermoregulated</span>
-                          <span className="text-slate-400 font-mono text-[9px]">Optimal 36.6°C</span>
-                        </div>
-                      </div>
-
-                      {/* Card 4: Blood Oxygen (SpO2) */}
-                      <div className="bg-[#0B1736]/90 border border-blue-400/20 rounded-xl p-3.5 shadow-lg">
-                        <div className="flex items-center justify-between text-slate-400">
-                          <span className="text-[10px] font-mono uppercase tracking-wider font-semibold">
-                            Blood Oxygen (SpO2)
-                          </span>
-                          <Wind className="w-3.5 h-3.5 text-emerald-400" />
-                        </div>
-                        <div className="flex items-baseline justify-between mt-1.5">
-                          <h3 className="text-2xl font-black text-emerald-400 font-sans tracking-tight">
-                            98%
-                          </h3>
-                          <span className="text-[11px] font-mono text-slate-400 font-bold">O₂ Sat</span>
-                        </div>
-                        <div className="mt-2 flex items-center justify-between text-[10px]">
-                          <span className="text-emerald-400 font-mono font-semibold">Cabin Norm: 21.0 kPa</span>
-                          <span className="text-slate-400 font-mono text-[9px]">Nominal</span>
+                        {/* Battery */}
+                        <div>
+                          <div className="flex justify-between items-baseline text-xs font-mono">
+                            <span className="text-slate-400">BATTERY CAPACITY</span>
+                            <span className="text-sm font-bold text-[#f6eedb]">87%</span>
+                          </div>
+                          <div className="hairline-bar-track mt-1">
+                            <div className="hairline-bar-fill" style={{ width: '87%' }} />
+                          </div>
                         </div>
                       </div>
                     </div>
 
-                    {/* ── CREW WELLBEING GAUGES (OAT YELLOW METRICS) ── */}
-                    <div className="bg-[#0B1736]/95 border border-amber-400/25 p-4 sm:p-5 rounded-2xl shadow-xl flex flex-col space-y-4 mb-6">
+                    {/* ── 2. CREW WELLBEING GAUGES (OAT YELLOW METRICS) ── */}
+                    <div className="bg-[#0B1736]/95 border border-amber-400/25 p-4 sm:p-5 rounded-2xl shadow-xl flex flex-col space-y-4 mb-4">
                       <div>
                         <div className="flex items-center justify-between">
                           <h2 className="text-sm sm:text-base font-bold text-white tracking-wide">
@@ -1934,42 +1888,88 @@ export default function InovavPortal({
                       </div>
                     </div>
 
-                    {/* ── EVA SUIT LIFE SUPPORT SYSTEMS (O2, PRESSURE 4.3 PSI, BATTERY) ── */}
-                    <div className="bg-[#0B1736]/70 border border-blue-400/15 rounded-xl p-4 mb-6">
-                      <div className="font-mono text-[11px] text-[#ead9b2] uppercase tracking-wider mb-3 flex items-center gap-2">
-                        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                        <span>EVA Suit Primary Systems & Pressure Seal</span>
+                    {/* ── 3. 4 REAL-TIME VITALS CARDS (HEART RATE, BLOOD PRESSURE, CORE TEMP, BLOOD OXYGEN) ── */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                      {/* Card 1: Heart Rate */}
+                      <div className="bg-[#0B1736]/90 border border-blue-400/20 rounded-xl p-3.5 shadow-lg">
+                        <div className="flex items-center justify-between text-slate-400">
+                          <span className="text-[10px] font-mono uppercase tracking-wider font-semibold">
+                            Heart Rate (HR)
+                          </span>
+                          <Heart className="w-3.5 h-3.5 text-rose-400" />
+                        </div>
+                        <div className="flex items-baseline justify-between mt-1.5">
+                          <h3 className="text-2xl font-black text-cyan-300 font-sans tracking-tight">
+                            {liveHeartRate || 62}
+                          </h3>
+                          <span className="text-[11px] font-mono text-slate-400 font-bold">BPM</span>
+                        </div>
+                        <div className="mt-2 flex items-center justify-between text-[10px]">
+                          <span className="text-emerald-400 font-mono flex items-center gap-1 font-semibold">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                            <span>Resting Pace</span>
+                          </span>
+                          <span className="text-slate-400 font-mono text-[9px]">Baseline: 64 BPM</span>
+                        </div>
                       </div>
-                      <div className="flex flex-col gap-3.5">
-                        {/* Oxygen */}
-                        <div>
-                          <div className="flex justify-between items-baseline text-xs font-mono">
-                            <span className="text-slate-400">OXYGEN RESERVE</span>
-                            <span className="text-sm font-bold text-[#f6eedb]">99.4%</span>
-                          </div>
-                          <div className="hairline-bar-track mt-1">
-                            <div className="hairline-bar-fill" style={{ width: '99.4%' }} />
-                          </div>
+
+                      {/* Card 2: Blood Pressure */}
+                      <div className="bg-[#0B1736]/90 border border-amber-400/35 rounded-xl p-3.5 shadow-lg">
+                        <div className="flex items-center justify-between text-slate-400">
+                          <span className="text-[10px] font-mono uppercase tracking-wider font-semibold">
+                            Blood Pressure
+                          </span>
+                          <Activity className="w-3.5 h-3.5 text-[#F5B82E]" />
                         </div>
-                        {/* Suit Pressure */}
-                        <div>
-                          <div className="flex justify-between items-baseline text-xs font-mono">
-                            <span className="text-slate-400">SUIT PRESSURE (INTERNAL)</span>
-                            <span className="text-sm font-bold text-[#f6eedb]">4.3 <span className="text-slate-400 text-xs">psi</span></span>
-                          </div>
-                          <div className="hairline-bar-track mt-1">
-                            <div className="hairline-bar-fill" style={{ width: '86%' }} />
-                          </div>
+                        <div className="flex items-baseline justify-between mt-1.5">
+                          <h3 className="text-2xl font-black text-[#FDE047] font-sans tracking-tight">
+                            112/71
+                          </h3>
+                          <span className="text-[11px] font-mono text-slate-400 font-bold">mmHg</span>
                         </div>
-                        {/* Battery */}
-                        <div>
-                          <div className="flex justify-between items-baseline text-xs font-mono">
-                            <span className="text-slate-400">BATTERY CAPACITY</span>
-                            <span className="text-sm font-bold text-[#f6eedb]">87%</span>
-                          </div>
-                          <div className="hairline-bar-track mt-1">
-                            <div className="hairline-bar-fill" style={{ width: '87%' }} />
-                          </div>
+                        <div className="mt-2 flex items-center justify-between text-[10px]">
+                          <span className="text-cyan-300 font-mono font-semibold">Microgravity Reg.</span>
+                          <span className="text-slate-400 font-mono text-[9px]">Sys/Dia</span>
+                        </div>
+                      </div>
+
+                      {/* Card 3: Core Temperature */}
+                      <div className="bg-[#0B1736]/90 border border-blue-400/20 rounded-xl p-3.5 shadow-lg">
+                        <div className="flex items-center justify-between text-slate-400">
+                          <span className="text-[10px] font-mono uppercase tracking-wider font-semibold">
+                            Core Temperature
+                          </span>
+                          <Thermometer className="w-3.5 h-3.5 text-amber-300" />
+                        </div>
+                        <div className="flex items-baseline justify-between mt-1.5">
+                          <h3 className="text-2xl font-black text-amber-300 font-sans tracking-tight">
+                            36.8
+                          </h3>
+                          <span className="text-[11px] font-mono text-slate-400 font-bold">°C</span>
+                        </div>
+                        <div className="mt-2 flex items-center justify-between text-[10px]">
+                          <span className="text-emerald-400 font-mono font-semibold">Thermoregulated</span>
+                          <span className="text-slate-400 font-mono text-[9px]">Optimal 36.6°C</span>
+                        </div>
+                      </div>
+
+                      {/* Card 4: Blood Oxygen (SpO2) */}
+                      <div className="bg-[#0B1736]/90 border border-blue-400/20 rounded-xl p-3.5 shadow-lg">
+                        <div className="flex items-center justify-between text-slate-400">
+                          <span className="text-[10px] font-mono uppercase tracking-wider font-semibold">
+                            Blood Oxygen (SpO2)
+                          </span>
+                          <Wind className="w-3.5 h-3.5 text-emerald-400" />
+                        </div>
+                        <div className="flex items-baseline justify-between mt-1.5">
+                          <h3 className="text-2xl font-black text-emerald-400 font-sans tracking-tight">
+                            98%
+                          </h3>
+                          <span className="text-[11px] font-mono text-slate-400 font-bold">O₂ Sat</span>
+                        </div>
+                        <div className="mt-2 flex items-center justify-between text-[10px]">
+                          <span className="text-emerald-400 font-mono font-semibold">Cabin Norm: 21.0 kPa</span>
+                          <span className="text-slate-400 font-mono text-[9px]">Nominal</span>
                         </div>
                       </div>
                     </div>

@@ -67,8 +67,8 @@ export default function HeartRateTelemetryChart({ data = [], currentBpm = 74 }) 
   return (
     <div
       style={{
-        marginTop: '24px',
-        padding: '16px 18px 12px',
+        marginTop: '14px',
+        padding: '12px 14px 8px',
         background: 'rgba(10, 28, 63, 0.45)',
         border: '1px solid rgba(246, 238, 219, 0.16)',
         borderRadius: '6px',
@@ -82,7 +82,7 @@ export default function HeartRateTelemetryChart({ data = [], currentBpm = 74 }) 
           justifyContent: 'space-between',
           flexWrap: 'wrap',
           gap: '8px',
-          marginBottom: '12px',
+          marginBottom: '8px',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -143,10 +143,10 @@ export default function HeartRateTelemetryChart({ data = [], currentBpm = 74 }) 
         </div>
       </div>
 
-      {/* Recharts Line Chart */}
-      <div style={{ width: '100%', height: '148px' }}>
+      {/* Recharts Line Chart - Compact reduced length */}
+      <div style={{ width: '100%', height: '105px' }}>
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={data} margin={{ top: 6, right: 8, left: -16, bottom: 2 }}>
+          <LineChart data={data} margin={{ top: 4, right: 8, left: -18, bottom: 0 }}>
             <CartesianGrid
               stroke="rgba(246, 238, 219, 0.08)"
               strokeDasharray="3 4"
@@ -165,7 +165,7 @@ export default function HeartRateTelemetryChart({ data = [], currentBpm = 74 }) 
               tick={{ fill: '#9fb6da', fontSize: 10, fontFamily: 'monospace' }}
               tickLine={false}
               axisLine={false}
-              ticks={[60, 70, 80, 90]}
+              ticks={[60, 75, 90]}
             />
             <ReferenceLine
               y={72}

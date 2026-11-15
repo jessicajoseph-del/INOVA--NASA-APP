@@ -803,8 +803,8 @@ export default function AstroCareDashboard({
               </div>
             </div>
 
-            {/* Recharts Multi-Metric Chart Canvas */}
-            <div className="h-72 w-full">
+            {/* Recharts Multi-Metric Chart Canvas (Reduced compact height) */}
+            <div className="h-48 sm:h-52 w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <ComposedChart
                   data={dataset}
