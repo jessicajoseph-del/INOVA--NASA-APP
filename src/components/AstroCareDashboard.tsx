@@ -598,23 +598,23 @@ export default function AstroCareDashboard({
       {/* 2. MAIN CONTENT STAGE */}
       <main className="max-w-7xl mx-auto p-4 sm:p-6 space-y-6 w-full">
         {/* 1. CREW WELLBEING GAUGES - HORIZONTAL SECTION BELOW PROFILE RIBBON */}
-        <div className="bg-[#0B1736]/95 border border-blue-400/25 p-5 sm:p-6 rounded-2xl shadow-xl space-y-4 text-left">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-blue-900/40 pb-3">
+        <div className="bg-[#F7F3E9] border border-[#DCD5C7] p-5 sm:p-6 rounded-2xl shadow-[0_8px_24px_rgba(11,23,54,0.08)] space-y-4 text-left">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#DCD5C7] pb-3">
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-base sm:text-lg font-bold text-white tracking-wide">
+                <h2 className="text-base sm:text-lg font-bold text-[#0B1736] tracking-wide">
                   Crew Wellbeing Gauges
                 </h2>
-                <span className="text-[10px] font-mono text-[#FDE047] font-semibold px-2 py-0.5 rounded bg-[#FDE047]/10 border border-[#FDE047]/30">
+                <span className="text-[10px] font-mono text-[#8A5A00] font-semibold px-2 py-0.5 rounded bg-[#FDE047]/20 border border-[#D6A31E]/40">
                   OAT YELLOW METRICS
                 </span>
               </div>
-              <p className="text-xs text-slate-300 mt-0.5">
+              <p className="text-xs text-[#5A657D] mt-0.5">
                 Restorative sleep, countermeasure exercise &amp; cognitive readiness across mission timeline.
               </p>
             </div>
-            <div className="text-xs font-mono text-slate-400">
-              Selected: <span className="text-[#FDE047] font-bold">Day {currentRecord.day} ({currentRecord.date})</span>
+            <div className="text-xs font-mono text-[#5A657D]">
+              Selected: <span className="text-[#9A5B00] font-bold">Day {currentRecord.day} ({currentRecord.date})</span>
             </div>
           </div>
 
@@ -628,7 +628,7 @@ export default function AstroCareDashboard({
               unit="h"
               targetText="Target: 8.0h Rest Baseline"
               colorHex="#F5B82E"
-              cardClassName="bg-[#0B152C]/90 border border-slate-700/40 rounded-xl p-4 sm:p-5 flex flex-col justify-between"
+              cardClassName="bg-white border border-[#DCD5C7] rounded-xl p-4 sm:p-5 flex flex-col justify-between"
             />
 
             {/* 2. Daily Exercise Countermeasure */}
@@ -652,20 +652,20 @@ export default function AstroCareDashboard({
                   <span>Log Session</span>
                 </button>
               }
-              cardClassName="bg-[#0B152C]/90 border border-slate-700/40 rounded-xl p-4 sm:p-5 hover:border-[#FACC15]/50 transition-all flex flex-col justify-between"
+              cardClassName="bg-white border border-[#DCD5C7] rounded-xl p-4 sm:p-5 hover:border-[#D6A31E]/60 transition-all flex flex-col justify-between"
               footerContent={
-                <div className="flex items-center gap-2 mt-2 w-full justify-center flex-wrap pt-2 border-t border-slate-800/60">
-                  <div className="px-2.5 py-1 rounded-lg bg-[#060F28] border border-blue-400/20 font-mono text-[10px] text-slate-300 flex items-center gap-1.5 shadow-sm">
+                <div className="flex items-center gap-2 mt-2 w-full justify-center flex-wrap pt-2 border-t border-[#DCD5C7]">
+                  <div className="px-2.5 py-1 rounded-lg bg-[#F7F4EE] border border-[#DCD5C7] font-mono text-[10px] text-[#0B1736] flex items-center gap-1.5 shadow-sm">
                     <Dumbbell className="w-3 h-3 text-[#FACC15]" />
-                    <span className="text-slate-400">ARED LOAD:</span>
-                    <span className="font-bold text-[#FFFDF7]">
+                    <span className="text-[#5A657D]">ARED LOAD:</span>
+                    <span className="font-bold text-[#0B1736]">
                       {effectiveAredLoad.toLocaleString()} kg
                     </span>
                   </div>
-                  <div className="px-2.5 py-1 rounded-lg bg-[#060F28] border border-blue-400/20 font-mono text-[10px] text-slate-300 flex items-center gap-1.5 shadow-sm">
+                  <div className="px-2.5 py-1 rounded-lg bg-[#F7F4EE] border border-[#DCD5C7] font-mono text-[10px] text-[#0B1736] flex items-center gap-1.5 shadow-sm">
                     <Activity className="w-3 h-3 text-cyan-400" />
-                    <span className="text-slate-400">T2 / CEVIS:</span>
-                    <span className="font-bold text-[#FFFDF7]">
+                    <span className="text-[#5A657D]">T2 / CEVIS:</span>
+                    <span className="font-bold text-[#0B1736]">
                       {currentRecord.cardioMinutes} min • {currentRecord.cardioBpm} bpm
                     </span>
                   </div>
@@ -681,18 +681,18 @@ export default function AstroCareDashboard({
               unit="/10"
               targetText="Behavioral Stability Normal"
               colorHex="#FDE047"
-              cardClassName="bg-[#0B152C]/90 border border-slate-700/40 rounded-xl p-4 sm:p-5 flex flex-col justify-between"
+              cardClassName="bg-white border border-[#DCD5C7] rounded-xl p-4 sm:p-5 flex flex-col justify-between"
             />
           </div>
 
           {/* Contextual Daily Flight Journal Entry */}
-          <div className="bg-[#060F28] border border-blue-400/15 rounded-xl p-3.5 text-left flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div className="bg-white border border-[#DCD5C7] rounded-xl p-3.5 text-left flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm">
             <div className="flex-1">
-              <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-amber-300 mb-1">
-                <Radio className="w-3.5 h-3.5 text-[#F5B82E]" />
+              <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-[#9A5B00] mb-1">
+                <Radio className="w-3.5 h-3.5 text-[#C17A00]" />
                 <span>Mission Journal Log: Day {currentRecord.day}</span>
               </div>
-              <p className="text-xs text-slate-300 leading-relaxed italic">
+              <p className="text-xs text-[#334155] leading-relaxed italic">
                 {currentRecord.journal ||
                   `Standard orbital shift. Physical countermeasure workout complete on ARED. Microgravity vitals logged in accordance with Flight Rule 4.2.`}
               </p>

@@ -406,9 +406,9 @@ export default function BehavioralHealthPage({
     { id: 'reflections', label: 'Journal & Poetry' },
   ];
   return (
-    <div className="min-h-screen flex flex-col bg-[#F6EEDB] text-[#06132B] pb-20 lg:pb-10">
-      {/* Three-Zone Top Bar on Shaded Ink Blue Canvas */}
-      <header className="w-full border-b border-white/10 bg-[#0D1C33]/65 backdrop-blur-md sticky top-0 z-30">
+    <div className="min-h-screen flex flex-col bg-[#F7F4EE] text-[#0B1736] pb-20 lg:pb-10">
+      {/* Three-Zone Top Bar on Ink Blue Canvas */}
+      <header className="w-full border-b border-white/10 bg-[#0B1736] sticky top-0 z-30">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between gap-4 lg:gap-8">
           {/* Zone 1: Brand Title & Return Navigation */}
           <div className="flex items-center gap-3 shrink-0">
@@ -696,7 +696,7 @@ export default function BehavioralHealthPage({
       {/* Mobile & Tablet Thumb-Zone Bottom Navigation (compact <= 64px, < 15% mobile height) */}
       <nav
         aria-label="Mobile navigation"
-        className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#0B172A]/95 backdrop-blur-md border-t border-white/10"
+        className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#0B1736] border-t border-white/10"
       >
         <div className="grid grid-cols-5 h-16">
           <button
