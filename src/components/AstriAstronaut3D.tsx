@@ -171,3 +171,4 @@ export default function AstriAstronaut3D({
     </div>
   );
 }
+

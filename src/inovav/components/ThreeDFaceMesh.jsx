@@ -161,9 +161,16 @@ async function buildSphericalFaceTexture(faceSnaps, fallbackUrl) {
     // Draw side angles first so center face cleanly overlays with full priority
     if (rightImg) {
       drawFullFace(rightImg, W * 0.33 - sideW / 2, sideY, sideW, sideH, false);
+    } else if (centerImg) {
+      // Seamless panoramic face fill: softly blend center face to right cheek
+      drawFullFace(centerImg, W * 0.31 - sideW / 2, sideY, sideW * 0.95, sideH * 0.95, false);
     }
+
     if (leftImg) {
       drawFullFace(leftImg, W * 0.67 - sideW / 2, sideY, sideW, sideH, false);
+    } else if (centerImg) {
+      // Seamless panoramic face fill: softly blend center face to left cheek
+      drawFullFace(centerImg, W * 0.69 - sideW / 2, sideY, sideW * 0.95, sideH * 0.95, false);
     }
 
     // Center face covers the entire front 170° with edge-to-edge clarity

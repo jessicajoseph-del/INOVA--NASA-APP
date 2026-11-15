@@ -102,12 +102,22 @@ export default function App() {
   const [portalInitialScreen, setPortalInitialScreen] = useState('intro');
   const [showARVisor, setShowARVisor] = useState(false);
   const [showProfileSettings, setShowProfileSettings] = useState(false);
-  const [activeAstronaut, setActiveAstronaut] = useState({
-    id: 'ASTRO-01',
-    name: 'CDR. Alex Vance',
-    mission: 'Artemis VII // Mars Transfer',
-    role: 'Mission Commander',
-    bloodType: 'O-Negative',
+  const [activeAstronaut, setActiveAstronaut] = useState(() => {
+    try {
+      const raw = localStorage.getItem('ridge_astronaut_db') || localStorage.getItem('inova_astronaut_db');
+      if (raw) {
+        const list = JSON.parse(raw);
+        if (Array.isArray(list) && list.length > 0) return list[0];
+      }
+    } catch {}
+    return {
+      id: 'ASTRO-01',
+      name: 'CDR. Alex Vance',
+      mission: 'Artemis VII // Mars Transfer',
+      role: 'Mission Commander',
+      bloodType: 'O-Negative',
+      faceSnaps: { center: null, left: null, right: null },
+    };
   });
 
   const handleLogout = () => {
@@ -690,10 +700,25 @@ export default function App() {
         onClose={() => setShowProfileSettings(false)}
         activeAstronaut={activeAstronaut}
         onSaveFaceData={(snaps) => {
-          setActiveAstronaut((prev) => ({
-            ...prev,
-            faceSnaps: { ...(prev.faceSnaps || {}), ...snaps },
-          }));
+          setActiveAstronaut((prev) => {
+            const updated = {
+              ...prev,
+              faceSnaps: { ...(prev.faceSnaps || {}), ...snaps },
+            };
+            try {
+              const raw = localStorage.getItem('ridge_astronaut_db') || localStorage.getItem('inova_astronaut_db');
+              const current = raw ? JSON.parse(raw) : [];
+              const list = Array.isArray(current) ? current : [];
+              const updatedList = [
+                ...list.filter((a) => a.id?.toLowerCase() !== updated.id?.toLowerCase()),
+                updated,
+              ];
+              localStorage.setItem('ridge_astronaut_db', JSON.stringify(updatedList));
+            } catch (err) {
+              console.warn(err);
+            }
+            return updated;
+          });
         }}
         onLoginSuccess={(astro) => {
           setActiveAstronaut(astro);

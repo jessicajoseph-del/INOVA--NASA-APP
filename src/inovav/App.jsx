@@ -981,9 +981,16 @@ export default function InovavPortal({
   // Astronaut DB & Active User
   const [astronauts, setAstronauts] = useState(getStoredAstronauts);
   const [activeAstronaut, setActiveAstronaut] = useState(() => {
+    if (propActiveAstronaut && propActiveAstronaut.id) return propActiveAstronaut;
     const list = getStoredAstronauts();
     return list[0] || DEFAULT_ASTRONAUT;
   });
+
+  useEffect(() => {
+    if (propActiveAstronaut && propActiveAstronaut.id) {
+      setActiveAstronaut(propActiveAstronaut);
+    }
+  }, [propActiveAstronaut]);
 
   const [isAstroHovered, setIsAstroHovered] = useState(false);
 
@@ -1079,6 +1086,7 @@ export default function InovavPortal({
     setActiveAstronaut(updatedAstro);
     const updatedList = saveAstronautToDb(updatedAstro);
     setAstronauts(updatedList);
+    if (onAstronautChange) onAstronautChange(updatedAstro);
   };
 
   // Determine current active face snap (center, left, right) based on mouse hover across visor

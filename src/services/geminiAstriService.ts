@@ -180,3 +180,4 @@ Roger that, Commander. Telemetry processing confirmed for query: *"${prompt}"*.
 
 Would you like me to run a deep-scan telemetry audit, review your daily flight roadmap, or synchronize comms with Houston CAPCOM?`;
 }
+

@@ -28,6 +28,26 @@ export default function ThreeDFaceStudioModal({
   const videoRef = useRef(null);
   const streamRef = useRef(null);
   const canvasRef = useRef(null);
+  const fileInputRef = useRef(null);
+
+  // File upload handler for offline / manual face upload
+  const handleFileUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const dataUrl = event.target?.result;
+      if (typeof dataUrl === 'string') {
+        setCapturedSnaps((prev) => ({
+          ...prev,
+          [currentAngle]: dataUrl,
+          ...(prev.center ? {} : { center: dataUrl }),
+        }));
+      }
+    };
+    reader.readAsDataURL(file);
+    e.target.value = '';
+  };
 
   // Initialize camera
   const requestCameraAccess = async () => {
@@ -191,6 +211,13 @@ export default function ThreeDFaceStudioModal({
       }}
     >
       <canvas ref={canvasRef} style={{ display: 'none' }} />
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        onChange={handleFileUpload}
+        style={{ display: 'none' }}
+      />
 
       <div
         className="holo-card custom-scroll"
@@ -418,14 +445,30 @@ export default function ThreeDFaceStudioModal({
                   <div className="font-mono" style={{ fontSize: '0.8rem', color: '#9fb6da', marginBottom: '12px' }}>
                     Camera access is currently inactive.
                   </div>
-                  <button
-                    type="button"
-                    onClick={requestCameraAccess}
-                    className="tech-btn"
-                    style={{ fontSize: '0.72rem', padding: '8px 16px' }}
-                  >
-                    ENABLE CAMERA
-                  </button>
+                  <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', justifyContent: 'center' }}>
+                    <button
+                      type="button"
+                      onClick={requestCameraAccess}
+                      className="tech-btn"
+                      style={{ fontSize: '0.72rem', padding: '8px 16px' }}
+                    >
+                      ENABLE CAMERA
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="tech-btn"
+                      style={{
+                        fontSize: '0.72rem',
+                        padding: '8px 16px',
+                        background: 'rgba(246, 238, 219, 0.15)',
+                        color: '#f6eedb',
+                        borderColor: 'rgba(246, 238, 219, 0.4)',
+                      }}
+                    >
+                      📁 UPLOAD PHOTO
+                    </button>
+                  </div>
                 </div>
               )}
 
@@ -536,21 +579,38 @@ export default function ThreeDFaceStudioModal({
 
             {/* Quick Action Buttons */}
             {activeTab === '3d-creator' ? (
-              <button
-                type="button"
-                onClick={() => captureSnapshot(currentAngle)}
-                className="tech-btn"
-                style={{
-                  width: '100%',
-                  padding: '12px',
-                  background: '#f6eedb',
-                  color: '#06132b',
-                  borderColor: '#f6eedb',
-                  fontWeight: 700,
-                }}
-              >
-                📸 CAPTURE {currentAngle.toUpperCase()} & BUILD 3D MESH
-              </button>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <button
+                  type="button"
+                  onClick={() => captureSnapshot(currentAngle)}
+                  className="tech-btn"
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    background: '#f6eedb',
+                    color: '#06132b',
+                    borderColor: '#f6eedb',
+                    fontWeight: 700,
+                  }}
+                >
+                  📸 CAPTURE {currentAngle.toUpperCase()} & BUILD 3D MESH
+                </button>
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="tech-btn"
+                  style={{
+                    width: '100%',
+                    padding: '8px 12px',
+                    fontSize: '0.72rem',
+                    background: 'rgba(246, 238, 219, 0.1)',
+                    color: '#f6eedb',
+                    borderColor: 'rgba(246, 238, 219, 0.35)',
+                  }}
+                >
+                  📁 OR UPLOAD PHOTO FOR {currentAngle.toUpperCase()} FACE
+                </button>
+              </div>
             ) : (
               <button
                 type="button"
@@ -634,6 +694,7 @@ export default function ThreeDFaceStudioModal({
                   }}
                 >
                   <ThreeDFaceMesh
+                    faceSnaps={capturedSnaps}
                     faceTextureUrl={currentPreviewTexture}
                     mouseX={previewMouse.x}
                     mouseY={previewMouse.y}
