@@ -10,6 +10,7 @@ import {
 import { PartAForm } from './components/PartAForm';
 import { PartBForm } from './components/PartBForm';
 import { PartCReport } from './components/PartCReport';
+import { ExpressionConsentModal } from './components/ExpressionConsentModal';
 import {
   ExpressionMonitor,
   ExpressionSample,
@@ -114,7 +115,20 @@ export default function BehavioralHealthPage({ onBack }: BehavioralHealthPagePro
   const [shareChoice, setShareChoice] = useState<'yes' | 'no' | null>(null);
   const [consultationChoice, setConsultationChoice] = useState<'yes' | 'no' | null>(null);
   const [expressionMatchChoice, setExpressionMatchChoice] = useState<'yes' | 'no' | null>(null);
+  const [isConsentModalOpen, setIsConsentModalOpen] = useState(false);
+  const hasPromptedModalRef = useRef(false);
   const expressionSamplesRef = useRef<ExpressionSample[]>([]);
+
+  useEffect(() => {
+    if (
+      activeTab === 'daily' &&
+      expressionCollectionStatus === 'idle' &&
+      !hasPromptedModalRef.current
+    ) {
+      hasPromptedModalRef.current = true;
+      setIsConsentModalOpen(true);
+    }
+  }, [activeTab, expressionCollectionStatus]);
 
   useEffect(() => {
     try {
@@ -217,11 +231,9 @@ export default function BehavioralHealthPage({ onBack }: BehavioralHealthPagePro
       setJustSavedDay(null);
     }, 2400);
 
-    // On mobile/tablet single-column view, jump straight to Part C report after logging
-    if (window.innerWidth < 1024) {
-      setActiveTab('report');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    // Automatically jump straight to Part C Assessment Report after completing assessment
+    setActiveTab('report');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleSavePartA = () => {
@@ -450,76 +462,6 @@ export default function BehavioralHealthPage({ onBack }: BehavioralHealthPagePro
         {activeTab === 'daily' && (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-7 items-start">
             <div className="lg:col-span-6 space-y-3">
-              {!isEditingLoggedDay && (
-                <section
-                  aria-labelledby="expression-consent-title"
-                  className="rounded-2xl border border-[#12233B]/15 bg-[#FCF9F0] p-4 shadow-sm"
-                >
-                  <h2
-                    id="expression-consent-title"
-                    className="font-display text-lg font-bold text-[#12233B]"
-                  >
-                    Optional private expression check
-                  </h2>
-                  <p className="mt-1 text-sm leading-relaxed text-[#4A5C75]">
-                    If you opt in, your camera preview stays hidden while a local model samples
-                    facial-expression estimates during today&apos;s check. Only temporary labels and
-                    scores are kept in page memory; no video, frames, or face descriptors are
-                    saved. Sampling stops when you submit or stop it. Account sharing is not
-                    available until Firestore security rules are confirmed, and nothing will be
-                    uploaded now.
-                  </p>
-                  {expressionCollectionStatus === 'active' && (
-                    <p className="mt-3 text-sm font-semibold text-[#145252]" aria-live="polite">
-                      Local sampling is active. The camera preview is hidden.
-                    </p>
-                  )}
-                  {expressionCollectionStatus === 'starting' && (
-                    <p className="mt-3 text-sm font-semibold text-[#4A5C75]" aria-live="polite">
-                      Loading local models and requesting camera permission…
-                    </p>
-                  )}
-                  {expressionCollectionStatus === 'skipped' && (
-                    <p className="mt-3 text-sm text-[#4A5C75]" aria-live="polite">
-                      Skipped. No camera data is being collected.
-                    </p>
-                  )}
-                  {expressionCollectionError && (
-                    <p className="mt-3 text-sm font-medium text-red-800" role="alert">
-                      {expressionCollectionError}
-                    </p>
-                  )}
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {expressionCollectionEnabled ? (
-                      <button
-                        type="button"
-                        onClick={handleStopExpressionCollection}
-                        className="min-h-10 rounded-full border border-[#12233B]/25 px-4 py-2 text-sm font-semibold text-[#12233B] hover:bg-[#12233B]/5"
-                      >
-                        Stop and discard
-                      </button>
-                    ) : (
-                      <>
-                        <button
-                          type="button"
-                          onClick={handleStartExpressionCollection}
-                          className="min-h-10 rounded-full bg-[#12233B] px-4 py-2 text-sm font-semibold text-white hover:bg-[#243D5F]"
-                        >
-                          I agree — start local check
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setExpressionCollectionStatus('skipped')}
-                          className="min-h-10 rounded-full border border-[#12233B]/25 px-4 py-2 text-sm font-semibold text-[#12233B] hover:bg-[#12233B]/5"
-                        >
-                          Skip
-                        </button>
-                      </>
-                    )}
-                  </div>
-                </section>
-              )}
-
               {isEditingLoggedDay && (
                 <div className="flex items-center justify-between gap-3 px-4 py-2.5 rounded-2xl bg-[#162C4E]/80 border border-white/10 text-xs text-[#E2D1A8]">
                   <span>
@@ -544,6 +486,8 @@ export default function BehavioralHealthPage({ onBack }: BehavioralHealthPagePro
                 }}
                 onSubmit={handleLogDailyCheck}
                 justSavedDay={justSavedDay}
+                onOpenExpressionModal={() => setIsConsentModalOpen(true)}
+                expressionStatus={expressionCollectionStatus}
               />
             </div>
 
@@ -830,6 +774,20 @@ export default function BehavioralHealthPage({ onBack }: BehavioralHealthPagePro
           </section>
         </div>
       )}
+      {/* Expression Privacy & Consent Modal */}
+      <ExpressionConsentModal
+        isOpen={isConsentModalOpen}
+        onClose={() => setIsConsentModalOpen(false)}
+        onAgree={handleStartExpressionCollection}
+        onSkip={() => {
+          handleStopExpressionCollection();
+          setExpressionCollectionStatus('skipped');
+        }}
+        onStop={handleStopExpressionCollection}
+        status={expressionCollectionStatus}
+        enabled={expressionCollectionEnabled}
+        error={expressionCollectionError}
+      />
     </div>
   );
 }
