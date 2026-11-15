@@ -651,89 +651,89 @@ export default function AstroCareDashboard({
           </div>
         </div>
 
-        {/* 3. 4 CORE VITALS CARDS (INK BLUE + OAT YELLOW ACCENTS) */}
+        {/* 3. 4 CORE VITALS CARDS (OAT IVORY BACKGROUND + BLUE PALETTE ELEMENTS) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           
           {/* Heart Rate Card */}
-          <div className="bg-[#0B1736]/80 border border-blue-400/15 rounded-2xl p-4 shadow-xl hover:border-amber-400/30 transition-all group">
-            <div className="flex items-center justify-between text-slate-400">
-              <span className="text-[11px] font-mono uppercase tracking-wider font-semibold">
+          <div className="bg-[#F6EEDB] border border-[#E5D7B7] rounded-2xl p-4 shadow-xl shadow-black/20 hover:border-blue-600/40 hover:shadow-blue-950/20 transition-all group">
+            <div className="flex items-center justify-between text-[#1E3A8A]">
+              <span className="text-[11px] font-mono uppercase tracking-wider font-bold text-[#1E3A8A]">
                 Heart Rate (HR)
               </span>
-              <Heart className="w-4 h-4 text-rose-400 group-hover:scale-110 transition-transform" />
+              <Heart className="w-4 h-4 text-[#2563EB] group-hover:scale-110 transition-transform" />
             </div>
             <div className="flex items-baseline justify-between mt-2">
-              <h3 className="text-3xl font-black text-cyan-300 font-sans tracking-tight">
+              <h3 className="text-3xl font-black text-[#06132B] font-sans tracking-tight">
                 {currentRecord.heartRate}
               </h3>
-              <span className="text-xs font-mono text-slate-400 font-bold">BPM</span>
+              <span className="text-xs font-mono text-[#1E3A8A] font-bold">BPM</span>
             </div>
             <div className="mt-2.5 flex items-center justify-between text-[11px]">
-              <span className="text-emerald-400 font-mono flex items-center gap-1 font-semibold">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+              <span className="text-[#1D4ED8] font-mono flex items-center gap-1.5 font-bold">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#2563EB] animate-ping"></span>
                 <span>Resting Pace</span>
               </span>
-              <span className="text-slate-400 font-mono text-[10px]">Baseline: 64 BPM</span>
+              <span className="text-[#475569] font-mono text-[10px] font-semibold">Baseline: 64 BPM</span>
             </div>
           </div>
 
           {/* Blood Pressure Card */}
-          <div className="bg-[#0B1736]/80 border border-blue-400/15 rounded-2xl p-4 shadow-xl hover:border-amber-400/30 transition-all group">
-            <div className="flex items-center justify-between text-slate-400">
-              <span className="text-[11px] font-mono uppercase tracking-wider font-semibold">
+          <div className="bg-[#F6EEDB] border border-[#E5D7B7] rounded-2xl p-4 shadow-xl shadow-black/20 hover:border-blue-600/40 hover:shadow-blue-950/20 transition-all group">
+            <div className="flex items-center justify-between text-[#1E3A8A]">
+              <span className="text-[11px] font-mono uppercase tracking-wider font-bold text-[#1E3A8A]">
                 Blood Pressure
               </span>
-              <Activity className="w-4 h-4 text-[#F5B82E] group-hover:scale-110 transition-transform" />
+              <Activity className="w-4 h-4 text-[#1D4ED8] group-hover:scale-110 transition-transform" />
             </div>
             <div className="flex items-baseline justify-between mt-2">
-              <h3 className="text-3xl font-black text-[#FDE047] font-sans tracking-tight">
+              <h3 className="text-3xl font-black text-[#06132B] font-sans tracking-tight">
                 {currentRecord.bloodPressure}
               </h3>
-              <span className="text-xs font-mono text-slate-400 font-bold">mmHg</span>
+              <span className="text-xs font-mono text-[#1E3A8A] font-bold">mmHg</span>
             </div>
             <div className="mt-2.5 flex items-center justify-between text-[11px]">
-              <span className="text-cyan-300 font-mono font-semibold">Microgravity Reg.</span>
-              <span className="text-slate-400 font-mono text-[10px]">Sys/Dia</span>
+              <span className="text-[#0284C7] font-mono font-bold">Microgravity Reg.</span>
+              <span className="text-[#475569] font-mono text-[10px] font-semibold">Sys/Dia</span>
             </div>
           </div>
 
           {/* Core Temperature Card */}
-          <div className="bg-[#0B1736]/80 border border-blue-400/15 rounded-2xl p-4 shadow-xl hover:border-amber-400/30 transition-all group">
-            <div className="flex items-center justify-between text-slate-400">
-              <span className="text-[11px] font-mono uppercase tracking-wider font-semibold">
+          <div className="bg-[#F6EEDB] border border-[#E5D7B7] rounded-2xl p-4 shadow-xl shadow-black/20 hover:border-blue-600/40 hover:shadow-blue-950/20 transition-all group">
+            <div className="flex items-center justify-between text-[#1E3A8A]">
+              <span className="text-[11px] font-mono uppercase tracking-wider font-bold text-[#1E3A8A]">
                 Core Temperature
               </span>
-              <Thermometer className="w-4 h-4 text-amber-300 group-hover:scale-110 transition-transform" />
+              <Thermometer className="w-4 h-4 text-[#0284C7] group-hover:scale-110 transition-transform" />
             </div>
             <div className="flex items-baseline justify-between mt-2">
-              <h3 className="text-3xl font-black text-amber-300 font-sans tracking-tight">
+              <h3 className="text-3xl font-black text-[#06132B] font-sans tracking-tight">
                 {currentRecord.temperature}
               </h3>
-              <span className="text-xs font-mono text-slate-400 font-bold">°C</span>
+              <span className="text-xs font-mono text-[#1E3A8A] font-bold">°C</span>
             </div>
             <div className="mt-2.5 flex items-center justify-between text-[11px]">
-              <span className="text-emerald-400 font-mono font-semibold">Thermoregulated</span>
-              <span className="text-slate-400 font-mono text-[10px]">Optimal 36.6°C</span>
+              <span className="text-[#1E40AF] font-mono font-bold">Thermoregulated</span>
+              <span className="text-[#475569] font-mono text-[10px] font-semibold">Optimal 36.6°C</span>
             </div>
           </div>
 
           {/* Blood Oxygen (SpO2) Card */}
-          <div className="bg-[#0B1736]/80 border border-blue-400/15 rounded-2xl p-4 shadow-xl hover:border-amber-400/30 transition-all group">
-            <div className="flex items-center justify-between text-slate-400">
-              <span className="text-[11px] font-mono uppercase tracking-wider font-semibold">
+          <div className="bg-[#F6EEDB] border border-[#E5D7B7] rounded-2xl p-4 shadow-xl shadow-black/20 hover:border-blue-600/40 hover:shadow-blue-950/20 transition-all group">
+            <div className="flex items-center justify-between text-[#1E3A8A]">
+              <span className="text-[11px] font-mono uppercase tracking-wider font-bold text-[#1E3A8A]">
                 Blood Oxygen (SpO2)
               </span>
-              <Wind className="w-4 h-4 text-emerald-400 group-hover:scale-110 transition-transform" />
+              <Wind className="w-4 h-4 text-[#0EA5E9] group-hover:scale-110 transition-transform" />
             </div>
             <div className="flex items-baseline justify-between mt-2">
-              <h3 className="text-3xl font-black text-emerald-400 font-sans tracking-tight">
+              <h3 className="text-3xl font-black text-[#06132B] font-sans tracking-tight">
                 {currentRecord.spo2}%
               </h3>
-              <span className="text-xs font-mono text-slate-400 font-bold">O₂ Sat</span>
+              <span className="text-xs font-mono text-[#1E3A8A] font-bold">O₂ Sat</span>
             </div>
             <div className="mt-2.5 flex items-center justify-between text-[11px]">
-              <span className="text-emerald-400 font-mono font-semibold">Cabin Norm: 21.0 kPa</span>
-              <span className="text-slate-400 font-mono text-[10px]">Nominal</span>
+              <span className="text-[#0369A1] font-mono font-bold">Cabin Norm: 21.0 kPa</span>
+              <span className="text-[#475569] font-mono text-[10px] font-semibold">Nominal</span>
             </div>
           </div>
 
