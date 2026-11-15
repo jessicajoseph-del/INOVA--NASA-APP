@@ -500,120 +500,142 @@ export default function BehavioralHealthPage({
           />
         )}
 
-        {/* Desktop Daily Check shows Part B Form alongside Live Part C Report; mobile shows focused single view */}
+        {/* Spacious centered Daily Assessment (one-by-one question space) */}
         {activeTab === 'daily' && (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-7 items-start">
-            <div className="lg:col-span-6 space-y-3">
-              {!isEditingLoggedDay && (
-                <section
-                  aria-labelledby="expression-consent-title"
-                  className="rounded-2xl border border-[#12233B]/15 bg-[#FCF9F0] p-4 shadow-sm"
-                >
-                  <h2
-                    id="expression-consent-title"
-                    className="font-display text-lg font-bold text-[#12233B]"
-                  >
-                    Optional private expression check
-                  </h2>
-                  <p className="mt-1 text-sm leading-relaxed text-[#4A5C75]">
-                    Camera monitoring starts automatically when this page opens, after browser
-                    permission is granted. The preview stays hidden; estimates run locally and
-                    only temporary labels and scores are held in page memory. No video, frames, or
-                    face descriptors are saved. Expression monitoring stops when you submit, leave
-                    this page, or press Stop. Hand AR is a separate camera feature and can remain
-                    active on other pages if enabled.
-                  </p>
-                  {expressionCollectionStatus === 'active' && (
-                    <p className="mt-3 text-sm font-semibold text-[#145252]" aria-live="polite">
-                      Local sampling is active. The camera preview is hidden.
-                    </p>
-                  )}
-                  {expressionCollectionStatus === 'starting' && (
-                    <p className="mt-3 text-sm font-semibold text-[#4A5C75]" aria-live="polite">
-                      Loading local models and requesting camera permission…
-                    </p>
-                  )}
-                  {expressionCollectionStatus === 'idle' && (
-                    <p className="mt-3 text-sm text-[#4A5C75]" aria-live="polite">
-                      Camera monitoring is paused.
-                    </p>
-                  )}
-                  {expressionCollectionStatus === 'stopped' && (
-                    <p className="mt-3 text-sm text-[#4A5C75]" aria-live="polite">
-                      Camera stopped. Temporary samples were discarded.
-                    </p>
-                  )}
-                  {expressionCollectionError && (
-                    <p className="mt-3 text-sm font-medium text-red-800" role="alert">
-                      {expressionCollectionError}
-                    </p>
-                  )}
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {expressionCollectionEnabled ? (
-                      <button
-                        type="button"
-                        onClick={handleStopExpressionCollection}
-                        className="min-h-10 rounded-full border border-[#12233B]/25 px-4 py-2 text-sm font-semibold text-[#12233B] hover:bg-[#12233B]/5"
-                      >
-                        Stop camera and discard
-                      </button>
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={handleStartExpressionCollection}
-                        className="min-h-10 rounded-full bg-[#12233B] px-4 py-2 text-sm font-semibold text-white hover:bg-[#243D5F]"
-                      >
-                        {expressionCollectionStatus === 'error' ? 'Retry camera' : 'Start camera'}
-                      </button>
-                    )}
+          <div className="max-w-4xl mx-auto w-full space-y-6 animate-fadeIn">
+            {/* If user recently submitted, prominent Output Report Action Button */}
+            {justSavedDay && (
+              <div className="p-4 sm:p-5 rounded-3xl bg-[#FCF9F0] border-2 border-[#145252]/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm animate-fadeIn">
+                <div className="flex items-center gap-3.5">
+                  <div className="w-11 h-11 rounded-2xl bg-[#145252]/15 text-[#145252] flex items-center justify-center shrink-0">
+                    <CheckCircle2 className="w-6 h-6 stroke-[2.5]" />
                   </div>
-                </section>
-              )}
-
-              {isEditingLoggedDay && (
-                <div className="flex items-center justify-between gap-3 px-4 py-2.5 rounded-2xl bg-[#162C4E]/80 border border-white/10 text-xs text-[#E2D1A8]">
-                  <span>
-                    Editing logged entry for Flight Day {draft.day}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={handleReturnToNextDay}
-                    className="font-semibold text-[#FCF9F0] hover:underline whitespace-nowrap shrink-0 cursor-pointer"
-                  >
-                    Switch to new day
-                  </button>
+                  <div>
+                    <span className="text-[10px] font-mono uppercase tracking-widest text-[#145252] font-bold">
+                      ASSESSMENT SUBMITTED
+                    </span>
+                    <h4 className="font-display text-base font-bold text-[#12233B]">
+                      Flight Day {justSavedDay} Assessment Recorded
+                    </h4>
+                    <p className="text-xs text-[#566A86]">
+                      Your mood ratings, vitality scores, and sleep countermeasures have been analyzed.
+                    </p>
+                  </div>
                 </div>
-              )}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedReportDay(justSavedDay);
+                    setActiveTab('report');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className="w-full sm:w-auto px-6 py-2.5 rounded-full bg-[#145252] hover:bg-[#0F3F3F] text-white text-xs sm:text-sm font-semibold inline-flex items-center justify-center gap-2 shadow-md cursor-pointer transition-all active:scale-95 shrink-0"
+                >
+                  <FileBarChart2 className="w-4 h-4 text-[#FDE047]" />
+                  <span>View Output Report</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+            )}
 
-              <PartBForm
-                key={`partb-${draft.day}-${editSessionKey}`}
-                draft={draft}
-                onChange={(updated) => {
-                  setDraft(updated);
-                  setSelectedReportDay(updated.day);
-                }}
-                onSubmit={handleLogDailyCheck}
-                onOpenReport={(day) => {
-                  setSelectedReportDay(day);
-                  setActiveTab('report');
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
-                justSavedDay={justSavedDay}
-                onOpenExpressionModal={() => setIsConsentModalOpen(true)}
-                expressionStatus={expressionCollectionStatus}
-              />
-            </div>
+            {!isEditingLoggedDay && (
+              <section
+                aria-labelledby="expression-consent-title"
+                className="rounded-2xl border border-[#12233B]/15 bg-[#FCF9F0] p-4 shadow-sm"
+              >
+                <h2
+                  id="expression-consent-title"
+                  className="font-display text-lg font-bold text-[#12233B]"
+                >
+                  Optional private expression check
+                </h2>
+                <p className="mt-1 text-sm leading-relaxed text-[#4A5C75]">
+                  Camera monitoring starts automatically when this page opens, after browser
+                  permission is granted. The preview stays hidden; estimates run locally and
+                  only temporary labels and scores are held in page memory. No video, frames, or
+                  face descriptors are saved. Expression monitoring stops when you submit, leave
+                  this page, or press Stop. Hand AR is a separate camera feature and can remain
+                  active on other pages if enabled.
+                </p>
+                {expressionCollectionStatus === 'active' && (
+                  <p className="mt-3 text-sm font-semibold text-[#145252]" aria-live="polite">
+                    Local sampling is active. The camera preview is hidden.
+                  </p>
+                )}
+                {expressionCollectionStatus === 'starting' && (
+                  <p className="mt-3 text-sm font-semibold text-[#4A5C75]" aria-live="polite">
+                    Loading local models and requesting camera permission…
+                  </p>
+                )}
+                {expressionCollectionStatus === 'idle' && (
+                  <p className="mt-3 text-sm text-[#4A5C75]" aria-live="polite">
+                    Camera monitoring is paused.
+                  </p>
+                )}
+                {expressionCollectionStatus === 'stopped' && (
+                  <p className="mt-3 text-sm text-[#4A5C75]" aria-live="polite">
+                    Camera stopped. Temporary samples were discarded.
+                  </p>
+                )}
+                {expressionCollectionError && (
+                  <p className="mt-3 text-sm font-medium text-red-800" role="alert">
+                    {expressionCollectionError}
+                  </p>
+                )}
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {expressionCollectionEnabled ? (
+                    <button
+                      type="button"
+                      onClick={handleStopExpressionCollection}
+                      className="min-h-10 rounded-full border border-[#12233B]/25 px-4 py-2 text-sm font-semibold text-[#12233B] hover:bg-[#12233B]/5 cursor-pointer"
+                    >
+                      Stop camera and discard
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={handleStartExpressionCollection}
+                      className="min-h-10 rounded-full bg-[#12233B] px-4 py-2 text-sm font-semibold text-white hover:bg-[#243D5F] cursor-pointer"
+                    >
+                      {expressionCollectionStatus === 'error' ? 'Retry camera' : 'Start camera'}
+                    </button>
+                  )}
+                </div>
+              </section>
+            )}
 
-            <div className="hidden lg:block lg:col-span-6 lg:sticky lg:top-22">
-              <PartCReport
-                scoredDays={scoredDays}
-                baseline={baseline}
-                partAResult={partAResult}
-                selectedDayNumber={selectedReportDay}
-                onSelectDay={setSelectedReportDay}
-                isLivePreview={isLivePreview}
-              />
-            </div>
+            {isEditingLoggedDay && (
+              <div className="flex items-center justify-between gap-3 px-4 py-2.5 rounded-2xl bg-[#162C4E]/80 border border-white/10 text-xs text-[#E2D1A8]">
+                <span>
+                  Editing logged entry for Flight Day {draft.day}
+                </span>
+                <button
+                  type="button"
+                  onClick={handleReturnToNextDay}
+                  className="font-semibold text-[#FCF9F0] hover:underline whitespace-nowrap shrink-0 cursor-pointer"
+                >
+                  Switch to new day
+                </button>
+              </div>
+            )}
+
+            <PartBForm
+              key={`partb-${draft.day}-${editSessionKey}`}
+              draft={draft}
+              onChange={(updated) => {
+                setDraft(updated);
+                setSelectedReportDay(updated.day);
+              }}
+              onSubmit={handleLogDailyCheck}
+              onOpenReport={(day) => {
+                setSelectedReportDay(day);
+                setActiveTab('report');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              justSavedDay={justSavedDay}
+              onOpenExpressionModal={() => setIsConsentModalOpen(true)}
+              expressionStatus={expressionCollectionStatus}
+            />
           </div>
         )}
 
@@ -914,7 +936,7 @@ export default function BehavioralHealthPage({
                 className="w-full min-h-[50px] px-6 py-3 rounded-full bg-[#145252] hover:bg-[#0F3F3F] text-white font-display font-semibold text-base flex items-center justify-center gap-2.5 shadow-lg shadow-[#145252]/25 transition-all cursor-pointer active:scale-95"
               >
                 <FileBarChart2 className="w-5 h-5 text-[#FDE047]" />
-                <span>Click to Open Report</span>
+                <span>View Output Report</span>
                 <ArrowRight className="w-4 h-4 ml-0.5" />
               </button>
 

@@ -224,19 +224,19 @@ export const PartBForm: React.FC<PartBFormProps> = ({
               : 'Tap a circle or drag the slider for each statement over the last 24 hours.'}
           </p>
 
-          {/* Assessment Done Banner with Click to Open Report Button */}
+          {/* Assessment Done Banner with View Output Report Button */}
           {justSavedDay && (
-            <div className="mt-4 p-4 rounded-2xl bg-emerald-600/10 border-2 border-emerald-600/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-[#06132B]">
+            <div className="mt-4 p-4 sm:p-5 rounded-2xl bg-emerald-600/10 border-2 border-emerald-600/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-[#06132B] animate-fadeIn">
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-full bg-emerald-600 text-white flex items-center justify-center shrink-0">
                   <Check className="w-5 h-5 stroke-[2.5]" />
                 </div>
                 <div>
                   <div className="font-bold text-sm text-[#06132B]">
-                    Flight Day {justSavedDay} Assessment Done!
+                    Flight Day {justSavedDay} Assessment Recorded!
                   </div>
                   <div className="text-xs text-[#365073]">
-                    All answers have been recorded in your mission ledger.
+                    Telemetry synced. Click below to inspect your full output report.
                   </div>
                 </div>
               </div>
@@ -247,7 +247,7 @@ export const PartBForm: React.FC<PartBFormProps> = ({
                   className="w-full sm:w-auto px-5 py-2.5 rounded-full bg-[#145252] hover:bg-[#0F3F3F] text-white text-xs sm:text-sm font-semibold inline-flex items-center justify-center gap-2 shadow-md cursor-pointer transition-all active:scale-95 shrink-0"
                 >
                   <FileBarChart2 className="w-4 h-4 text-[#FDE047]" />
-                  <span>Click to Open Report</span>
+                  <span>View Output Report</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
               )}
@@ -653,17 +653,17 @@ export const PartBForm: React.FC<PartBFormProps> = ({
                   </div>
                 )}
 
-                {/* Direct Action inside completion card */}
-                {onOpenReport && (
-                  <div className="pt-2">
+                {/* Output Report Button shown only after assessment is submitted */}
+                {justSavedDay === draft.day && onOpenReport && (
+                  <div className="pt-2 animate-fadeIn">
                     <button
                       type="button"
                       onClick={() => onOpenReport(draft.day)}
-                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white hover:bg-[#FCF9F0] border border-[#12233B]/20 text-[#12233B] text-xs font-bold transition-all cursor-pointer shadow-sm active:scale-95"
+                      className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#145252] hover:bg-[#0F3F3F] text-white text-sm font-semibold transition-all cursor-pointer shadow-md active:scale-95"
                     >
-                      <FileBarChart2 className="w-4 h-4 text-[#145252]" />
-                      <span>Click to Open Report (Preview)</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
+                      <FileBarChart2 className="w-4 h-4 text-[#FDE047]" />
+                      <span>View Output Report</span>
+                      <ArrowRight className="w-4 h-4" />
                     </button>
                   </div>
                 )}
@@ -708,19 +708,19 @@ export const PartBForm: React.FC<PartBFormProps> = ({
                       </>
                     ) : (
                       <>
-                        <span>Submit &amp; Open Report</span>
-                        <FileBarChart2 className="w-5 h-5 text-[#FDE047]" />
+                        <span>Submit Assessment</span>
+                        <CheckCircle2 className="w-5 h-5 text-emerald-400" />
                       </>
                     )}
                   </button>
-                  {onOpenReport && (
+                  {justSavedDay === draft.day && onOpenReport && (
                     <button
                       type="button"
                       onClick={() => onOpenReport(draft.day)}
-                      className="min-h-[48px] px-5 py-3 rounded-full bg-white hover:bg-[#FCF9F0] border border-[#12233B]/20 text-[#12233B] font-semibold text-sm inline-flex items-center gap-2 transition-all cursor-pointer shadow-sm active:scale-95"
+                      className="min-h-[48px] px-6 py-3 rounded-full bg-white hover:bg-[#FCF9F0] border-2 border-[#145252]/40 text-[#145252] font-semibold text-sm inline-flex items-center gap-2 transition-all cursor-pointer shadow-sm active:scale-95 animate-fadeIn"
                     >
                       <FileBarChart2 className="w-4 h-4 text-[#145252]" />
-                      <span>Click to Open Report</span>
+                      <span>View Output Report</span>
                       <ArrowRight className="w-4 h-4" />
                     </button>
                   )}
