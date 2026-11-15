@@ -132,9 +132,9 @@ export default function WelcomeScreen({ onContinue, onNavigateToSignUp }) {
   const [dailyGreeting] = useState(getDailyMessage());
 
   return (
-    <div className="relative w-full min-h-screen flex flex-col items-center justify-center bg-[#F7F4EE] text-[#0B1736] p-4 sm:p-6 overflow-hidden">
-      {/* Background Subtle Oat Grid */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(11,23,54,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(11,23,54,0.04)_1px,transparent_1px)] bg-[size:4rem_4rem] pointer-events-none" />
+    <div className="relative w-full min-h-screen flex flex-col items-center justify-center bg-[#0F2557] text-[#F7F4EE] p-4 sm:p-6 overflow-hidden">
+      {/* Background Subtle Navy Grid */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:4rem_4rem] pointer-events-none" />
       <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-blue-900/5 rounded-full blur-[140px] pointer-events-none" />
 
       {/* Main Elevated Warm Alabaster Card */}
@@ -218,7 +218,7 @@ export default function WelcomeScreen({ onContinue, onNavigateToSignUp }) {
       </div>
 
       {/* Security Footer Notice */}
-      <div className="relative z-10 mt-6 text-[11px] font-mono text-[#5A657D] text-center">
+      <div className="relative z-10 mt-6 text-[11px] font-mono text-[#EDE8DE] text-center">
         <span>ENCRYPTED PROTOCOL • COMPLIANT WITH NASA MISSION DEFENSE DIRECTIVE 44</span>
       </div>
     </div>

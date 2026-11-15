@@ -180,9 +180,9 @@ export default function LoginScreen({
   };
 
   return (
-    <div className="relative w-full min-h-screen flex flex-col items-center justify-center bg-[#F7F4EE] text-[#0B1736] p-4 sm:p-6 overflow-y-auto">
-      {/* Background Subtle Oat Grid */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(11,23,54,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(11,23,54,0.04)_1px,transparent_1px)] bg-[size:4rem_4rem] pointer-events-none" />
+    <div className="relative w-full min-h-screen flex flex-col items-center justify-center bg-[#0F2557] text-[#F7F4EE] p-4 sm:p-6 overflow-y-auto">
+      {/* Background Subtle Navy Grid */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:4rem_4rem] pointer-events-none" />
 
       {/* Main Container */}
       <div className="relative z-10 w-full max-w-md bg-[#FFFFFF] border border-[#DCD5C7] rounded-3xl p-6 sm:p-9 shadow-[0_12px_40px_rgba(11,23,54,0.08)] my-8">
