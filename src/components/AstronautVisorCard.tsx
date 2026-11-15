@@ -173,3 +173,4 @@ export const AstronautVisorCard: React.FC<AstronautVisorCardProps> = ({
 };
 
 export default AstronautVisorCard;
+
