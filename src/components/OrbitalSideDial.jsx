@@ -179,9 +179,13 @@ export default function OrbitalSideDial({ activeModuleId, onSelectModule }) {
           />
         </svg>
 
-        {/* ── FIXED CENTER INDICATOR NOTCH (NAVY RECTANGLE ON RIGHT EDGE) ── */}
+        {/* ── DYNAMIC ACTIVE INDICATOR NOTCH (TRACKS ACTIVE MODULE ON RIGHT EDGE) ── */}
         <div
-          className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-2 rounded-l-full bg-[#0F2557] shadow-sm z-30"
+          style={{
+            transform: `translate3d(0, calc(-50% + ${(safeActiveIdx - 2.5) * 76}px), 0)`,
+            transition: 'transform 360ms cubic-bezier(0.22, 1, 0.36, 1)',
+          }}
+          className="absolute right-0 top-1/2 w-4 h-3 rounded-l-full bg-[#E06D06] shadow-sm z-30"
           title="Active Module Indicator"
         />
 
@@ -195,43 +199,20 @@ export default function OrbitalSideDial({ activeModuleId, onSelectModule }) {
           <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
         </button>
 
-        {/* ── ROTARY MODULE ITEMS ALONG THE CURVED ARC (INFINITE LOOP) ── */}
+        {/* ── MODULE ITEMS ALONG THE CURVED ARC (STARTING SEQUENTIALLY FROM 01 TO 06) ── */}
         <div className="relative w-full h-full flex items-center justify-end">
           {MODULES.map((mod, idx) => {
-            // Calculate shortest cyclic delta in a 6-item loop
-            let delta = idx - safeActiveIdx;
-            if (delta > 3) delta -= 6;
-            if (delta < -2) delta += 6;
+            const isActive = idx === safeActiveIdx;
 
-            const isActive = delta === 0;
+            // Sequential arc positioning: 01 at the top (-190px) down to 06 at the bottom (+190px)
+            const offsetFromCenter = idx - 2.5;
+            const slotSpacing = 76; // px vertical distance between items
+            const y = offsetFromCenter * slotSpacing;
+            const x = Math.pow(offsetFromCenter, 2) * 5.8; // Parabolic arc depth
 
-            // Parabolic curvature: x moves further right as |delta| increases
-            const slotSpacing = 72; // px vertical distance between items
-            const y = delta * slotSpacing;
-            const x = Math.pow(delta, 2) * 6.2; // Semicircular curve depth
-
-            // Visual scaling & fading based on distance from center
-            let scale = 1.0;
-            let opacity = 1.0;
-            let zIndex = 20;
-
-            if (isActive) {
-              scale = 1.1;
-              opacity = 1.0;
-              zIndex = 25;
-            } else if (Math.abs(delta) === 1) {
-              scale = 0.94;
-              opacity = 0.72;
-              zIndex = 15;
-            } else if (Math.abs(delta) === 2) {
-              scale = 0.84;
-              opacity = 0.48;
-              zIndex = 10;
-            } else {
-              scale = 0.74;
-              opacity = 0.28;
-              zIndex = 5;
-            }
+            const scale = isActive ? 1.08 : 0.95;
+            const opacity = isActive ? 1.0 : 0.78;
+            const zIndex = isActive ? 30 : 15;
 
             const IconComponent = mod.icon;
 
@@ -243,7 +224,7 @@ export default function OrbitalSideDial({ activeModuleId, onSelectModule }) {
                   transform: `translate3d(${x}px, ${y}px, 0) scale(${scale})`,
                   opacity,
                   zIndex,
-                  transition: 'transform 420ms cubic-bezier(0.22, 1, 0.36, 1), opacity 380ms ease',
+                  transition: 'transform 360ms cubic-bezier(0.22, 1, 0.36, 1), opacity 300ms ease',
                 }}
                 className="absolute right-6 flex items-center justify-end gap-3 pointer-events-auto cursor-pointer group"
               >
@@ -251,8 +232,8 @@ export default function OrbitalSideDial({ activeModuleId, onSelectModule }) {
                 <div
                   className={`px-3 py-1 rounded-full text-xs font-mono transition-all duration-300 flex items-center gap-1.5 shadow-sm whitespace-nowrap ${
                     isActive
-                      ? 'bg-[#FFFFFF] border border-[#0F2557]/40 text-[#0F2557] font-bold shadow-md shadow-blue-950/10'
-                      : 'bg-[#FFFFFF]/70 border border-[#DCD5C7] text-[#5A657D] group-hover:text-[#0B1736] group-hover:bg-[#FFFFFF]'
+                      ? 'bg-[#FFFFFF] border-2 border-[#0F2557] text-[#0F2557] font-bold shadow-md shadow-blue-950/15'
+                      : 'bg-[#FFFFFF]/80 border border-[#DCD5C7] text-[#5A657D] group-hover:text-[#0B1736] group-hover:bg-[#FFFFFF]'
                   }`}
                 >
                   <span className={`text-[10px] font-extrabold ${isActive ? 'text-[#E06D06]' : 'text-[#5A657D]'}`}>

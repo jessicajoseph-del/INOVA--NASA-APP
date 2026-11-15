@@ -107,8 +107,8 @@ export const TOPIC_DATA = {
 };
 
 export default function App() {
-  // Navigation State: 'portal' (Suit & Vitals continuous flow) | 'aura' | 'overview' | 'behavioral' | 'roadmap' | 'astri'
-  const [activeView, setActiveView] = useState('portal');
+  // Navigation State: 'aura' (3D ISS Station Twin default) | 'overview' | 'portal' | 'roadmap' | 'behavioral' | 'mealplan' | 'astri'
+  const [activeView, setActiveView] = useState('aura');
   const [portalInitialScreen, setPortalInitialScreen] = useState('dashboard');
   const [showARVisor, setShowARVisor] = useState(false);
   const [showProfileSettings, setShowProfileSettings] = useState(false);
@@ -143,12 +143,12 @@ export default function App() {
     };
   });
 
-  // Handle successful login or signup
+  // Handle successful login or signup - defaults to 3D ISS Station Twin ('aura')
   const handleAuthSuccess = (user) => {
     setCurrentUser(user);
     setSessionExpiredMessage(null);
     setAuthScreen('dashboard');
-    setActiveView('portal');
+    setActiveView('aura');
     setPortalInitialScreen('dashboard');
     if (user) {
       setActiveAstronaut({
