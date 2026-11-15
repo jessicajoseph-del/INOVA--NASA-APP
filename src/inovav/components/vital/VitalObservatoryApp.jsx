@@ -88,8 +88,8 @@ export default function VitalObservatoryApp({
         position: isEmbedded ? 'relative' : 'fixed',
         inset: isEmbedded ? 'auto' : 0,
         width: '100%',
-        height: isEmbedded ? '980px' : '100%',
-        minHeight: isEmbedded ? '850px' : '100vh',
+        height: isEmbedded ? '100vh' : '100%',
+        minHeight: '100vh',
         zIndex: isEmbedded ? 20 : 9999,
         backgroundColor: '#f6eedb',
         backgroundImage: `

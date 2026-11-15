@@ -1241,6 +1241,7 @@ export default function InovavPortal({
             }}
           />
 
+<<<<<<< HEAD
           {/* ── SECTION 1: SUIT TELEMETRY & ASTRONAUT 3D FACE VISOR (ALIGNED ON THE EXACT SAME LEVEL) ── */}
           <div
             className="w-full grid grid-cols-1 lg:grid-cols-2 items-start"
@@ -2351,6 +2352,15 @@ export default function InovavPortal({
         </div>
       </div>
     )}
+=======
+          <VitalObservatory
+            astronaut={activeAstronaut}
+            isEmbedded={true}
+            onClose={onBackToOverview}
+          />
+        </div>
+      )}
+>>>>>>> baf7295 (feat: integrate space-kitchen into meal plan view and remove redundant suit telemetry section)
 
       {/* ── 5. VITAL HUMAN SYSTEMS OBSERVATORY (ENLARGED scene.gltf & INTERNAL ORGAN ZOOM) ── */}
       {showBodyScanModal && (

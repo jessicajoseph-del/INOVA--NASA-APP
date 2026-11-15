@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import SpaceKitchen from '../components/SpaceKitchen';
 import {
   Utensils,
   Droplets,
@@ -122,6 +123,7 @@ export default function MealPlanPage() {
     return 2400;
   });
 
+  const [mainMode, setMainMode] = useState('kitchen'); // 'kitchen' | 'protocol'
   const [activeTab, setActiveTab] = useState('schedule');
   const [selectedMeal, setSelectedMeal] = useState(null);
 
@@ -203,7 +205,40 @@ export default function MealPlanPage() {
         </div>
       </div>
 
-      {/* ── TOP KPI ROW (WARM ALABASTER CARDS) ── */}
+      {/* ── HIGH-LEVEL MODE SELECTOR ── */}
+      <div className="flex items-center gap-3">
+        <button
+          type="button"
+          onClick={() => setMainMode('kitchen')}
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl font-mono text-xs font-bold transition-all shadow-xs cursor-pointer ${
+            mainMode === 'kitchen'
+              ? 'bg-[#0B1736] text-[#F7F4EE]'
+              : 'bg-[#FFFFFF] border border-[#DCD5C7] text-[#5A657D] hover:text-[#0B1736] hover:bg-[#EDE8DE]'
+          }`}
+        >
+          <span className="text-sm">🍳</span>
+          <span>SPACE KITCHEN (PANTRY & MEAL STUDIO)</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setMainMode('protocol')}
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl font-mono text-xs font-bold transition-all shadow-xs cursor-pointer ${
+            mainMode === 'protocol'
+              ? 'bg-[#0B1736] text-[#F7F4EE]'
+              : 'bg-[#FFFFFF] border border-[#DCD5C7] text-[#5A657D] hover:text-[#0B1736] hover:bg-[#EDE8DE]'
+          }`}
+        >
+          <Utensils className="w-4 h-4 text-[#E06D06]" />
+          <span>FLIGHT RATIONS & HYDRATION TELEMETRY</span>
+        </button>
+      </div>
+
+      {mainMode === 'kitchen' ? (
+        <SpaceKitchen />
+      ) : (
+        <>
+          {/* ── TOP KPI ROW (WARM ALABASTER CARDS) ── */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* KPI 1: Energy Target */}
         <div className="bg-[#FFFFFF] border border-[#DCD5C7] rounded-2xl p-5 shadow-[0_4px_20px_rgba(11,23,54,0.05)] flex flex-col justify-between">
@@ -467,6 +502,8 @@ export default function MealPlanPage() {
           </span>
         </div>
       </div>
+      </>
+      )}
     </div>
   );
 }
