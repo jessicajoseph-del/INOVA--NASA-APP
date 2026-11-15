@@ -463,7 +463,7 @@ export default function AuraDashboard({ onBackToHome }) {
                     <div className="flex flex-col">
                         <div className="flex items-center gap-2.5">
                             <h1 className="text-lg sm:text-xl font-extrabold tracking-wider text-slate-900 leading-none">
-                                INOVA <span className="text-slate-400 font-light">/</span> EDGE_COMPUTE
+                                Ridge <span className="text-slate-400 font-light">/</span> EDGE_COMPUTE
                             </h1>
                             <span
                                 className={`text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1.5 ${
@@ -522,7 +522,7 @@ export default function AuraDashboard({ onBackToHome }) {
                                 onClick={onBackToHome}
                                 className="shrink-0 px-4 py-2 bg-[#0f2557] hover:bg-blue-900 rounded-full text-[11px] font-bold uppercase tracking-wider text-white transition-colors shadow-xs cursor-pointer flex items-center gap-1.5"
                             >
-                                <span>←</span> Back to INOVA
+                                <span>←</span> Back to Ridge
                             </button>
                         )}
 

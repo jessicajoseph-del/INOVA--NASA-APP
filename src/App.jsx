@@ -159,17 +159,14 @@ export default function App() {
           <div 
             onClick={() => { setActiveView('portal'); setPortalInitialScreen('intro'); }}
             className="flex items-center space-x-2.5 shrink-0 cursor-pointer group"
-            title="Return to Mission Start"
+            title="Return to Ridge Mission Start"
           >
             <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gradient-to-tr from-cyan-400 via-blue-500 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-cyan-500/30 group-hover:scale-105 transition-transform">
               <Layers className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
-            <div className="hidden sm:block">
+            <div className="flex items-center">
               <span className="font-extrabold text-base tracking-tight text-white group-hover:text-cyan-300 transition-colors">
-                INOVA<span className="text-amber-400">.</span>
-              </span>
-              <span className="ml-1.5 text-[10px] font-mono uppercase tracking-wider text-cyan-300/80">
-                NASA
+                Ridge
               </span>
             </div>
           </div>
