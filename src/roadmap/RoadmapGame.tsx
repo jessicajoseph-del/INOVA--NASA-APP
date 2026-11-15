@@ -9,7 +9,7 @@ import { MilestoneSummitCard } from './components/MilestoneSummitCard';
 import { TaskInspectorRail } from './components/TaskInspectorRail';
 import { ConfettiBurst } from './components/ConfettiBurst';
 
-const STORAGE_KEY = 'lumina-quest-stages-v2';
+const STORAGE_KEY = 'lumina-quest-stages-v3';
 
 function loadInitialTasks(): TaskNode[] {
   if (typeof window === 'undefined') return INITIAL_TASKS;
@@ -17,7 +17,7 @@ function loadInitialTasks(): TaskNode[] {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (!raw) return INITIAL_TASKS;
     const parsed = JSON.parse(raw) as TaskNode[];
-    if (Array.isArray(parsed) && parsed.length > 0) {
+    if (Array.isArray(parsed) && parsed.length === INITIAL_TASKS.length && parsed[0]?.title.includes('Urine Test')) {
       return parsed;
     }
   } catch {

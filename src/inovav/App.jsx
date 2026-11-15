@@ -1157,13 +1157,13 @@ export default function InovavPortal({
             }}
           >
             <span className="font-mono" style={{ fontSize: '0.8rem', letterSpacing: '0.3em', color: '#ead9b2', marginBottom: '12px' }}>
-              // AEROSPACE BIO-TELEMETRY & SUIT PORTAL
+              // NASA BIO-TELEMETRY & ASTRONAUT SUIT PORTAL
             </span>
             <h1 className="ridge-title font-tech" style={{ margin: 0, fontSize: 'clamp(2.8rem, 6.5vw, 5.2rem)', fontWeight: 600, color: '#f6eedb', textIndent: '0.4em', lineHeight: 1 }}>
-              RIDGE
+              INOVA
             </h1>
             <p style={{ margin: '18px 0 28px', fontSize: '0.92rem', letterSpacing: '0.28em', color: 'rgba(246, 238, 219, 0.72)', textTransform: 'uppercase' }}>
-              ASTRONAUT HEALTH MONITORING & 3D VITALS SYSTEM
+              NASA ASTRONAUT HEALTH MONITORING & 3D VITALS SYSTEM
             </p>
 
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '14px', pointerEvents: 'auto', width: '100%' }}>
@@ -2039,27 +2039,32 @@ export default function InovavPortal({
               </div>
             )}
 
-            {/* TAB 2: PROJECTS */}
+            {/* TAB 2: PROJECTS / ASTRONAUT TO-DO LIST */}
             {activeTab === 'projects' && (
-              <div style={{ maxWidth: '620px', marginLeft: 'auto', marginRight: 'auto' }}>
+              <div style={{ maxWidth: '640px', marginLeft: 'auto', marginRight: 'auto' }}>
                 <div className="font-mono" style={{ fontSize: '0.72rem', color: '#ead9b2', letterSpacing: '0.22em', marginBottom: '8px', textTransform: 'uppercase' }}>
-                  RIDGE // EXPEDITION CHECKLISTS
+                  INOVA // ASTRONAUT DAILY MISSION ROADMAP
                 </div>
-                <h2 style={{ fontSize: '2.2rem', fontWeight: 400, color: '#f6eedb', margin: '0 0 24px 0' }}>Flight Missions & Tasks</h2>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <h2 style={{ fontSize: '2rem', fontWeight: 400, color: '#f6eedb', margin: '0 0 20px 0' }}>Daily Flight To-Do List</h2>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                   {[
-                    { title: 'Project Artemis VII Deep-Space Transfer', status: 'In Transit', progress: '68%', desc: 'Hohmann orbital transfer trajectory between Earth orbital habitat and Mars orbital insertion stage.', color: '#f6eedb' },
-                    { title: 'EVA Spacewalk Delta-4 Checklist', status: 'Scheduled 04:30 UTC', progress: 'Ready', desc: 'Depressurize airlock B, inspect primary photovoltaic array gimbal hinges, replace high-gain microwave antenna coupler.', color: '#ead9b2' },
-                    { title: 'Cryogenic Fuel Boil-Off Countermeasures', status: 'Continuous Active', progress: '98%', desc: 'Active cooling circulation loop monitoring LOX/CH4 storage tanks under direct solar exposure.', color: '#f6eedb' },
-                    { title: 'Autonomous Life Support Bio-Regen', status: 'Active Recycling', progress: '94%', desc: 'Chlorella algae closed-loop carbon dioxide scrubbing and potable water condensation reclaim system.', color: '#ead9b2' },
+                    { time: '06:00 – 06:10 AM', title: 'Urine Test', status: 'Immediate Target', progress: 'Ready', desc: 'Collect midstream bio-specimen in UPA diagnostic pouch; record electrolyte osmolarity and specific gravity.', color: '#FACC15' },
+                    { time: '06:10 – 06:40 AM', title: 'Blood Test Planner', status: 'Next Up', progress: 'Calibrated', desc: 'i-STAT clinical cartridge run for venous pH, lactate, and hematocrit metabolic panel baseline.', color: '#38BDF8' },
+                    { time: '06:40 – 07:00 AM', title: 'Plan Your Breakfast', status: 'Scheduled', progress: 'Galley', desc: 'Rehydrate lyophilized oat meal pack with 250 mL hot water; log vitamin D3 & calcium supplements.', color: '#ead9b2' },
+                    { time: '07:00 – 08:30 AM', title: 'Physical Exercise (Morning)', status: 'Active Circuit', progress: 'ARED Load', desc: '1200 kg musculoskeletal squat & deadlift resistance protocol; telemetry heart rate tracking.', color: '#FB7185' },
+                    { time: '12:00 – 13:00', title: 'Plan Your Lunch', status: 'Scheduled', progress: 'Mid-Day', desc: 'Nutritional rebalancing in Unity module; vacuum-sealed entrée & 500 mL mineral hydration pack.', color: '#ead9b2' },
+                    { time: '13:30 – 15:30', title: 'Wet Clean (Station Maintenance)', status: 'Scheduled', progress: 'Sanitation', desc: 'Antimicrobial wipe-down of Columbus & Destiny handrails; vacuum return air grill mesh filters.', color: '#38BDF8' },
+                    { time: '16:15 – 18:15', title: 'Afternoon Exercise', status: 'Countermeasure', progress: 'T2 / CEVIS', desc: '45-minute T2 Colbert treadmill run + 30-minute CEVIS ergometer cool-down @ 135 BPM.', color: '#FACC15' },
+                    { time: '18:45 – 19:36 PM', title: 'ODF Medical Support Analysis', status: 'Medical Sync', progress: 'Houston Link', desc: 'Operations Data File Checklist 4.2 review with Flight Surgeon; transmit bio-telemetry audit packet.', color: '#FB7185' },
+                    { time: '19:45 – 20:30', title: 'Dinner & Crew Debrief', status: 'Evening', progress: 'Reflection', desc: 'Hot meal reconstitution, daily behavioral wellness score logging, and Day +1 manifest review.', color: '#f6eedb' },
                   ].map((p, i) => (
-                    <div key={i} style={{ borderBottom: '1px solid rgba(246,238,219,0.12)', paddingBottom: '16px' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                        <span className="font-mono" style={{ fontSize: '0.72rem', color: p.color, letterSpacing: '0.12em' }}>{p.status}</span>
+                    <div key={i} style={{ borderBottom: '1px solid rgba(246,238,219,0.12)', paddingBottom: '14px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                        <span className="font-mono" style={{ fontSize: '0.72rem', color: p.color, letterSpacing: '0.12em', fontWeight: 600 }}>{p.time} // {p.status}</span>
                         <span className="font-mono" style={{ fontSize: '0.72rem', color: '#f6eedb' }}>{p.progress}</span>
                       </div>
-                      <h3 style={{ fontSize: '1.05rem', color: '#f6eedb', margin: '0 0 6px 0', fontWeight: 500 }}>{p.title}</h3>
-                      <p style={{ fontSize: '0.82rem', color: '#9fb6da', lineHeight: 1.5, margin: 0 }}>{p.desc}</p>
+                      <h3 style={{ fontSize: '1rem', color: '#f6eedb', margin: '0 0 4px 0', fontWeight: 600 }}>{p.title}</h3>
+                      <p style={{ fontSize: '0.8rem', color: '#9fb6da', lineHeight: 1.45, margin: 0 }}>{p.desc}</p>
                     </div>
                   ))}
                 </div>
@@ -2092,24 +2097,29 @@ export default function InovavPortal({
               </div>
             )}
 
-            {/* TAB 4: CALENDAR */}
+            {/* TAB 4: CALENDAR / DAILY SCHEDULE */}
             {activeTab === 'calendar' && (
-              <div style={{ maxWidth: '620px', marginLeft: 'auto', marginRight: 'auto' }}>
+              <div style={{ maxWidth: '640px', marginLeft: 'auto', marginRight: 'auto' }}>
                 <div className="font-mono" style={{ fontSize: '0.72rem', color: '#ead9b2', letterSpacing: '0.22em', marginBottom: '8px', textTransform: 'uppercase' }}>
-                  RIDGE // TIMELINES
+                  INOVA // ASTRONAUT CHRONO SCHEDULE
                 </div>
-                <h2 style={{ fontSize: '2.2rem', fontWeight: 400, color: '#f6eedb', margin: '0 0 24px 0' }}>Orbital Schedule</h2>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+                <h2 style={{ fontSize: '2rem', fontWeight: 400, color: '#f6eedb', margin: '0 0 20px 0' }}>Daily Mission Schedule</h2>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                   {[
-                    { date: 'TODAY // 04:30 UTC', event: 'EVA Air-Lock Exit Delta-4', type: 'Extravehicular Activity', status: 'Confirmed' },
-                    { date: 'TODAY // 11:15 UTC', event: 'Orbital Perigee Booster Check', type: 'Navigation', status: 'Ready' },
-                    { date: 'TOMORROW // 02:00 UTC', event: 'Astronaut Sleep Cycle Sync (8 hrs)', type: 'Life Support', status: 'Scheduled' },
-                    { date: 'IN 2 DAYS // 09:45 UTC', event: 'Lunar Flyby Trajectory Observation', type: 'Deep Space Mission', status: 'Planned' },
+                    { date: 'TODAY // 06:00 – 06:10 AM', event: 'Urine Test', type: 'Biomarkers & Electrolytes', status: 'Immediate' },
+                    { date: 'TODAY // 06:10 – 06:40 AM', event: 'Blood Test Planner', type: 'i-STAT Metabolic Panel', status: 'Scheduled' },
+                    { date: 'TODAY // 06:40 – 07:00 AM', event: 'Plan Your Breakfast', type: 'Nutrition Reconstitution', status: 'Scheduled' },
+                    { date: 'TODAY // 07:00 – 08:30 AM', event: 'Physical Exercise (Morning)', type: 'ARED Resistance Training', status: 'Scheduled' },
+                    { date: 'TODAY // 12:00 – 13:00 PM', event: 'Plan Your Lunch', type: 'Mid-Day Nutrition & Hydration', status: 'Scheduled' },
+                    { date: 'TODAY // 13:30 – 15:30 PM', event: 'Wet Clean Station Maintenance', type: 'Habitat Sanitation & HEPA', status: 'Scheduled' },
+                    { date: 'TODAY // 16:15 – 18:15 PM', event: 'Afternoon Countermeasure Exercise', type: 'T2 Treadmill & CEVIS Cardio', status: 'Scheduled' },
+                    { date: 'TODAY // 18:45 – 19:36 PM', event: 'ODF Medical Support Analysis', type: 'Operations Data File Review', status: 'Scheduled' },
+                    { date: 'TODAY // 19:45 – 20:30 PM', event: 'Dinner & Behavioral Journaling', type: 'Crew Debrief & Sleep Prep', status: 'Scheduled' },
                   ].map((c, i) => (
-                    <div key={i} style={{ borderBottom: '1px solid rgba(246,238,219,0.12)', paddingBottom: '14px' }}>
-                      <div className="font-mono" style={{ fontSize: '0.72rem', color: '#ead9b2', marginBottom: '4px' }}>{c.date}</div>
-                      <h4 style={{ fontSize: '1rem', color: '#f6eedb', margin: '0 0 4px 0', fontWeight: 500 }}>{c.event}</h4>
-                      <div className="font-mono" style={{ fontSize: '0.72rem', color: '#9fb6da' }}>{c.type} // {c.status}</div>
+                    <div key={i} style={{ borderBottom: '1px solid rgba(246,238,219,0.12)', paddingBottom: '12px' }}>
+                      <div className="font-mono" style={{ fontSize: '0.72rem', color: '#ead9b2', marginBottom: '3px' }}>{c.date}</div>
+                      <h4 style={{ fontSize: '1rem', color: '#f6eedb', margin: '0 0 3px 0', fontWeight: 500 }}>{c.event}</h4>
+                      <div className="font-mono" style={{ fontSize: '0.72rem', color: '#9fb6da' }}>{c.type} // <span style={{ color: '#FACC15' }}>{c.status}</span></div>
                     </div>
                   ))}
                 </div>
