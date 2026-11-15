@@ -271,18 +271,16 @@ export default function RoadmapGame({ onBack, isEmbedded = false }: RoadmapGameP
     const pos = geometry.taskPositions[stageIndex];
     if (!pos) return;
 
-    if (isEmbedded) {
-      const mapCanvas = mapViewportRef.current;
-      if (mapCanvas) {
-        const mapRect = mapCanvas.getBoundingClientRect();
-        const ratio = pos.y / geometry.viewBoxHeight;
-        const targetScrollY =
-          window.scrollY + mapRect.top + ratio * mapCanvas.offsetHeight - window.innerHeight * 0.4;
-        window.scrollTo({
-          top: Math.max(0, targetScrollY),
-          behavior: 'smooth',
-        });
-      }
+    const mapCanvas = mapViewportRef.current;
+    if (mapCanvas) {
+      const mapRect = mapCanvas.getBoundingClientRect();
+      const ratio = pos.y / geometry.viewBoxHeight;
+      const targetScrollY =
+        window.scrollY + mapRect.top + ratio * mapCanvas.offsetHeight - window.innerHeight * 0.4;
+      window.scrollTo({
+        top: Math.max(0, targetScrollY),
+        behavior: 'smooth',
+      });
       return;
     }
 
@@ -299,29 +297,21 @@ export default function RoadmapGame({ onBack, isEmbedded = false }: RoadmapGameP
   };
 
   const scrollToSummit = () => {
-    if (isEmbedded) {
-      const summit = document.getElementById('milestone-summit');
-      if (summit) {
-        summit.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        return;
-      }
+    const summit = document.getElementById('milestone-summit');
+    if (summit) {
+      summit.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
     }
-    const container = mapViewportRef.current;
-    if (!container) return;
-    container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
   };
 
   const scrollToBase = () => {
-    if (isEmbedded) {
-      const base = document.getElementById('map-canvas');
-      if (base) {
-        base.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        return;
-      }
+    const base = document.getElementById('map-canvas');
+    if (base) {
+      base.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
     }
-    const container = mapViewportRef.current;
-    if (!container) return;
-    container.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleJumpToCurrent = () => {
@@ -407,11 +397,7 @@ export default function RoadmapGame({ onBack, isEmbedded = false }: RoadmapGameP
         <main
           id="map-canvas"
           ref={mapViewportRef}
-          className={`relative flex-1 ink-canvas-bg ${
-            isEmbedded
-              ? 'w-full'
-              : 'lg:h-[calc(100vh-4rem)] lg:overflow-y-auto'
-          } px-2 sm:px-6 lg:px-10 py-6 sm:py-10`}
+          className="relative flex-1 ink-canvas-bg w-full px-2 sm:px-6 lg:px-10 py-6 sm:py-10"
         >
           {/* Playful Header Banner */}
           <div className="mx-auto max-w-[900px] mb-5 flex flex-wrap items-center justify-between gap-3 px-2">
@@ -499,11 +485,7 @@ export default function RoadmapGame({ onBack, isEmbedded = false }: RoadmapGameP
 
         {/* Oat Ivory Companion Game Quest Panel */}
         <div
-          className={`${
-            isEmbedded
-              ? 'w-full lg:w-[380px] shrink-0 border-t lg:border-t-0 lg:border-l border-sky-300/15 lg:sticky lg:top-20 self-start max-h-[calc(100vh-6rem)] lg:overflow-y-auto'
-              : 'lg:h-[calc(100vh-4rem)] lg:overflow-y-auto shrink-0'
-          }`}
+          className="w-full lg:w-[380px] shrink-0 border-t lg:border-t-0 lg:border-l border-sky-300/15 lg:sticky lg:top-24 self-start"
         >
           <TaskInspectorRail
             tasks={tasks}
