@@ -27,7 +27,8 @@ import {
   LogOut,
   Settings,
   Glasses,
-  User
+  User,
+  Clock
 } from 'lucide-react';
 import TrendAnalytics from './components/TrendAnalytics';
 import LogoMarquee from './components/LogoMarquee';
@@ -40,6 +41,12 @@ import VitalObservatory from './inovav/VitalObservatory';
 import JarvisTouchlessHud from './inovav/JarvisTouchlessHud';
 import ThreeDFaceStudioModal from './inovav/components/ThreeDFaceStudioModal';
 import AstriChatbot from './components/AstriChatbot';
+import StartScreen from './pages/StartScreen';
+import WelcomeScreen from './pages/WelcomeScreen';
+import SignUpScreen from './pages/SignUpScreen';
+import LoginScreen from './pages/LoginScreen';
+import useIdleTimeout from './hooks/useIdleTimeout';
+import { getCurrentUser, signOutUser } from './services/authService';
 
 /**
  * TOPIC & EXECUTIVE KPI DATA CONFIGURATION:
@@ -97,19 +104,30 @@ export const TOPIC_DATA = {
 };
 
 export default function App() {
-  // Navigation State: 'portal' (Suit & Vitals continuous flow) | 'aura' | 'overview' | 'behavioral' | 'roadmap'
+  // Navigation State: 'portal' (Suit & Vitals continuous flow) | 'aura' | 'overview' | 'behavioral' | 'roadmap' | 'astri'
   const [activeView, setActiveView] = useState('portal');
-  const [portalInitialScreen, setPortalInitialScreen] = useState('intro');
+  const [portalInitialScreen, setPortalInitialScreen] = useState('dashboard');
   const [showARVisor, setShowARVisor] = useState(false);
   const [showProfileSettings, setShowProfileSettings] = useState(false);
+
+  // Banking-grade Authentication & Route Visibility State
+  const [currentUser, setCurrentUser] = useState(() => getCurrentUser());
+  const [authScreen, setAuthScreen] = useState(() => (getCurrentUser() ? 'dashboard' : 'start'));
+  const [sessionExpiredMessage, setSessionExpiredMessage] = useState(null);
+  const [showLogoutConfirmModal, setShowLogoutConfirmModal] = useState(false);
+
   const [activeAstronaut, setActiveAstronaut] = useState(() => {
-    try {
-      const raw = localStorage.getItem('ridge_astronaut_db') || localStorage.getItem('inova_astronaut_db');
-      if (raw) {
-        const list = JSON.parse(raw);
-        if (Array.isArray(list) && list.length > 0) return list[0];
-      }
-    } catch {}
+    const user = getCurrentUser();
+    if (user) {
+      return {
+        id: user.uid || 'ASTRO-01',
+        name: user.fullName || user.username || 'CDR. Alex Vance',
+        mission: user.mission || 'Artemis VII // Mars Transfer',
+        role: user.role || 'Mission Commander',
+        bloodType: user.bloodType || 'O-Negative',
+        faceSnaps: user.faceSnaps || { center: null, left: null, right: null },
+      };
+    }
     return {
       id: 'ASTRO-01',
       name: 'CDR. Alex Vance',
@@ -120,16 +138,52 @@ export default function App() {
     };
   });
 
-  const handleLogout = () => {
-    setActiveAstronaut({
-      id: 'ASTRO-01',
-      name: 'CDR. Alex Vance',
-      mission: 'Artemis VII // Mars Transfer',
-      role: 'Mission Commander',
-      bloodType: 'O-Negative',
-    });
-    setPortalInitialScreen('intro');
+  // Handle successful login or signup
+  const handleAuthSuccess = (user) => {
+    setCurrentUser(user);
+    setSessionExpiredMessage(null);
+    setAuthScreen('dashboard');
     setActiveView('portal');
+    setPortalInitialScreen('dashboard');
+    if (user) {
+      setActiveAstronaut({
+        id: user.uid || 'ASTRO-01',
+        name: user.fullName || user.username || 'CDR. Alex Vance',
+        mission: user.mission || 'Artemis VII // Mars Transfer',
+        role: user.role || 'Mission Commander',
+        bloodType: user.bloodType || 'O-Negative',
+        faceSnaps: user.faceSnaps || { center: null, left: null, right: null },
+      });
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Inactivity timeout handler
+  const handleSessionTimeout = React.useCallback(() => {
+    signOutUser();
+    setCurrentUser(null);
+    setAuthScreen('login');
+    setSessionExpiredMessage('Session terminated due to inactivity. Please log in again.');
+  }, []);
+
+  // 3-minute inactivity monitor with 30s countdown warning
+  const { isWarning, secondsRemaining, resetTimer } = useIdleTimeout({
+    isAuthenticated: Boolean(currentUser && authScreen === 'dashboard'),
+    timeoutMs: 180000,
+    warningMs: 30000,
+    onTimeout: handleSessionTimeout,
+  });
+
+  const handleLogout = () => {
+    setShowLogoutConfirmModal(true);
+  };
+
+  const handleConfirmLogout = () => {
+    signOutUser();
+    setCurrentUser(null);
+    setShowLogoutConfirmModal(false);
+    setAuthScreen('login');
+    setSessionExpiredMessage(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -162,15 +216,16 @@ export default function App() {
       <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(11,23,54,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(11,23,54,0.04)_1px,transparent_1px)] bg-[size:4rem_4rem] pointer-events-none" />
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-blue-900/5 rounded-full blur-[120px] pointer-events-none" />
 
-      {/* 1. HEADER / FLOATING CAPSULE NAVIGATION BAR (INK BLUE CAPSULE ON OAT IVORY BACKDROP) */}
+      {/* 1. HEADER / FLOATING CAPSULE NAVIGATION BAR (STRICTLY HIDDEN ON PRE-AUTH SCREENS) */}
+      {currentUser && authScreen === 'dashboard' && (
       <header className="sticky top-0 z-50 w-full px-3 py-2.5 sm:px-6 pointer-events-none">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-3 pointer-events-auto bg-[#0B1736] text-[#F7F4EE] backdrop-blur-2xl border border-[#DCD5C7]/30 shadow-[0_12px_40px_rgba(11,23,54,0.35)] rounded-2xl sm:rounded-full px-3 sm:px-4 py-2">
           
           {/* Brand Pill (Emblem pill inspired by side bar.jpg) */}
           <div 
-            onClick={() => { setActiveView('portal'); setPortalInitialScreen('intro'); }}
+            onClick={() => { setActiveView('portal'); setPortalInitialScreen('dashboard'); }}
             className="flex items-center space-x-2.5 shrink-0 cursor-pointer group"
-            title="Return to Ridge Mission Start"
+            title="Return to Suit & Vitals Dashboard"
           >
             <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gradient-to-tr from-cyan-400 via-blue-500 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-cyan-500/30 group-hover:scale-105 transition-transform">
               <Layers className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -322,8 +377,8 @@ export default function App() {
             <button
               type="button"
               onClick={handleLogout}
-              className="inline-flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-full bg-rose-950/40 border border-rose-500/30 hover:border-rose-400 hover:bg-rose-900/50 text-xs text-rose-300 transition-all cursor-pointer active:scale-95 whitespace-nowrap"
-              title="Sign Out of Astronaut Session & Return to Start"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-rose-950/40 border border-rose-500/40 hover:border-rose-400 hover:bg-rose-900/60 text-xs font-bold text-rose-300 transition-all cursor-pointer active:scale-95 whitespace-nowrap shadow-xs"
+              title="Sign Out of Astronaut Session"
             >
               <LogOut className="w-3.5 h-3.5 text-rose-400" />
               <span className="hidden sm:inline">Log Out</span>
@@ -331,7 +386,42 @@ export default function App() {
           </div>
         </div>
       </header>
+      )}
 
+      {/* ── PRE-AUTH BANKING-GRADE ENTRY FLOW (NAVBAR & DASHBOARDS STRICTLY HIDDEN) ── */}
+      {(!currentUser || authScreen !== 'dashboard') && (
+        <main className="flex-1 w-full relative z-10 flex flex-col justify-center">
+          {authScreen === 'start' && (
+            <StartScreen onEnter={() => setAuthScreen('welcome')} />
+          )}
+
+          {authScreen === 'welcome' && (
+            <WelcomeScreen
+              onContinue={() => setAuthScreen('login')}
+              onNavigateToSignUp={() => setAuthScreen('signup')}
+            />
+          )}
+
+          {authScreen === 'signup' && (
+            <SignUpScreen
+              onSignUpSuccess={handleAuthSuccess}
+              onNavigateToLogin={() => setAuthScreen('login')}
+            />
+          )}
+
+          {(authScreen === 'login' || authScreen === 'logged-out') && (
+            <LoginScreen
+              onLoginSuccess={handleAuthSuccess}
+              onNavigateToSignUp={() => setAuthScreen('signup')}
+              sessionExpiredMessage={sessionExpiredMessage}
+            />
+          )}
+        </main>
+      )}
+
+      {/* ── AUTHENTICATED DASHBOARD APPLICATION VIEWS ── */}
+      {currentUser && authScreen === 'dashboard' && (
+        <>
       {/* 2. DYNAMIC PAGE CONTENT: OVERVIEW, ROADMAP GAME, OR BEHAVIORAL HEALTH */}
       {activeView === 'overview' && (
         <main className="flex-1 w-full relative z-10">
@@ -746,6 +836,65 @@ export default function App() {
           </div>
         </div>
       </footer>
+        </>
+      )}
+
+      {/* 30-SECOND INACTIVITY TIMEOUT WARNING BANNER */}
+      {currentUser && authScreen === 'dashboard' && isWarning && (
+        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-[90] max-w-lg w-[92%] bg-[#0B1736] text-[#F7F4EE] border border-amber-400/50 rounded-2xl px-5 py-3.5 shadow-2xl flex items-center justify-between gap-3 animate-pulse">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
+              <Clock className="w-4 h-4 animate-spin" />
+            </div>
+            <div className="text-left text-xs">
+              <span className="font-bold text-amber-400 block">Security Alert: Inactivity Timeout</span>
+              <span className="text-slate-300">
+                Session will terminate in <strong className="text-white font-mono">{secondsRemaining}s</strong>.
+              </span>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={resetTimer}
+            className="px-3.5 py-1.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-[#0B1736] text-xs font-bold transition-all shrink-0 cursor-pointer shadow-sm active:scale-95"
+          >
+            Extend Session
+          </button>
+        </div>
+      )}
+
+      {/* BANKING-GRADE LOGOUT CONFIRMATION MODAL */}
+      {showLogoutConfirmModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="w-full max-w-md bg-[#FFFFFF] border border-[#DCD5C7] rounded-3xl p-6 sm:p-8 shadow-[0_20px_60px_rgba(11,23,54,0.3)] text-[#0B1736] flex flex-col items-center text-center animate-scaleIn">
+            <div className="w-14 h-14 rounded-2xl bg-rose-50 border border-rose-200 flex items-center justify-center text-rose-600 mb-4 shadow-sm">
+              <LogOut className="w-7 h-7" />
+            </div>
+            <h3 className="text-xl font-extrabold tracking-tight text-[#0B1736]">
+              Confirm Log Out
+            </h3>
+            <p className="text-xs sm:text-sm text-[#5A657D] mt-2 mb-6 leading-relaxed">
+              Are you sure you want to exit your active RIDGE session? All unsaved telemetry streams and mission buffers will be sealed.
+            </p>
+            <div className="flex items-center gap-3 w-full">
+              <button
+                type="button"
+                onClick={() => setShowLogoutConfirmModal(false)}
+                className="flex-1 py-3 px-4 rounded-xl border border-[#DCD5C7] bg-[#EDE8DE] hover:bg-[#DCD5C7] text-[#0B1736] font-semibold text-xs tracking-wider uppercase transition-all cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmLogout}
+                className="flex-1 py-3 px-4 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs tracking-wider uppercase shadow-md shadow-rose-600/30 transition-all cursor-pointer"
+              >
+                Yes, Log Out
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );
