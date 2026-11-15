@@ -20,7 +20,13 @@ import {
   Radio,
   Sparkles,
   ShieldCheck,
+  Thermometer,
+  Wind,
+  Dumbbell,
+  Plus,
+  ShieldAlert,
 } from 'lucide-react';
+import { SemiCircularGauge } from '../components/AstroCareDashboard';
 import VitalObservatory from './VitalObservatory';
 import JarvisTouchlessHud from './JarvisTouchlessHud';
 import { getAstronautsFromFirebase, saveAstronautToFirebase } from './firebase';
@@ -987,6 +993,10 @@ export default function InovavPortal({
   const [suitTelemetryView, setSuitTelemetryView] = useState('metrics'); // 'metrics' | 'auth-log'
   const [faceAuthLogs, setFaceAuthLogs] = useState(getFaceAuthLogs);
   const [telemetrySide, setTelemetrySide] = useState('left'); // 'left' = Suit Telemetry on the left, Astronaut with 3D Face on the right
+  const [exerciseMinutes, setExerciseMinutes] = useState(135);
+  const [aredVolume, setAredVolume] = useState(1840);
+  const [sleepHours, setSleepHours] = useState(6.6);
+  const [psychReadiness, setPsychReadiness] = useState(7.0);
 
   // Real-time Heart Rate Telemetry Buffer for Suit Telemetry Line Chart
   const [heartRateHistory, setHeartRateHistory] = useState(() => {
@@ -1751,64 +1761,216 @@ export default function InovavPortal({
                   />
                 ) : (
                   <>
-                    {/* ── FRAMELESS HAIRLINE TELEMETRY METRICS ───────────── */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
-                      {/* Metric 1: Oxygen Reserve */}
-                      <div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-                          <span className="font-mono" style={{ fontSize: '0.74rem', color: '#9fb6da', letterSpacing: '0.18em', textTransform: 'uppercase' }}>
-                            OXYGEN RESERVE
+                    {/* ── 4 REAL-TIME VITALS CARDS (HEART RATE, BLOOD PRESSURE, CORE TEMP, BLOOD OXYGEN) ── */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+                      {/* Card 1: Heart Rate */}
+                      <div className="bg-[#0B1736]/90 border border-blue-400/20 rounded-xl p-3.5 shadow-lg">
+                        <div className="flex items-center justify-between text-slate-400">
+                          <span className="text-[10px] font-mono uppercase tracking-wider font-semibold">
+                            Heart Rate (HR)
                           </span>
-                          <span style={{ fontSize: '2rem', fontWeight: 300, color: '#f6eedb', letterSpacing: '-0.02em' }}>
-                            99.4 <span style={{ fontSize: '1.25rem', fontWeight: 300, color: '#9fb6da' }}>%</span>
-                          </span>
+                          <Heart className="w-3.5 h-3.5 text-rose-400" />
                         </div>
-                        <div className="hairline-bar-track">
-                          <div className="hairline-bar-fill" style={{ width: '99.4%' }} />
+                        <div className="flex items-baseline justify-between mt-1.5">
+                          <h3 className="text-2xl font-black text-cyan-300 font-sans tracking-tight">
+                            {liveHeartRate || 62}
+                          </h3>
+                          <span className="text-[11px] font-mono text-slate-400 font-bold">BPM</span>
                         </div>
-                      </div>
-
-                      {/* Metric 2: Suit Pressure */}
-                      <div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-                          <span className="font-mono" style={{ fontSize: '0.74rem', color: '#9fb6da', letterSpacing: '0.18em', textTransform: 'uppercase' }}>
-                            SUIT PRESSURE
+                        <div className="mt-2 flex items-center justify-between text-[10px]">
+                          <span className="text-emerald-400 font-mono flex items-center gap-1 font-semibold">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                            <span>Resting Pace</span>
                           </span>
-                          <span style={{ fontSize: '2rem', fontWeight: 300, color: '#f6eedb', letterSpacing: '-0.02em' }}>
-                            4.3 <span style={{ fontSize: '1.25rem', fontWeight: 300, color: '#9fb6da' }}>psi</span>
-                          </span>
-                        </div>
-                        <div className="hairline-bar-track">
-                          <div className="hairline-bar-fill" style={{ width: '86%' }} />
+                          <span className="text-slate-400 font-mono text-[9px]">Baseline: 64 BPM</span>
                         </div>
                       </div>
 
-                      {/* Metric 3: Battery Capacity / Life Support */}
-                      <div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-                          <span className="font-mono" style={{ fontSize: '0.74rem', color: '#9fb6da', letterSpacing: '0.18em', textTransform: 'uppercase' }}>
-                            BATTERY CAPACITY
+                      {/* Card 2: Blood Pressure */}
+                      <div className="bg-[#0B1736]/90 border border-amber-400/35 rounded-xl p-3.5 shadow-lg">
+                        <div className="flex items-center justify-between text-slate-400">
+                          <span className="text-[10px] font-mono uppercase tracking-wider font-semibold">
+                            Blood Pressure
                           </span>
-                          <span style={{ fontSize: '2rem', fontWeight: 300, color: '#f6eedb', letterSpacing: '-0.02em' }}>
-                            87 <span style={{ fontSize: '1.25rem', fontWeight: 300, color: '#9fb6da' }}>%</span>
-                          </span>
+                          <Activity className="w-3.5 h-3.5 text-[#F5B82E]" />
                         </div>
-                        <div className="hairline-bar-track">
-                          <div className="hairline-bar-fill" style={{ width: '87%' }} />
+                        <div className="flex items-baseline justify-between mt-1.5">
+                          <h3 className="text-2xl font-black text-[#FDE047] font-sans tracking-tight">
+                            112/71
+                          </h3>
+                          <span className="text-[11px] font-mono text-slate-400 font-bold">mmHg</span>
+                        </div>
+                        <div className="mt-2 flex items-center justify-between text-[10px]">
+                          <span className="text-cyan-300 font-mono font-semibold">Microgravity Reg.</span>
+                          <span className="text-slate-400 font-mono text-[9px]">Sys/Dia</span>
+                        </div>
+                      </div>
+
+                      {/* Card 3: Core Temperature */}
+                      <div className="bg-[#0B1736]/90 border border-blue-400/20 rounded-xl p-3.5 shadow-lg">
+                        <div className="flex items-center justify-between text-slate-400">
+                          <span className="text-[10px] font-mono uppercase tracking-wider font-semibold">
+                            Core Temperature
+                          </span>
+                          <Thermometer className="w-3.5 h-3.5 text-amber-300" />
+                        </div>
+                        <div className="flex items-baseline justify-between mt-1.5">
+                          <h3 className="text-2xl font-black text-amber-300 font-sans tracking-tight">
+                            36.8
+                          </h3>
+                          <span className="text-[11px] font-mono text-slate-400 font-bold">°C</span>
+                        </div>
+                        <div className="mt-2 flex items-center justify-between text-[10px]">
+                          <span className="text-emerald-400 font-mono font-semibold">Thermoregulated</span>
+                          <span className="text-slate-400 font-mono text-[9px]">Optimal 36.6°C</span>
+                        </div>
+                      </div>
+
+                      {/* Card 4: Blood Oxygen (SpO2) */}
+                      <div className="bg-[#0B1736]/90 border border-blue-400/20 rounded-xl p-3.5 shadow-lg">
+                        <div className="flex items-center justify-between text-slate-400">
+                          <span className="text-[10px] font-mono uppercase tracking-wider font-semibold">
+                            Blood Oxygen (SpO2)
+                          </span>
+                          <Wind className="w-3.5 h-3.5 text-emerald-400" />
+                        </div>
+                        <div className="flex items-baseline justify-between mt-1.5">
+                          <h3 className="text-2xl font-black text-emerald-400 font-sans tracking-tight">
+                            98%
+                          </h3>
+                          <span className="text-[11px] font-mono text-slate-400 font-bold">O₂ Sat</span>
+                        </div>
+                        <div className="mt-2 flex items-center justify-between text-[10px]">
+                          <span className="text-emerald-400 font-mono font-semibold">Cabin Norm: 21.0 kPa</span>
+                          <span className="text-slate-400 font-mono text-[9px]">Nominal</span>
                         </div>
                       </div>
                     </div>
 
-                    {/* Micro Stats Inline Row */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '26px', padding: '0 4px' }}>
-                      <div className="font-mono" style={{ fontSize: '0.75rem', color: '#9fb6da', letterSpacing: '0.12em' }}>
-                        HEART RATE <span style={{ color: '#f6eedb', fontWeight: 600 }}>{liveHeartRate} BPM</span>
+                    {/* ── CREW WELLBEING GAUGES (OAT YELLOW METRICS) ── */}
+                    <div className="bg-[#0B1736]/95 border border-amber-400/25 p-4 sm:p-5 rounded-2xl shadow-xl flex flex-col space-y-4 mb-6">
+                      <div>
+                        <div className="flex items-center justify-between">
+                          <h2 className="text-sm sm:text-base font-bold text-white tracking-wide">
+                            Crew Wellbeing Gauges
+                          </h2>
+                          <span className="text-[10px] font-mono text-[#FDE047] font-semibold">
+                            OAT YELLOW METRICS
+                          </span>
+                        </div>
+                        <p className="text-xs text-slate-300 mt-0.5">
+                          Restorative sleep, countermeasure exercise & cognitive readiness.
+                        </p>
                       </div>
-                      <div className="font-mono" style={{ fontSize: '0.75rem', color: '#9fb6da', letterSpacing: '0.12em' }}>
-                        EVA SEAL <span style={{ color: '#f6eedb', fontWeight: 600 }}>100%</span>
+
+                      {/* 3 Semi-Circular Gauges: Sleep, Exercise, and Mood */}
+                      <div className="flex flex-col gap-3.5">
+                        {/* 1. Daily Restorative Sleep */}
+                        <SemiCircularGauge
+                          label="DAILY RESTORATIVE SLEEP"
+                          value={sleepHours}
+                          max={10}
+                          unit="h"
+                          targetText="Target: 8.0h Rest Baseline"
+                          colorHex="#F5B82E"
+                          cardClassName="bg-[#0B152C]/90 border border-slate-700/40 rounded-xl p-4 sm:p-5"
+                        />
+
+                        {/* 2. Daily Exercise Countermeasure */}
+                        <SemiCircularGauge
+                          label="DAILY EXERCISE COUNTERMEASURE"
+                          value={exerciseMinutes}
+                          max={150}
+                          unit="min"
+                          targetText="• Target: 150m ARED / T2 Baseline"
+                          colorHex="#FACC15"
+                          showGlowDot={true}
+                          subtitle={`${Math.round((exerciseMinutes / 150) * 100)}% of Daily Target`}
+                          headerAction={
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setExerciseMinutes((prev) => Math.min(150, prev + 15));
+                                setAredVolume((prev) => prev + 120);
+                              }}
+                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[10px] font-mono font-bold bg-[#FACC15]/10 hover:bg-[#FACC15]/20 text-[#FACC15] border border-[#FACC15]/35 transition-all cursor-pointer active:scale-95 shadow-sm"
+                              title="Log +15 min Countermeasure Exercise"
+                            >
+                              <Plus className="w-3 h-3" />
+                              <span>+ Log Session</span>
+                            </button>
+                          }
+                          cardClassName="bg-[#0B152C]/90 border border-slate-700/40 rounded-xl p-4 sm:p-5 hover:border-[#FACC15]/50 transition-all"
+                          footerContent={
+                            <div className="flex items-center gap-2 mt-2 w-full justify-center flex-wrap pt-2 border-t border-slate-800/60">
+                              <div className="px-2.5 py-1 rounded-lg bg-[#060F28] border border-blue-400/20 font-mono text-[10px] text-slate-300 flex items-center gap-1.5 shadow-sm">
+                                <Dumbbell className="w-3 h-3 text-[#FACC15]" />
+                                <span className="text-slate-400">ARED LOAD:</span>
+                                <span className="font-bold text-[#FFFDF7]">
+                                  {aredVolume.toLocaleString()} kg
+                                </span>
+                              </div>
+                              <div className="px-2.5 py-1 rounded-lg bg-[#060F28] border border-blue-400/20 font-mono text-[10px] text-slate-300 flex items-center gap-1.5 shadow-sm">
+                                <Activity className="w-3 h-3 text-cyan-400" />
+                                <span className="text-slate-400">T2 / CEVIS:</span>
+                                <span className="font-bold text-[#FFFDF7]">
+                                  45 min • 138 bpm
+                                </span>
+                              </div>
+                            </div>
+                          }
+                        />
+
+                        {/* 3. Psychological Readiness Index */}
+                        <SemiCircularGauge
+                          label="PSYCHOLOGICAL READINESS INDEX"
+                          value={psychReadiness}
+                          max={10}
+                          unit="/10"
+                          targetText="Behavioral Stability Normal"
+                          colorHex="#FDE047"
+                          cardClassName="bg-[#0B152C]/90 border border-slate-700/40 rounded-xl p-4 sm:p-5"
+                        />
                       </div>
-                      <div className="font-mono" style={{ fontSize: '0.75rem', color: '#9fb6da', letterSpacing: '0.12em' }}>
-                        THERMAL <span style={{ color: '#f6eedb', fontWeight: 600 }}>+21°C</span>
+                    </div>
+
+                    {/* ── EVA SUIT LIFE SUPPORT SYSTEMS (O2, PRESSURE 4.3 PSI, BATTERY) ── */}
+                    <div className="bg-[#0B1736]/70 border border-blue-400/15 rounded-xl p-4 mb-6">
+                      <div className="font-mono text-[11px] text-[#ead9b2] uppercase tracking-wider mb-3 flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                        <span>EVA Suit Primary Systems & Pressure Seal</span>
+                      </div>
+                      <div className="flex flex-col gap-3.5">
+                        {/* Oxygen */}
+                        <div>
+                          <div className="flex justify-between items-baseline text-xs font-mono">
+                            <span className="text-slate-400">OXYGEN RESERVE</span>
+                            <span className="text-sm font-bold text-[#f6eedb]">99.4%</span>
+                          </div>
+                          <div className="hairline-bar-track mt-1">
+                            <div className="hairline-bar-fill" style={{ width: '99.4%' }} />
+                          </div>
+                        </div>
+                        {/* Suit Pressure */}
+                        <div>
+                          <div className="flex justify-between items-baseline text-xs font-mono">
+                            <span className="text-slate-400">SUIT PRESSURE (INTERNAL)</span>
+                            <span className="text-sm font-bold text-[#f6eedb]">4.3 <span className="text-slate-400 text-xs">psi</span></span>
+                          </div>
+                          <div className="hairline-bar-track mt-1">
+                            <div className="hairline-bar-fill" style={{ width: '86%' }} />
+                          </div>
+                        </div>
+                        {/* Battery */}
+                        <div>
+                          <div className="flex justify-between items-baseline text-xs font-mono">
+                            <span className="text-slate-400">BATTERY CAPACITY</span>
+                            <span className="text-sm font-bold text-[#f6eedb]">87%</span>
+                          </div>
+                          <div className="hairline-bar-track mt-1">
+                            <div className="hairline-bar-fill" style={{ width: '87%' }} />
+                          </div>
+                        </div>
                       </div>
                     </div>
 

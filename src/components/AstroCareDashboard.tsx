@@ -272,7 +272,7 @@ interface SemiGaugeProps {
   cardClassName?: string;
 }
 
-function SemiCircularGauge({
+export function SemiCircularGauge({
   label,
   value,
   max,
