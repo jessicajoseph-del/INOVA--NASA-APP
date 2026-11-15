@@ -33,8 +33,7 @@ function loadFaceApi() {
         return (window as any).faceapi;
       }
       try {
-        const pkgName = 'face-api.js';
-        const mod = await import(/* @vite-ignore */ pkgName);
+        const mod = await import('face-api.js');
         return mod.default || mod;
       } catch {
         if (typeof window !== 'undefined' && (window as any).faceapi) {
@@ -44,10 +43,17 @@ function loadFaceApi() {
       }
     })()
       .then(async (faceapi) => {
-        await Promise.all([
-          faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
-          faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL),
-        ]);
+        try {
+          await Promise.all([
+            faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
+            faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL),
+          ]);
+        } catch (error) {
+          console.error('Local expression model loading failed.', error);
+          throw new Error(
+            `Local expression model loading failed. Confirm the model files are deployed under ${MODEL_URL}.`
+          );
+        }
         return faceapi;
       })
       .catch((error: unknown) => {
@@ -69,8 +75,8 @@ function getCameraErrorMessage(error: unknown) {
   if (error.name === 'NotReadableError' || error.name === 'TrackStartError') {
     return 'The camera is already in use by another application.';
   }
-  if (error.message.includes('local face model')) {
-    return 'The local expression models could not be loaded. Confirm the model files are deployed under /models.';
+  if (error.message.includes('Local expression model loading failed')) {
+    return `The local expression models could not be loaded. Confirm the model files are deployed under ${MODEL_URL}.`;
   }
   return error.message || 'Camera analysis failed. Please retry.';
 }
@@ -151,12 +157,7 @@ export function ExpressionMonitor({
 
     const startAnalysis = async () => {
       try {
-        const faceapi = await loadFaceApi().catch((modelError: unknown) => {
-          console.error('Local expression model loading failed.', modelError);
-          throw new Error(
-            'The local face model could not be loaded. Confirm the model files are deployed under /models.'
-          );
-        });
+        const faceapi = await loadFaceApi();
         if (cancelled) return;
 
         if (!navigator.mediaDevices?.getUserMedia) {
