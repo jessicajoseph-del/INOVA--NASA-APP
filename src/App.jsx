@@ -19,7 +19,11 @@ import {
   Brain,
   ClipboardCheck,
   Radio,
-  Box
+  Box,
+  Rocket,
+  UserCheck,
+  Dna,
+  LogIn
 } from 'lucide-react';
 import TrendAnalytics from './components/TrendAnalytics';
 import LogoMarquee from './components/LogoMarquee';
@@ -27,6 +31,8 @@ import RoadmapGame from './roadmap/RoadmapGame';
 import BehavioralHealthPage from './behavioral/BehavioralHealthPage';
 import AstroCareDashboard from './components/AstroCareDashboard';
 import AuraDashboard from './pages/AuraDashboard';
+import InovavPortal from './inovav/App';
+import VitalObservatory from './inovav/VitalObservatory';
 
 /**
  * TOPIC & EXECUTIVE KPI DATA CONFIGURATION:
@@ -84,8 +90,15 @@ export const TOPIC_DATA = {
 };
 
 export default function App() {
-  // Navigation State: 'overview' | 'astrocare' | 'roadmap' | 'behavioral' | 'aura'
+  // Navigation State: 'overview' | 'start' | 'login' | 'vital' | 'astrocare' | 'roadmap' | 'behavioral' | 'aura'
   const [activeView, setActiveView] = useState('overview');
+  const [activeAstronaut, setActiveAstronaut] = useState({
+    id: 'ASTRO-01',
+    name: 'CDR. Alex Vance',
+    mission: 'Artemis VII // Mars Transfer',
+    role: 'Mission Commander',
+    bloodType: 'O-Negative',
+  });
 
   const scrollToRoadmap = () => {
     if (activeView !== 'overview') {
@@ -118,8 +131,8 @@ export default function App() {
 
       {/* 1. HEADER / NAVIGATION BAR WITH MULTI-PAGE SWITCHER */}
       <header className="border-b border-blue-900/40 bg-[#060D21]/80 backdrop-blur-md sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
-          <div className="flex items-center space-x-3 shrink-0">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3">
+          <div className="flex items-center space-x-3 shrink-0 cursor-pointer" onClick={() => setActiveView('overview')}>
             <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#FF7300] to-orange-400 flex items-center justify-center text-white shadow-lg shadow-orange-500/20">
               <Layers className="w-5 h-5" />
             </div>
@@ -127,14 +140,14 @@ export default function App() {
               <span className="font-extrabold text-xl tracking-tight text-white">
                 INOVA<span className="text-[#FF7300]">.</span>
               </span>
-              <span className="ml-2 text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-950/80 text-cyan-300 border border-cyan-500/30 hidden lg:inline-block">
+              <span className="ml-2 text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-950/80 text-cyan-300 border border-cyan-500/30 hidden xl:inline-block">
                 Mission Telemetry
               </span>
             </div>
           </div>
 
           {/* Primary View Switcher Navigation Tabs */}
-          <nav className="flex items-center p-1 rounded-xl bg-blue-950/60 border border-blue-800/40 backdrop-blur-md overflow-x-auto">
+          <nav className="flex items-center p-1 rounded-xl bg-blue-950/60 border border-blue-800/40 backdrop-blur-md overflow-x-auto gap-1">
             {/* Tab 1: Overview */}
             <button
               type="button"
@@ -142,99 +155,164 @@ export default function App() {
                 setActiveView('overview');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
-              className={`inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap ${
+              className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap ${
                 activeView === 'overview'
                   ? 'bg-gradient-to-r from-[#FF7300] to-orange-500 text-white shadow-md shadow-orange-500/20'
                   : 'text-slate-400 hover:text-white hover:bg-white/5'
               }`}
             >
               <Activity className="w-3.5 h-3.5" />
-              <span>Telemetry & Trends</span>
+              <span>Telemetry</span>
             </button>
 
-            {/* Tab 2: AURA 3D ISS Model */}
+            {/* Tab 2: Mission Start (from inovav) */}
+            <button
+              type="button"
+              onClick={() => {
+                setActiveView('start');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap ${
+                activeView === 'start'
+                  ? 'bg-gradient-to-r from-amber-300 to-yellow-500 text-slate-950 shadow-md shadow-yellow-500/20 font-bold'
+                  : 'text-slate-400 hover:text-[#f6eedb] hover:bg-white/5'
+              }`}
+            >
+              <Rocket className="w-3.5 h-3.5 text-yellow-400" />
+              <span>Start</span>
+              <span className="h-1.5 w-1.5 rounded-full bg-yellow-400 animate-pulse hidden sm:inline-block" />
+            </button>
+
+            {/* Tab 3: Login & Biometrics (from inovav) */}
+            <button
+              type="button"
+              onClick={() => {
+                setActiveView('login');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap ${
+                activeView === 'login'
+                  ? 'bg-gradient-to-r from-cyan-400 to-blue-500 text-slate-950 shadow-md shadow-cyan-400/20 font-bold'
+                  : 'text-slate-400 hover:text-cyan-300 hover:bg-white/5'
+              }`}
+            >
+              <UserCheck className="w-3.5 h-3.5 text-cyan-400" />
+              <span>Login</span>
+            </button>
+
+            {/* Tab 4: 3D Vital Observatory (from inovav) */}
+            <button
+              type="button"
+              onClick={() => {
+                setActiveView('vital');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap ${
+                activeView === 'vital'
+                  ? 'bg-gradient-to-r from-rose-400 to-pink-500 text-slate-950 shadow-md shadow-rose-400/20 font-bold'
+                  : 'text-slate-400 hover:text-rose-300 hover:bg-white/5'
+              }`}
+            >
+              <Dna className="w-3.5 h-3.5 text-rose-400" />
+              <span>3D Vital</span>
+              <span className="h-1.5 w-1.5 rounded-full bg-rose-400 animate-pulse hidden sm:inline-block" />
+            </button>
+
+            {/* Tab 5: AURA 3D ISS Model */}
             <button
               type="button"
               onClick={() => {
                 setActiveView('aura');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
-              className={`inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap ${
+              className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap ${
                 activeView === 'aura'
                   ? 'bg-gradient-to-r from-purple-500 to-indigo-600 text-white shadow-md shadow-purple-500/20 font-bold'
                   : 'text-slate-400 hover:text-purple-300 hover:bg-white/5'
               }`}
             >
               <Box className="w-3.5 h-3.5 text-purple-400" />
-              <span>AURA 3D ISS</span>
-              <span className="h-1.5 w-1.5 rounded-full bg-purple-400 animate-pulse hidden sm:inline-block" />
+              <span>AURA 3D</span>
             </button>
 
-            {/* Tab 3: AstroCare ISS Telemetry */}
+            {/* Tab 6: AstroCare ISS Telemetry */}
             <button
               type="button"
               onClick={scrollToAstroCare}
-              className={`inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap ${
+              className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap ${
                 activeView === 'astrocare'
                   ? 'bg-gradient-to-r from-amber-400 to-[#F5B82E] text-slate-950 shadow-md shadow-amber-400/20 font-bold'
                   : 'text-slate-400 hover:text-[#FDE047] hover:bg-white/5'
               }`}
             >
               <Radio className="w-3.5 h-3.5 text-amber-400" />
-              <span>ISS AstroCare</span>
-              <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse hidden sm:inline-block" />
+              <span>AstroCare</span>
             </button>
 
-            {/* Tab 4: Roadmap Game (Smooth scrolls on single page) */}
+            {/* Tab 7: Roadmap Game */}
             <button
               type="button"
               onClick={scrollToRoadmap}
-              className={`inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap ${
+              className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap ${
                 activeView === 'roadmap'
                   ? 'bg-gradient-to-r from-amber-400 to-[#F5B82E] text-slate-950 shadow-md shadow-amber-400/20 font-bold'
                   : 'text-slate-400 hover:text-white hover:bg-white/5'
               }`}
             >
               <Gamepad2 className="w-3.5 h-3.5 text-amber-400" />
-              <span>Roadmap Game</span>
-              <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse hidden sm:inline-block" />
+              <span>Roadmap</span>
             </button>
 
-            {/* Tab 5: Behavioral Health */}
+            {/* Tab 8: Behavioral Health */}
             <button
               type="button"
               onClick={() => {
                 setActiveView('behavioral');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
-              className={`inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap ${
+              className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap ${
                 activeView === 'behavioral'
                   ? 'bg-gradient-to-r from-emerald-400 to-teal-500 text-slate-950 shadow-md shadow-emerald-400/20 font-bold'
                   : 'text-slate-400 hover:text-white hover:bg-white/5'
               }`}
             >
               <HeartPulse className="w-3.5 h-3.5" />
-              <span>Behavioral Health</span>
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse hidden sm:inline-block" />
+              <span className="hidden sm:inline">Behavioral</span>
             </button>
           </nav>
 
-          {/* Action CTA: Return button only when in dedicated view mode */}
-          {activeView !== 'overview' && (
-            <div className="flex items-center space-x-2 shrink-0">
+          {/* Right Header: Active Astronaut Pill & Return Button */}
+          <div className="flex items-center space-x-2 shrink-0">
+            {/* Astronaut Quick-Profile Chip */}
+            <button
+              type="button"
+              onClick={() => {
+                setActiveView('login');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="hidden lg:inline-flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-blue-950/80 border border-[#f6eedb]/20 hover:border-[#f6eedb]/50 text-xs text-[#f6eedb] transition-all cursor-pointer"
+              title="Crew Bio-Link / Click to open Login & Biometrics"
+            >
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="font-mono text-[11px] font-semibold">{activeAstronaut.name}</span>
+              <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#f6eedb]/15 text-[#f6eedb] font-mono">{activeAstronaut.id}</span>
+            </button>
+
+            {/* Action CTA: Return button only when in dedicated view mode */}
+            {activeView !== 'overview' && (
               <button 
                 type="button" 
                 onClick={() => {
                   setActiveView('overview');
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
-                className="inline-flex items-center justify-center text-xs font-semibold text-white bg-blue-900/60 hover:bg-blue-800/80 border border-blue-700/50 px-3.5 py-2 rounded-lg transition-all active:scale-95 cursor-pointer"
+                className="inline-flex items-center justify-center text-xs font-semibold text-white bg-blue-900/60 hover:bg-blue-800/80 border border-blue-700/50 px-3 py-1.5 rounded-lg transition-all active:scale-95 cursor-pointer whitespace-nowrap"
               >
                 <ArrowLeft className="w-3.5 h-3.5 mr-1" />
-                <span>Return to Overview</span>
+                <span>Overview</span>
               </button>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </header>
 
@@ -394,6 +472,100 @@ export default function App() {
             </div>
           </section>
 
+          {/* INOVA RIDGE CREW LAUNCHPAD: START, LOGIN & 3D VITAL SUITE */}
+          <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full my-8">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <span className="text-xs font-mono uppercase tracking-wider text-amber-300 font-semibold">
+                  // RIDGE BIOMETRIC & 3D PHYSIOLOGY SUITE
+                </span>
+                <h3 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
+                  Astronaut Portal & 3D Vital Observatory
+                </h3>
+              </div>
+              <span className="text-xs text-slate-400 font-mono hidden sm:inline-block">
+                OAT YELLOW // INK BLUE TELEMETRY
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              {/* Card 1: Mission Start */}
+              <div 
+                onClick={() => {
+                  setActiveView('start');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="rounded-2xl bg-gradient-to-b from-[#0e2859]/90 to-[#06132b]/95 border border-amber-400/30 p-6 backdrop-blur-md shadow-xl hover:border-amber-400 hover:shadow-amber-500/10 transition-all duration-300 cursor-pointer group flex flex-col justify-between"
+              >
+                <div className="space-y-3">
+                  <div className="w-10 h-10 rounded-xl bg-amber-400/10 border border-amber-400/30 flex items-center justify-center text-amber-300 group-hover:scale-110 transition-transform">
+                    <Rocket className="w-5 h-5" />
+                  </div>
+                  <h4 className="text-lg font-bold text-[#f6eedb] group-hover:text-amber-300 transition-colors">
+                    Mission Start & Swarm
+                  </h4>
+                  <p className="text-xs text-slate-300 leading-relaxed">
+                    3D Hohmann transfer particle trajectory simulation, RIDGE system countdown, and real-time mission telemetry handshake.
+                  </p>
+                </div>
+                <div className="pt-4 mt-4 border-t border-blue-900/40 flex items-center justify-between text-xs font-bold text-amber-300">
+                  <span>Enter Mission Start</span>
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </div>
+
+              {/* Card 2: Crew Login & Biometrics */}
+              <div 
+                onClick={() => {
+                  setActiveView('login');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="rounded-2xl bg-gradient-to-b from-[#0e2859]/90 to-[#06132b]/95 border border-cyan-400/30 p-6 backdrop-blur-md shadow-xl hover:border-cyan-400 hover:shadow-cyan-500/10 transition-all duration-300 cursor-pointer group flex flex-col justify-between"
+              >
+                <div className="space-y-3">
+                  <div className="w-10 h-10 rounded-xl bg-cyan-400/10 border border-cyan-400/30 flex items-center justify-center text-cyan-300 group-hover:scale-110 transition-transform">
+                    <UserCheck className="w-5 h-5" />
+                  </div>
+                  <h4 className="text-lg font-bold text-[#f6eedb] group-hover:text-cyan-300 transition-colors">
+                    Sliding Login & 3D Visor
+                  </h4>
+                  <p className="text-xs text-slate-300 leading-relaxed">
+                    Dual-panel sliding sign-in & registration, 3D face camera biometrics, helmet visor face mesh reflection, and suit telemetry.
+                  </p>
+                </div>
+                <div className="pt-4 mt-4 border-t border-blue-900/40 flex items-center justify-between text-xs font-bold text-cyan-300">
+                  <span>Open Crew Login</span>
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </div>
+
+              {/* Card 3: 3D Vital Observatory */}
+              <div 
+                onClick={() => {
+                  setActiveView('vital');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="rounded-2xl bg-gradient-to-b from-[#0e2859]/90 to-[#06132b]/95 border border-rose-400/30 p-6 backdrop-blur-md shadow-xl hover:border-rose-400 hover:shadow-rose-500/10 transition-all duration-300 cursor-pointer group flex flex-col justify-between"
+              >
+                <div className="space-y-3">
+                  <div className="w-10 h-10 rounded-xl bg-rose-400/10 border border-rose-400/30 flex items-center justify-center text-rose-300 group-hover:scale-110 transition-transform">
+                    <Dna className="w-5 h-5" />
+                  </div>
+                  <h4 className="text-lg font-bold text-[#f6eedb] group-hover:text-rose-300 transition-colors">
+                    3D Vital Human Observatory
+                  </h4>
+                  <p className="text-xs text-slate-300 leading-relaxed">
+                    Interactive 3D anatomical model, beating heart, crystal skull, internal organ zoom (liver, spleen), and touchless AR palm controls.
+                  </p>
+                </div>
+                <div className="pt-4 mt-4 border-t border-blue-900/40 flex items-center justify-between text-xs font-bold text-rose-300">
+                  <span>Launch 3D Vital Observatory</span>
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </div>
+            </div>
+          </section>
+
           {/* 3. ANIMATION RIBBON: WSO2-STYLE INFINITE LOGO MARQUEE (INTACT) */}
           <section className="w-full my-6 relative z-10">
             <LogoMarquee />
@@ -434,6 +606,46 @@ export default function App() {
             <RoadmapGame isEmbedded={true} />
           </section>
 
+        </main>
+      )}
+
+      {/* ── INOVA RIDGE: MISSION START SCREEN (3D HOHMANN PARTICLE SWARM & 8S COUNTDOWN) ── */}
+      {activeView === 'start' && (
+        <main className="flex-1 w-full relative z-10">
+          <InovavPortal
+            initialScreen="intro"
+            onBackToOverview={() => setActiveView('overview')}
+            onNavigateView={(view) => setActiveView(view)}
+            activeAstronaut={activeAstronaut}
+            onAstronautChange={setActiveAstronaut}
+          />
+        </main>
+      )}
+
+      {/* ── INOVA RIDGE: CREW LOGIN & BIOMETRICS (3D ASTRONAUT & DUAL-PANEL SLIDING LOGIN) ── */}
+      {activeView === 'login' && (
+        <main className="flex-1 w-full relative z-10">
+          <InovavPortal
+            initialScreen="login"
+            onBackToOverview={() => setActiveView('overview')}
+            onNavigateView={(view) => setActiveView(view)}
+            activeAstronaut={activeAstronaut}
+            onAstronautChange={setActiveAstronaut}
+          />
+        </main>
+      )}
+
+      {/* ── INOVA RIDGE: 3D VITAL HUMAN SYSTEMS OBSERVATORY (ORGAN ZOOM & AR PALM GESTURES) ── */}
+      {activeView === 'vital' && (
+        <main className="flex-1 w-full relative z-10">
+          <InovavPortal
+            initialScreen="dashboard"
+            initialShowBodyScan={true}
+            onBackToOverview={() => setActiveView('overview')}
+            onNavigateView={(view) => setActiveView(view)}
+            activeAstronaut={activeAstronaut}
+            onAstronautChange={setActiveAstronaut}
+          />
         </main>
       )}
 

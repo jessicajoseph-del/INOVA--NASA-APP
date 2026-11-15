@@ -1,0 +1,1990 @@
+import React, { useRef, useMemo, useState, useEffect, Suspense } from 'react';
+import { Canvas, useFrame, extend } from '@react-three/fiber';
+import { OrbitControls, Effects, useGLTF, useAnimations } from '@react-three/drei';
+import { UnrealBloomPass, ShaderPass, SkeletonUtils } from 'three-stdlib';
+import * as THREE from 'three';
+import {
+  Home as LucideHome,
+  Briefcase as LucideBriefcase,
+  MessageSquare as LucideMessageSquare,
+  Calendar as LucideCalendar,
+  Archive as LucideArchive,
+  BarChart3 as LucideBarChart,
+  User as LucideUser,
+  Settings as LucideSettings,
+  LogOut as LucideLogOut,
+  ChevronLeft as LucideChevronLeft,
+  ChevronRight as LucideChevronRight,
+  Activity,
+  Heart,
+  Radio,
+  Sparkles,
+  ShieldCheck,
+} from 'lucide-react';
+import VitalObservatory from './VitalObservatory';
+import JarvisTouchlessHud from './JarvisTouchlessHud';
+import { getAstronautsFromFirebase, saveAstronautToFirebase } from './firebase';
+import ThreeDFaceMesh from './components/ThreeDFaceMesh';
+import ThreeDFaceStudioModal from './components/ThreeDFaceStudioModal';
+import ModernSlidingLogin from './components/ModernSlidingLogin';
+import MissionHUD from './components/experience/MissionHUD';
+import HeartRateTelemetryChart from './components/HeartRateTelemetryChart';
+import FaceAuthLogView from './components/FaceAuthLogView';
+import { buildAstronautFaceDescriptors } from './utils/faceRecognition';
+import { getFaceAuthLogs, clearFaceAuthLogs } from './utils/faceAuthLog';
+
+extend({ UnrealBloomPass, ShaderPass });
+
+// ── DEFAULT SEED ASTRONAUT ───────────────────────────────────────────────
+const DEFAULT_ASTRONAUT = {
+  id: 'ASTRO-01',
+  name: 'CDR. Alex Vance',
+  password: 'password123',
+  mission: 'Artemis VII // Mars Transfer',
+  role: 'Mission Commander',
+  bloodType: 'O-Negative',
+  fingerprint: 'FP-SYNTH-89012',
+  faceSnaps: {
+    center: null,
+    left: null,
+    right: null,
+  },
+};
+
+const STORAGE_KEY = 'ridge_astronaut_db';
+const LEGACY_STORAGE_KEY = 'inova_astronaut_db';
+
+const getStoredAstronauts = () => {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem(LEGACY_STORAGE_KEY);
+    if (!raw) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify([DEFAULT_ASTRONAUT]));
+      return [DEFAULT_ASTRONAUT];
+    }
+    const parsed = JSON.parse(raw);
+    if (!localStorage.getItem(STORAGE_KEY)) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
+    }
+    return parsed;
+  } catch {
+    return [DEFAULT_ASTRONAUT];
+  }
+};
+
+const saveAstronautToDb = (newAstro) => {
+  try {
+    const current = getStoredAstronauts();
+    const updated = [...current.filter((a) => a.id.toLowerCase() !== newAstro.id.toLowerCase()), newAstro];
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+    // Persist to Google Cloud / Firebase Firestore
+    saveAstronautToFirebase(newAstro).catch(console.warn);
+    return updated;
+  } catch (err) {
+    console.error('Storage error:', err);
+    return [newAstro];
+  }
+};
+
+// ── 3D Holographic Human Body Component for "SCAN VITAL 3D BODY" ──────────
+const HolographicBody3D = ({ scanProgress }) => {
+  const groupRef = useRef();
+
+  useFrame((state) => {
+    if (groupRef.current) {
+      groupRef.current.rotation.y = state.clock.getElapsedTime() * 0.7;
+    }
+  });
+
+  return (
+    <group ref={groupRef} position={[0, -0.2, 0]} scale={1.1}>
+      {/* Head */}
+      <mesh position={[0, 1.45, 0]}>
+        <sphereGeometry args={[0.22, 24, 24]} />
+        <meshBasicMaterial color="#00ffff" wireframe transparent opacity={0.7} />
+      </mesh>
+      {/* Torso */}
+      <mesh position={[0, 0.75, 0]}>
+        <cylinderGeometry args={[0.25, 0.2, 1.1, 16]} />
+        <meshBasicMaterial color="#0099ff" wireframe transparent opacity={0.5} />
+      </mesh>
+      {/* Heart Core */}
+      <mesh position={[0.04, 0.85, 0.05]}>
+        <sphereGeometry args={[0.07, 16, 16]} />
+        <meshBasicMaterial color="#ff2266" transparent opacity={0.9} />
+      </mesh>
+      {/* Lungs */}
+      <mesh position={[-0.08, 0.88, 0]}>
+        <capsuleGeometry args={[0.06, 0.18, 8, 16]} />
+        <meshBasicMaterial color="#00ffcc" wireframe transparent opacity={0.6} />
+      </mesh>
+      <mesh position={[0.08, 0.88, 0]}>
+        <capsuleGeometry args={[0.06, 0.18, 8, 16]} />
+        <meshBasicMaterial color="#00ffcc" wireframe transparent opacity={0.6} />
+      </mesh>
+      {/* Arms */}
+      <mesh position={[-0.38, 0.75, 0]} rotation={[0, 0, 0.2]}>
+        <capsuleGeometry args={[0.06, 0.9, 8, 16]} />
+        <meshBasicMaterial color="#00e5ff" wireframe transparent opacity={0.45} />
+      </mesh>
+      <mesh position={[0.38, 0.75, 0]} rotation={[0, 0, -0.2]}>
+        <capsuleGeometry args={[0.06, 0.9, 8, 16]} />
+        <meshBasicMaterial color="#00e5ff" wireframe transparent opacity={0.45} />
+      </mesh>
+      {/* Legs */}
+      <mesh position={[-0.15, -0.4, 0]}>
+        <capsuleGeometry args={[0.08, 1.2, 8, 16]} />
+        <meshBasicMaterial color="#0088ff" wireframe transparent opacity={0.45} />
+      </mesh>
+      <mesh position={[0.15, -0.4, 0]}>
+        <capsuleGeometry args={[0.08, 1.2, 8, 16]} />
+        <meshBasicMaterial color="#0088ff" wireframe transparent opacity={0.45} />
+      </mesh>
+
+      {/* Dynamic Laser Scanning Ring */}
+      <mesh position={[0, -0.9 + (scanProgress % 100) * 0.026, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <ringGeometry args={[0.42, 0.52, 32]} />
+        <meshBasicMaterial color="#00ffff" side={THREE.DoubleSide} transparent opacity={0.85} />
+      </mesh>
+    </group>
+  );
+};
+
+// ── NAV.JPG FAITHFUL ICONSAX VECTOR ICONS ─────────────────────────────────
+const RabbitIcon = ({ size = 22, color = '#ffffff' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <path
+      d="M6 3.5L8.5 10.5L12 6.5L15.5 10.5L18 3.5C19.2 6.8 20 11.2 18.2 15C16.8 18 14.5 20.5 12 20.5C9.5 20.5 7.2 18 5.8 15C4 11.2 4.8 6.8 6 3.5Z"
+      stroke={color}
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      fill={color}
+    />
+  </svg>
+);
+
+const HomeNavIcon = ({ size = 20, color = 'currentColor' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <path
+      d="M4.5 11.5C4.5 6.8 7.8 3 12 3C16.2 3 19.5 6.8 19.5 11.5V17.5C19.5 19.4 17.9 21 16 21H8C6.1 21 4.5 19.4 4.5 17.5V11.5Z"
+      stroke={color}
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M9 13.5C10.2 15.2 13.8 15.2 15 13.5"
+      stroke={color}
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+const ProjectsNavIcon = ({ size = 20, color = 'currentColor' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <path
+      d="M9 6V4.5C9 3.67 9.67 3 10.5 3H13.5C14.33 3 15 3.67 15 4.5V6"
+      stroke={color}
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <rect
+      x="3.5"
+      y="6"
+      width="17"
+      height="15"
+      rx="4"
+      stroke={color}
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M3.5 11.5H9C9.5 11.5 10 12 10 12.5V13C10 14.1 10.9 15 12 15C13.1 15 14 14.1 14 13V12.5C14 12 14.5 11.5 15 11.5H20.5"
+      stroke={color}
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+const MessagesNavIcon = ({ size = 20, color = 'currentColor' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <path
+      d="M8.5 19H16C19 19 21 17.5 21 14V8.5C21 5 19 3.5 16 3.5H8C5 3.5 3 5 3 8.5V16C3 17.7 4 19 5.8 19.5"
+      stroke={color}
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M3.2 16.5L3 20C3 20.6 3.5 21 4.1 20.8L7.5 19.5"
+      stroke={color}
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <circle cx="8" cy="11.5" r="1" fill={color} />
+    <circle cx="12" cy="11.5" r="1" fill={color} />
+    <circle cx="16" cy="11.5" r="1" fill={color} />
+  </svg>
+);
+
+const CalendarNavIcon = ({ size = 20, color = 'currentColor' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <rect
+      x="3.5"
+      y="5"
+      width="17"
+      height="16"
+      rx="4.5"
+      stroke={color}
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M8 2.5V6M16 2.5V6"
+      stroke={color}
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M3.5 9.5H20.5"
+      stroke={color}
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <rect x="7.5" y="12.5" width="1.8" height="1.8" rx="0.5" fill={color} />
+    <rect x="11.1" y="12.5" width="1.8" height="1.8" rx="0.5" fill={color} />
+    <rect x="14.7" y="12.5" width="1.8" height="1.8" rx="0.5" fill={color} />
+    <rect x="7.5" y="16" width="1.8" height="1.8" rx="0.5" fill={color} />
+    <rect x="11.1" y="16" width="1.8" height="1.8" rx="0.5" fill={color} />
+    <rect x="14.7" y="16" width="1.8" height="1.8" rx="0.5" fill={color} />
+  </svg>
+);
+
+const ArchiveNavIcon = ({ size = 20, color = 'currentColor' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <path
+      d="M4 5.5C4 4.4 4.9 3.5 6 3.5H18C19.1 3.5 20 4.4 20 5.5V9C20 10.1 19.1 11 18 11H6C4.9 11 4 10.1 4 9V5.5Z"
+      stroke={color}
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M4.5 11V17.5C4.5 19.4 6.1 21 8 21H16C17.9 21 19.5 19.4 19.5 17.5V11"
+      stroke={color}
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M10 14H14"
+      stroke={color}
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+const AnalyticsNavIcon = ({ size = 20, color = 'currentColor' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <circle
+      cx="12"
+      cy="12"
+      r="9"
+      stroke={color}
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M8.5 15.5V12.5M12 15.5V9M15.5 15.5V11"
+      stroke={color}
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+const AccountNavIcon = ({ size = 20, color = 'currentColor' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <circle
+      cx="12"
+      cy="12"
+      r="9"
+      stroke={color}
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <circle
+      cx="12"
+      cy="12"
+      r="3.2"
+      stroke={color}
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <circle cx="12" cy="12" r="1" fill={color} />
+  </svg>
+);
+
+const SettingsNavIcon = ({ size = 20, color = 'currentColor' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <path
+      d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z"
+      stroke={color}
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M12 3V5.5M12 18.5V21M3 12H5.5M18.5 12H21M5.6 5.6L7.4 7.4M16.6 16.6L18.4 18.4M5.6 18.4L7.4 16.6M16.6 7.4L18.4 5.6"
+      stroke={color}
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+// ── SCREEN 1: Hohmann Transfer Particle Swarm (Intro) ─────────────────────
+const HohmannParticleSwarm = () => {
+  const meshRef = useRef();
+  const count = 18000;
+  const dummy = useMemo(() => new THREE.Object3D(), []);
+  const target = useMemo(() => new THREE.Vector3(), []);
+  const color = useMemo(() => new THREE.Color(), []);
+
+  const positions = useMemo(() => {
+    const pos = [];
+    for (let i = 0; i < count; i++) {
+      pos.push(new THREE.Vector3((Math.random() - 0.5) * 100, (Math.random() - 0.5) * 100, (Math.random() - 0.5) * 100));
+    }
+    return pos;
+  }, [count]);
+
+  const material = useMemo(() => new THREE.MeshBasicMaterial({ color: 0xffffff }), []);
+  const geometry = useMemo(() => {
+    const geo = new THREE.TetrahedronGeometry(0.24).clone();
+    const W = Math.ceil(Math.sqrt(count));
+    const H = W;
+    const references = new Float32Array(count * 2);
+    for (let i = 0; i < count; i++) {
+      references[i * 2] = ((i % W) + 0.5) / W;
+      references[i * 2 + 1] = (Math.floor(i / W) + 0.5) / H;
+    }
+    geo.setAttribute('reference', new THREE.InstancedBufferAttribute(references, 2));
+    return geo;
+  }, [count]);
+
+  const orbitScale = 20.0;
+  const transferEccentricity = 0.21;
+  const shipSpeed = 1.0;
+  const rEarth = 10.0 * orbitScale;
+  const rMars = 15.2 * orbitScale;
+  const a = (rEarth + rMars) / 2.0;
+  const e = transferEccentricity;
+  const b = a * Math.sqrt(Math.abs(1.0 - e * e));
+
+  const p1 = count * 0.1;
+  const p2 = count * 0.3;
+  const p3 = count * 0.5;
+  const p4 = count * 0.8;
+
+  useFrame((state) => {
+    if (!meshRef.current) return;
+    const time = state.clock.getElapsedTime();
+    const E_ship = (time * shipSpeed) % (Math.PI * 2.0);
+    const cx = a * Math.cos(E_ship) - a * e;
+    const cz = b * Math.sin(E_ship);
+
+    for (let i = 0; i < count; i++) {
+      if (i < p1) {
+        const hash1 = (i * 0.12345) % 1.0;
+        const phi = Math.acos(1.0 - 2.0 * ((i * 0.345) % 1.0));
+        const theta = ((i * 0.678) % 1.0) * Math.PI * 2.0;
+        const r = 2.0 * orbitScale * hash1;
+        target.set(r * Math.sin(phi) * Math.cos(theta), r * Math.sin(phi) * Math.sin(theta), r * Math.cos(phi));
+        color.setHSL(0.1 + hash1 * 0.05, 1.0, 0.5 + hash1 * 0.5);
+      } else if (i < p2) {
+        const angle = ((i - p1) / (p2 - p1)) * Math.PI * 2.0;
+        target.set(Math.cos(angle) * rEarth, 0.0, Math.sin(angle) * rEarth);
+        color.setHSL(0.6, 0.8, 0.5);
+      } else if (i < p3) {
+        const angle = ((i - p2) / (p3 - p2)) * Math.PI * 2.0;
+        target.set(Math.cos(angle) * rMars, 0.0, Math.sin(angle) * rMars);
+        color.setHSL(0.05, 0.9, 0.5);
+      } else if (i < p4) {
+        const E = ((i - p3) / (p4 - p3)) * Math.PI * 2.0;
+        target.set(a * Math.cos(E) - a * e, 0.0, b * Math.sin(E));
+        color.setHSL(0.3, 0.8, 0.3);
+      } else {
+        const idx = i - p4;
+        const hash = (idx * 0.54321) % 1.0;
+        const spread = 0.5 * orbitScale * hash;
+        const phi = Math.acos(1.0 - 2.0 * ((idx * 0.111) % 1.0));
+        const theta = ((idx * 0.222) % 1.0) * Math.PI * 2.0;
+        target.set(cx + spread * Math.sin(phi) * Math.cos(theta), spread * Math.sin(phi) * Math.sin(theta), cz + spread * Math.cos(phi));
+        color.setHSL(0.15, 1.0, 0.8 + hash * 0.2);
+      }
+      positions[i].lerp(target, 0.1);
+      dummy.position.copy(positions[i]);
+      dummy.updateMatrix();
+      meshRef.current.setMatrixAt(i, dummy.matrix);
+      meshRef.current.setColorAt(i, color);
+    }
+    meshRef.current.instanceMatrix.needsUpdate = true;
+    if (meshRef.current.instanceColor) meshRef.current.instanceColor.needsUpdate = true;
+  });
+
+  return <instancedMesh ref={meshRef} args={[geometry, material, count]} />;
+};
+
+// ── SCREEN 2: Astrophage Petrova Line Particle Swarm (Login Background) ──
+const PetrovaParticleSwarm = () => {
+  const meshRef = useRef();
+  const count = 20000;
+  const speedMult = 1.2;
+  const dummy = useMemo(() => new THREE.Object3D(), []);
+  const target = useMemo(() => new THREE.Vector3(), []);
+  const color = useMemo(() => new THREE.Color(), []);
+
+  const positions = useMemo(() => {
+    const pos = [];
+    for (let i = 0; i < count; i++) {
+      pos.push(new THREE.Vector3((Math.random() - 0.5) * 100, (Math.random() - 0.5) * 100, (Math.random() - 0.5) * 100));
+    }
+    return pos;
+  }, [count]);
+
+  const material = useMemo(() => new THREE.MeshBasicMaterial({ color: 0xffffff }), []);
+  const geometry = useMemo(() => {
+    const geo = new THREE.TetrahedronGeometry(0.25).clone();
+    const W = Math.ceil(Math.sqrt(count));
+    const H = W;
+    const references = new Float32Array(count * 2);
+    for (let i = 0; i < count; i++) {
+      references[i * 2] = ((i % W) + 0.5) / W;
+      references[i * 2 + 1] = (Math.floor(i / W) + 0.5) / H;
+    }
+    geo.setAttribute('reference', new THREE.InstancedBufferAttribute(references, 2));
+    return geo;
+  }, [count]);
+
+  const orbitRadius = 220.0;
+  const lineDensity = 2.5;
+  const speed = 1.2;
+  const chaos = 2.0;
+
+  useFrame((state) => {
+    if (!meshRef.current) return;
+    const time = state.clock.getElapsedTime() * speedMult;
+    const t = time * speed;
+    const sunX = 0.0, sunY = 0.0, sunZ = 0.0, venusX = orbitRadius;
+
+    for (let i = 0; i < count; i++) {
+      const u = i / count;
+      const phase = (u + t * 0.05) % 1.0;
+      const p = phase < 0.5 ? phase * 2.0 : (phase - 0.5) * 2.0;
+      const dir = phase < 0.5 ? 1.0 : -1.0;
+      const baseX = sunX + (venusX - sunX) * p;
+      const angle = u * 6.28318530718 * lineDensity;
+      const radius = 2.0 + 3.0 * Math.sin(u * 50.0 + t);
+      const swirlY = Math.cos(angle + t * dir) * radius;
+      const swirlZ = Math.sin(angle + t * dir) * radius;
+      const n = Math.sin((baseX) * 0.01 + t * 3.0) * chaos;
+      target.set(baseX + n, swirlY, swirlZ);
+
+      const heat = 1.0 - p;
+      const hue = 0.1 + 0.6 * (1.0 - heat) + 0.1 * Math.sin(t + u * 10.0);
+      const light = 0.5 + 0.3 * heat;
+      color.setHSL(hue % 1.0, 1.0, light);
+
+      positions[i].lerp(target, 0.1);
+      dummy.position.copy(positions[i]);
+      dummy.updateMatrix();
+      meshRef.current.setMatrixAt(i, dummy.matrix);
+      meshRef.current.setColorAt(i, color);
+    }
+    meshRef.current.instanceMatrix.needsUpdate = true;
+    if (meshRef.current.instanceColor) meshRef.current.instanceColor.needsUpdate = true;
+  });
+
+  return <instancedMesh ref={meshRef} args={[geometry, material, count]} />;
+};
+
+class AstronautErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback || null;
+    }
+    return this.props.children;
+  }
+}
+
+const ExternalGLTFAstronaut = ({ onSetAction }) => {
+  const { scene, animations } = useGLTF('/animated_astronaut_in_space_suit_loop/scene.gltf');
+  const modelRef = useRef();
+  const clone = useMemo(() => {
+    const c = SkeletonUtils.clone(scene);
+    c.traverse((child) => {
+      if (child.isMesh && child.material) {
+        child.material.toneMapped = true;
+        if (child.material.name === 'material1') {
+          child.material.roughness = 0.15;
+          child.material.metalness = 0.85;
+        } else {
+          child.material.roughness = 0.65;
+          child.material.metalness = 0.15;
+        }
+      }
+    });
+    return c;
+  }, [scene]);
+
+  const { actions, names } = useAnimations(animations, modelRef);
+
+  useEffect(() => {
+    if (actions && names.length > 0) {
+      const act = actions[names[0]];
+      if (act) {
+        act.reset().fadeIn(0.5).play();
+        act.timeScale = 0.65;
+        if (onSetAction) onSetAction(act);
+      }
+    }
+    return () => {
+      if (onSetAction) onSetAction(null);
+    };
+  }, [actions, names, onSetAction]);
+
+  return <primitive ref={modelRef} object={clone} />;
+};
+
+// Detailed Articulated 3D Astronaut rendered when scene.bin is absent from repo
+const ProceduralAstronautModel = ({ isHovered }) => {
+  const rightShoulderRef = useRef();
+  const rightElbowRef = useRef();
+  const leftShoulderRef = useRef();
+  const headRef = useRef();
+  const leftLegRef = useRef();
+  const rightLegRef = useRef();
+
+  const [suitTex, visorTex] = useMemo(() => {
+    const loader = new THREE.TextureLoader();
+    const s = loader.load('/animated_astronaut_in_space_suit_loop/textures/material0_baseColor.png');
+    s.colorSpace = THREE.SRGBColorSpace;
+    const v = loader.load('/animated_astronaut_in_space_suit_loop/textures/material1_baseColor.png');
+    v.colorSpace = THREE.SRGBColorSpace;
+    return [s, v];
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      suitTex?.dispose();
+      visorTex?.dispose();
+    };
+  }, [suitTex, visorTex]);
+
+  useFrame((state) => {
+    const t = state.clock.getElapsedTime();
+    const speed = isHovered ? 2.1 : 1.0;
+
+    // Gentle waving right arm + subtle zero-G counter balance
+    if (rightShoulderRef.current) {
+      rightShoulderRef.current.rotation.z = 2.15 + Math.sin(t * 2.2 * speed) * 0.28;
+      rightShoulderRef.current.rotation.x = -0.25 + Math.cos(t * 1.4) * 0.08;
+    }
+    if (rightElbowRef.current) {
+      rightElbowRef.current.rotation.z = 0.55 + Math.sin(t * 3.0 * speed + 0.5) * 0.26;
+    }
+    if (leftShoulderRef.current) {
+      leftShoulderRef.current.rotation.z = -0.22 + Math.sin(t * 1.1) * 0.06;
+      leftShoulderRef.current.rotation.x = 0.12 + Math.cos(t * 1.3) * 0.07;
+    }
+    if (headRef.current) {
+      headRef.current.rotation.y = Math.sin(t * 0.8) * 0.12;
+      headRef.current.rotation.x = Math.sin(t * 1.1) * 0.05;
+    }
+    if (leftLegRef.current && rightLegRef.current) {
+      leftLegRef.current.rotation.x = Math.sin(t * 1.2) * 0.06;
+      rightLegRef.current.rotation.x = -Math.sin(t * 1.2) * 0.06;
+    }
+  });
+
+  return (
+    <group>
+      {/* Torso & Chest Assembly */}
+      <mesh position={[0, 1.04, 0]}>
+        <capsuleGeometry args={[0.24, 0.36, 12, 24]} />
+        <meshStandardMaterial color="#e8edf5" map={suitTex} roughness={0.55} metalness={0.18} />
+      </mesh>
+
+      {/* Waist Belt / Gimbal Ring */}
+      <mesh position={[0, 0.77, 0]}>
+        <cylinderGeometry args={[0.24, 0.23, 0.1, 24]} />
+        <meshStandardMaterial color="#1f2c40" roughness={0.45} metalness={0.55} />
+      </mesh>
+
+      {/* Chest Telemetry Display Control Module (DCM) */}
+      <mesh position={[0, 1.08, 0.23]}>
+        <boxGeometry args={[0.24, 0.2, 0.1]} />
+        <meshStandardMaterial color="#cad4e2" roughness={0.4} metalness={0.45} />
+      </mesh>
+      <mesh position={[-0.055, 1.11, 0.285]}>
+        <boxGeometry args={[0.075, 0.055, 0.015]} />
+        <meshBasicMaterial color={isHovered ? '#00ffff' : '#38bdf8'} />
+      </mesh>
+      <mesh position={[0.055, 1.11, 0.285]} rotation={[Math.PI / 2, 0, 0]}>
+        <cylinderGeometry args={[0.02, 0.02, 0.015, 16]} />
+        <meshBasicMaterial color="#ff5a5f" />
+      </mesh>
+
+      {/* PLSS Life Support Backpack */}
+      <mesh position={[0, 1.08, -0.25]}>
+        <boxGeometry args={[0.42, 0.54, 0.2]} />
+        <meshStandardMaterial color="#dce4f0" roughness={0.5} metalness={0.25} />
+      </mesh>
+      <mesh position={[0.14, 1.42, -0.28]}>
+        <cylinderGeometry args={[0.012, 0.012, 0.22, 10]} />
+        <meshStandardMaterial color="#94a3b8" metalness={0.8} roughness={0.2} />
+      </mesh>
+      <mesh position={[0.14, 1.54, -0.28]}>
+        <sphereGeometry args={[0.022, 12, 12]} />
+        <meshBasicMaterial color="#00ffcc" />
+      </mesh>
+
+      {/* Helmet & Neck Seal Ring */}
+      <mesh position={[0, 1.36, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        <torusGeometry args={[0.19, 0.038, 14, 28]} />
+        <meshStandardMaterial color="#253652" metalness={0.65} roughness={0.3} />
+      </mesh>
+
+      <group ref={headRef} position={[0, 1.56, 0]}>
+        {/* White Helmet Shell */}
+        <mesh>
+          <sphereGeometry args={[0.255, 32, 32]} />
+          <meshStandardMaterial color="#f1f5f9" roughness={0.35} metalness={0.2} />
+        </mesh>
+        {/* Gold/Obsidian Reflective EVA Visor */}
+        <mesh position={[0, -0.01, 0.075]} scale={[0.92, 0.88, 0.92]}>
+          <sphereGeometry args={[0.225, 32, 32]} />
+          <meshStandardMaterial
+            color="#d49b38"
+            map={visorTex}
+            roughness={0.1}
+            metalness={0.92}
+            emissive="#1a1204"
+            emissiveIntensity={0.45}
+          />
+        </mesh>
+        {/* Visor Oat Yellow HUD Glint */}
+        <mesh position={[-0.08, 0.06, 0.25]}>
+          <sphereGeometry args={[0.025, 12, 12]} />
+          <meshBasicMaterial color="#f6eedb" transparent opacity={0.7} />
+        </mesh>
+        {/* Side Helmet Comms Pods */}
+        <mesh position={[-0.255, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
+          <cylinderGeometry args={[0.065, 0.065, 0.05, 16]} />
+          <meshStandardMaterial color="#334155" metalness={0.55} roughness={0.4} />
+        </mesh>
+        <mesh position={[0.255, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
+          <cylinderGeometry args={[0.065, 0.065, 0.05, 16]} />
+          <meshStandardMaterial color="#334155" metalness={0.55} roughness={0.4} />
+        </mesh>
+      </group>
+
+      {/* Left Arm */}
+      <group ref={leftShoulderRef} position={[-0.29, 1.24, 0]}>
+        <mesh>
+          <sphereGeometry args={[0.095, 16, 16]} />
+          <meshStandardMaterial color="#e2e8f0" roughness={0.5} />
+        </mesh>
+        <mesh position={[-0.04, -0.18, 0.02]} rotation={[0, 0, -0.14]}>
+          <capsuleGeometry args={[0.072, 0.24, 10, 16]} />
+          <meshStandardMaterial color="#e8edf5" map={suitTex} roughness={0.6} />
+        </mesh>
+        <mesh position={[-0.07, -0.4, 0.07]} rotation={[0.25, 0, -0.08]}>
+          <capsuleGeometry args={[0.065, 0.22, 10, 16]} />
+          <meshStandardMaterial color="#dce4f0" roughness={0.55} />
+        </mesh>
+        <mesh position={[-0.08, -0.56, 0.1]}>
+          <sphereGeometry args={[0.068, 14, 14]} />
+          <meshStandardMaterial color="#1e293b" roughness={0.45} metalness={0.4} />
+        </mesh>
+      </group>
+
+      {/* Right Arm (Waving) */}
+      <group ref={rightShoulderRef} position={[0.29, 1.24, 0]}>
+        <mesh>
+          <sphereGeometry args={[0.095, 16, 16]} />
+          <meshStandardMaterial color="#e2e8f0" roughness={0.5} />
+        </mesh>
+        <mesh position={[0.02, -0.17, 0.02]}>
+          <capsuleGeometry args={[0.072, 0.23, 10, 16]} />
+          <meshStandardMaterial color="#e8edf5" map={suitTex} roughness={0.6} />
+        </mesh>
+        <group ref={rightElbowRef} position={[0.02, -0.34, 0.02]}>
+          <mesh position={[0.02, -0.14, 0.04]}>
+            <capsuleGeometry args={[0.064, 0.2, 10, 16]} />
+            <meshStandardMaterial color="#dce4f0" roughness={0.55} />
+          </mesh>
+          <mesh position={[0.03, -0.28, 0.06]}>
+            <sphereGeometry args={[0.068, 14, 14]} />
+            <meshStandardMaterial color="#1e293b" roughness={0.45} metalness={0.4} />
+          </mesh>
+        </group>
+      </group>
+
+      {/* Left Leg & EVA Boot */}
+      <group ref={leftLegRef} position={[-0.125, 0.72, 0]}>
+        <mesh position={[0, -0.18, 0]}>
+          <capsuleGeometry args={[0.092, 0.26, 10, 18]} />
+          <meshStandardMaterial color="#e8edf5" map={suitTex} roughness={0.6} />
+        </mesh>
+        <mesh position={[0, -0.45, -0.01]}>
+          <capsuleGeometry args={[0.084, 0.26, 10, 18]} />
+          <meshStandardMaterial color="#dce4f0" roughness={0.55} />
+        </mesh>
+        <mesh position={[0, -0.64, 0.045]}>
+          <boxGeometry args={[0.14, 0.1, 0.24]} />
+          <meshStandardMaterial color="#1e293b" roughness={0.5} metalness={0.45} />
+        </mesh>
+      </group>
+
+      {/* Right Leg & EVA Boot */}
+      <group ref={rightLegRef} position={[0.125, 0.72, 0]}>
+        <mesh position={[0, -0.18, 0]}>
+          <capsuleGeometry args={[0.092, 0.26, 10, 18]} />
+          <meshStandardMaterial color="#e8edf5" map={suitTex} roughness={0.6} />
+        </mesh>
+        <mesh position={[0, -0.45, -0.01]}>
+          <capsuleGeometry args={[0.084, 0.26, 10, 18]} />
+          <meshStandardMaterial color="#dce4f0" roughness={0.55} />
+        </mesh>
+        <mesh position={[0, -0.64, 0.045]}>
+          <boxGeometry args={[0.14, 0.1, 0.24]} />
+          <meshStandardMaterial color="#1e293b" roughness={0.5} metalness={0.45} />
+        </mesh>
+      </group>
+    </group>
+  );
+};
+
+// ── 3D Astronaut Component with Evasion Physics ───────────────────────────
+const Astronaut = ({ onHover, isHovered, positionSide = 'right' }) => {
+  const group = useRef();
+  const actionRef = useRef(null);
+
+  const enterTimeRef = useRef(null);
+
+  // Dynamic target positioning for smooth planet-style cross-screen transitions
+  const getTargets = (side) => {
+    switch (side) {
+      case 'center':
+      case 'welcome': {
+        const now = performance.now();
+        if (enterTimeRef.current === null) {
+          enterTimeRef.current = now;
+        }
+        const elapsedSec = Math.max(0, (now - enterTimeRef.current) / 1000);
+        const flyProgress = THREE.MathUtils.clamp(elapsedSec / 1.8, 0, 1);
+        const ease = 1 - Math.pow(1 - flyProgress, 3);
+        const dynamicScale = THREE.MathUtils.lerp(5.5, 33.5, ease);
+        const dynamicY = THREE.MathUtils.lerp(-10.0, -26.0, ease);
+        const dynamicZ = THREE.MathUtils.lerp(-55.0, 12.0, ease);
+        return { x: 0.0, y: dynamicY, z: dynamicZ, scale: dynamicScale, facingY: 0.0 };
+      }
+      case 'login-right': {
+        enterTimeRef.current = null;
+        return { x: 12.8, y: -13.0, z: 0.0, scale: 10.2, facingY: -0.22 };
+      }
+      case 'login-left': {
+        enterTimeRef.current = null;
+        return { x: -12.8, y: -13.0, z: 0.0, scale: 10.2, facingY: 0.22 };
+      }
+      case 'dashboard': {
+        enterTimeRef.current = null;
+        return { x: -30.5, y: -15.0, z: 0.0, scale: 13.5, facingY: 0.28 };
+      }
+      default:
+        enterTimeRef.current = null;
+        return { x: 0.0, y: -16.0, z: 0.0, scale: 16.5, facingY: 0.0 };
+    }
+  };
+
+  const initial = getTargets(positionSide);
+  const currentBaseX = useRef(initial.x);
+  const currentBaseY = useRef(initial.y);
+  const currentBaseZ = useRef(initial.z || 0.0);
+  const currentScale = useRef(initial.scale);
+  const currentOffset = useRef(new THREE.Vector3(0, 0, 0));
+  const plane = useMemo(() => new THREE.Plane(new THREE.Vector3(0, 0, 1), 0), []);
+  const mouse3D = useMemo(() => new THREE.Vector3(), []);
+
+  useFrame((state) => {
+    if (!group.current) return;
+    const t = state.clock.getElapsedTime();
+    const { x: targetX, y: targetY, z: targetZ = 0.0, scale: targetScale, facingY: targetFacingY } = getTargets(positionSide);
+
+    currentBaseX.current = THREE.MathUtils.lerp(currentBaseX.current, targetX, 0.05);
+    currentBaseY.current = THREE.MathUtils.lerp(currentBaseY.current, targetY, 0.05);
+    currentBaseZ.current = THREE.MathUtils.lerp(currentBaseZ.current, targetZ, 0.05);
+    currentScale.current = THREE.MathUtils.lerp(currentScale.current, targetScale, 0.05);
+
+    plane.constant = -currentBaseZ.current;
+    state.raycaster.setFromCamera(state.pointer, state.camera);
+    state.raycaster.ray.intersectPlane(plane, mouse3D);
+
+    const astroCenter = new THREE.Vector3(
+      currentBaseX.current + currentOffset.current.x,
+      currentBaseY.current + (currentScale.current * 0.95) + currentOffset.current.y,
+      currentBaseZ.current + currentOffset.current.z
+    );
+
+    const distToMouse = astroCenter.distanceTo(mouse3D);
+    const evadeRadius = positionSide === 'center' ? (currentScale.current * 2.2) : 20.0;
+    const isEscaping = distToMouse < evadeRadius;
+
+    if (onHover) onHover(isEscaping);
+
+    if (actionRef.current) {
+      const targetSpeed = isEscaping ? 2.2 : 0.65;
+      actionRef.current.timeScale = THREE.MathUtils.lerp(actionRef.current.timeScale, targetSpeed, 0.08);
+    }
+
+    const targetOffset = new THREE.Vector3(0, 0, 0);
+
+    if (isEscaping && positionSide === 'center') {
+      const repelDir = astroCenter.clone().sub(mouse3D).normalize();
+      const forceRatio = (evadeRadius - distToMouse) / evadeRadius;
+      const force = Math.pow(forceRatio, 1.2) * 24.0;
+      targetOffset.x = repelDir.x * force * 1.1;
+      targetOffset.y = repelDir.y * force * 0.8;
+      targetOffset.z = -force * 0.85;
+    }
+
+    targetOffset.y += Math.sin(t * 1.5) * 1.6;
+    targetOffset.x += Math.cos(t * 0.9) * 0.9;
+    currentOffset.current.lerp(targetOffset, 0.09);
+
+    group.current.position.set(
+      currentBaseX.current + currentOffset.current.x,
+      currentBaseY.current + currentOffset.current.y,
+      currentBaseZ.current + currentOffset.current.z
+    );
+    group.current.scale.setScalar(currentScale.current);
+
+    let targetRotY = targetFacingY + Math.sin(t * 0.5) * 0.12;
+    let targetRotX = Math.sin(t * 0.7) * 0.05;
+    let targetRotZ = Math.sin(t * 0.8) * 0.04;
+
+    if (isEscaping && positionSide === 'center') {
+      const dx = astroCenter.x - mouse3D.x;
+      const dy = astroCenter.y - mouse3D.y;
+      targetRotZ = THREE.MathUtils.clamp(-dx * 0.02, -0.4, 0.4);
+      targetRotX = THREE.MathUtils.clamp(-0.25 - dy * 0.015, -0.45, 0.08);
+      targetRotY += THREE.MathUtils.clamp(dx * 0.015, -0.35, 0.35);
+    }
+
+    group.current.rotation.y = THREE.MathUtils.lerp(group.current.rotation.y, targetRotY, 0.08);
+    group.current.rotation.x = THREE.MathUtils.lerp(group.current.rotation.x, targetRotX, 0.08);
+    group.current.rotation.z = THREE.MathUtils.lerp(group.current.rotation.z, targetRotZ, 0.08);
+  });
+
+  return (
+    <group ref={group} style={{ cursor: 'pointer' }}>
+      <AstronautErrorBoundary fallback={<ProceduralAstronautModel isHovered={isHovered} />}>
+        <Suspense fallback={<ProceduralAstronautModel isHovered={isHovered} />}>
+          <ExternalGLTFAstronaut onSetAction={(act) => { actionRef.current = act; }} />
+        </Suspense>
+      </AstronautErrorBoundary>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.05, 0]}>
+        <ringGeometry args={[1.1, 1.45, 64]} />
+        <meshBasicMaterial color={isHovered ? '#f6eedb' : '#ead9b2'} transparent opacity={isHovered ? 0.9 : 0.35} side={THREE.DoubleSide} />
+      </mesh>
+    </group>
+  );
+};
+
+useGLTF.preload('/animated_astronaut_in_space_suit_loop/scene.gltf');
+
+// ── MAIN APPLICATION COMPONENT ────────────────────────────────────────────
+export default function InovavPortal({
+  initialScreen = 'intro',
+  initialShowBodyScan = false,
+  onBackToOverview,
+  onNavigateView,
+  activeAstronaut: propActiveAstronaut,
+  onAstronautChange,
+}) {
+  const [screen, setScreen] = useState(initialScreen); // 'intro' | 'astronaut' | 'login' | 'dashboard'
+  const [loginMode, setLoginMode] = useState('signin'); // 'signin' | 'signup'
+  const [countdown, setCountdown] = useState(8);
+  const [activeTab, setActiveTab] = useState('home');
+  const [showBodyScanModal, setShowBodyScanModal] = useState(initialShowBodyScan);
+  const [showJarvisHud, setShowJarvisHud] = useState(false);
+  const [showMissionHUD, setShowMissionHUD] = useState(false);
+
+  useEffect(() => {
+    if (initialScreen) {
+      setScreen(initialScreen);
+    }
+  }, [initialScreen]);
+
+  useEffect(() => {
+    if (typeof initialShowBodyScan === 'boolean') {
+      setShowBodyScanModal(initialShowBodyScan);
+    }
+  }, [initialShowBodyScan]);
+
+  // Astronaut DB & Active User
+  const [astronauts, setAstronauts] = useState(getStoredAstronauts);
+  const [activeAstronaut, setActiveAstronaut] = useState(() => {
+    const list = getStoredAstronauts();
+    return list[0] || DEFAULT_ASTRONAUT;
+  });
+
+  const [isAstroHovered, setIsAstroHovered] = useState(false);
+
+  // Visor 3D interactive tilt & angle
+  const [visorMouseX, setVisorMouseX] = useState(0);
+  const [visorMouseY, setVisorMouseY] = useState(0);
+  const [show3DFaceStudio, setShow3DFaceStudio] = useState(false);
+  const [suitTelemetryView, setSuitTelemetryView] = useState('metrics'); // 'metrics' | 'auth-log'
+  const [faceAuthLogs, setFaceAuthLogs] = useState(getFaceAuthLogs);
+
+  // Real-time Heart Rate Telemetry Buffer for Suit Telemetry Line Chart
+  const [heartRateHistory, setHeartRateHistory] = useState(() => {
+    const now = Date.now();
+    return Array.from({ length: 24 }, (_, idx) => {
+      const ts = new Date(now - (23 - idx) * 1000);
+      const time = ts.toISOString().slice(11, 19);
+      const wave = Math.sin(idx * 0.42) * 3.2 + Math.cos(idx * 0.21) * 1.6;
+      const bpm = Math.round(73 + wave);
+      return { time, bpm };
+    });
+  });
+
+  const liveHeartRate = heartRateHistory[heartRateHistory.length - 1]?.bpm ?? 74;
+
+  // Dynamic 3D model positioning for continuous planetary-style transition
+  const astroPositionSide = useMemo(() => {
+    if (screen === 'astronaut') return 'center';
+    if (screen === 'login') return loginMode === 'signup' ? 'login-left' : 'login-right';
+    return 'center';
+  }, [screen, loginMode]);
+
+  // Sync astronauts database with Google Cloud / Firebase Firestore
+  useEffect(() => {
+    getAstronautsFromFirebase().then((cloudList) => {
+      if (cloudList && cloudList.length > 0) {
+        setAstronauts(cloudList);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(cloudList));
+        if (cloudList[0]) setActiveAstronaut(cloudList[0]);
+      }
+    });
+  }, []);
+
+  // 8-second auto intro transition to welcome astronaut page
+  useEffect(() => {
+    if (screen !== 'intro') return;
+    const timer = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          setScreen('astronaut');
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [screen]);
+
+  // Real-time 1 Hz heart rate telemetry stream while Suit Telemetry dashboard is active
+  useEffect(() => {
+    if (screen !== 'dashboard') return;
+    let tick = 24;
+    const hrInterval = setInterval(() => {
+      tick += 1;
+      const ts = new Date();
+      const time = ts.toISOString().slice(11, 19);
+      setHeartRateHistory((prev) => {
+        const lastBpm = prev[prev.length - 1]?.bpm ?? 74;
+        const drift = Math.sin(tick * 0.38) * 1.9 + Math.cos(tick * 0.19) * 1.1 + (Math.random() - 0.5) * 1.8;
+        const nextBpm = Math.max(64, Math.min(86, Math.round(lastBpm * 0.55 + (74 + drift) * 0.45)));
+        return [...prev.slice(-23), { time, bpm: nextBpm }];
+      });
+    }, 1000);
+    return () => clearInterval(hrInterval);
+  }, [screen]);
+
+  const handleSaveFaceData = async (snaps) => {
+    const mergedSnaps = {
+      ...(activeAstronaut.faceSnaps || {}),
+      ...snaps,
+    };
+    const faceDescriptors = await buildAstronautFaceDescriptors(mergedSnaps);
+    const updatedAstro = {
+      ...activeAstronaut,
+      faceSnaps: mergedSnaps,
+      faceDescriptors,
+    };
+    setActiveAstronaut(updatedAstro);
+    const updatedList = saveAstronautToDb(updatedAstro);
+    setAstronauts(updatedList);
+  };
+
+  // Determine current active face snap (center, left, right) based on mouse hover across visor
+  const currentVisorFaceSnap = useMemo(() => {
+    const snaps = activeAstronaut.faceSnaps || {};
+    if (visorMouseX < -0.2 && snaps.left) return snaps.left;
+    if (visorMouseX > 0.2 && snaps.right) return snaps.right;
+    return snaps.center || snaps.left || snaps.right || null;
+  }, [visorMouseX, activeAstronaut]);
+
+  return (
+    <div style={{ position: 'relative', width: '100%', minHeight: '100vh', height: '100vh', background: '#06132b', overflow: 'hidden' }}>
+
+      {/* Floating Back Navigation Bar */}
+      {onBackToOverview && (
+        <div style={{ position: 'fixed', top: '16px', left: '16px', zIndex: 99999, display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <button
+            type="button"
+            onClick={onBackToOverview}
+            className="tech-btn"
+            style={{
+              padding: '8px 18px',
+              fontSize: '0.72rem',
+              letterSpacing: '0.14em',
+              background: 'rgba(6, 19, 43, 0.92)',
+              border: '1px solid #f6eedb',
+              color: '#f6eedb',
+              backdropFilter: 'blur(12px)',
+              boxShadow: '0 4px 24px rgba(0,0,0,0.6)',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+            }}
+          >
+            <span>←</span>
+            <span>RETURN TO OVERVIEW</span>
+          </button>
+        </div>
+      )}
+
+      {/* ── 1. STARTING SCREEN: HOHMANN TRANSFER SIMULATION & RIDGE 8S COUNTDOWN ── */}
+      {screen === 'intro' && (
+        <div className="screen-fade" style={{ position: 'absolute', inset: 0, zIndex: 10 }}>
+          <Canvas camera={{ position: [0, 0, 100], fov: 60 }} style={{ position: 'absolute', inset: 0 }}>
+            <HohmannParticleSwarm />
+            <OrbitControls autoRotate={true} autoRotateSpeed={0.8} enableDamping={true} />
+            <Effects disableGamma>
+              <unrealBloomPass threshold={0.25} strength={0.5} radius={0.3} />
+              <shaderPass
+                args={[
+                  {
+                    uniforms: { tDiffuse: { value: null }, bgColor: { value: new THREE.Color('#06132b') } },
+                    vertexShader: `varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+                    fragmentShader: `uniform sampler2D tDiffuse; uniform vec3 bgColor; varying vec2 vUv; void main() { vec4 texel = texture2D(tDiffuse, vUv); float alpha = clamp(max(texel.r, max(texel.g, texel.b)), 0.0, 1.0); gl_FragColor = vec4(texel.rgb + bgColor * (1.0 - alpha), 1.0); }`,
+                  },
+                ]}
+              />
+            </Effects>
+          </Canvas>
+
+          {/* RIDGE Branding & 8s Countdown in the Middle */}
+          <div
+            style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              zIndex: 10,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              textAlign: 'center',
+              userSelect: 'none',
+              pointerEvents: 'none',
+              width: '90%',
+              maxWidth: '680px',
+            }}
+          >
+            <span className="font-mono" style={{ fontSize: '0.8rem', letterSpacing: '0.3em', color: '#ead9b2', marginBottom: '12px' }}>
+              // AEROSPACE BIO-TELEMETRY & SUIT PORTAL
+            </span>
+            <h1 className="ridge-title font-tech" style={{ margin: 0, fontSize: 'clamp(2.8rem, 6.5vw, 5.2rem)', fontWeight: 600, color: '#f6eedb', textIndent: '0.4em', lineHeight: 1 }}>
+              RIDGE
+            </h1>
+            <p style={{ margin: '18px 0 28px', fontSize: '0.92rem', letterSpacing: '0.28em', color: 'rgba(246, 238, 219, 0.72)', textTransform: 'uppercase' }}>
+              ASTRONAUT HEALTH MONITORING & 3D VITALS SYSTEM
+            </p>
+
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '14px', pointerEvents: 'auto', width: '100%' }}>
+              <div className="font-mono" style={{ fontSize: '0.85rem', color: 'rgba(234, 217, 178, 0.9)', letterSpacing: '0.15em' }}>
+                INITIALIZING IN <span style={{ fontWeight: 'bold', color: '#f6eedb' }}>{countdown}S</span>
+              </div>
+              <div style={{ width: '220px', height: '3px', background: 'rgba(246, 238, 219, 0.16)', borderRadius: '2px', overflow: 'hidden' }}>
+                <div style={{ width: `${((8 - countdown) / 8) * 100}%`, height: '100%', background: 'linear-gradient(90deg, #ead9b2, #f6eedb)', transition: 'width 1s linear' }} />
+              </div>
+              
+              <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '12px', marginTop: '12px' }}>
+                <button
+                  type="button"
+                  onClick={() => setScreen('astronaut')}
+                  className="tech-btn"
+                  style={{ cursor: 'pointer' }}
+                >
+                  ENTER CREW PORTAL →
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setLoginMode('signin');
+                    setScreen('login');
+                  }}
+                  className="tech-btn"
+                  style={{ cursor: 'pointer', background: 'rgba(10, 28, 63, 0.85)', color: '#f6eedb', border: '1px solid rgba(246, 238, 219, 0.4)' }}
+                >
+                  CREW LOGIN & BIOMETRICS 👤
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowBodyScanModal(true)}
+                  className="tech-btn"
+                  style={{ cursor: 'pointer', background: 'rgba(234, 217, 178, 0.15)', color: '#f6eedb', border: '1px solid #ead9b2' }}
+                >
+                  3D VITALS OBSERVATORY 🧬
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── PERSISTENT 3D ASTRONAUT & PARTICLE SWARM SCENE (WELCOME & LOGIN SCREENS ONLY) ── */}
+      {(screen === 'astronaut' || screen === 'login') && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 1,
+            pointerEvents: screen === 'astronaut' ? 'auto' : 'none',
+          }}
+        >
+          <Canvas camera={{ position: [0, 0, 100], fov: 60 }} style={{ width: '100%', height: '100%' }}>
+            <ambientLight intensity={0.95} />
+            <directionalLight position={[15, 25, 30]} intensity={1.6} color="#f6eedb" />
+            <directionalLight position={[-25, 10, 20]} intensity={1.0} color="#9fb8de" />
+            <pointLight position={[0, 10, 30]} intensity={1.6} color="#ead9b2" distance={80} />
+            <PetrovaParticleSwarm />
+            <Suspense fallback={null}>
+              <Astronaut
+                onHover={setIsAstroHovered}
+                isHovered={isAstroHovered}
+                positionSide={astroPositionSide}
+              />
+            </Suspense>
+            <OrbitControls autoRotate={false} enableDamping={true} enabled={false} />
+            <Effects disableGamma>
+              <unrealBloomPass threshold={0.85} strength={0.4} radius={0.2} />
+              <shaderPass
+                args={[
+                  {
+                    uniforms: { tDiffuse: { value: null }, bgColor: { value: new THREE.Color('#06132b') } },
+                    vertexShader: `varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+                    fragmentShader: `uniform sampler2D tDiffuse; uniform vec3 bgColor; varying vec2 vUv; void main() { vec4 texel = texture2D(tDiffuse, vUv); float alpha = clamp(max(texel.r, max(texel.g, texel.b)), 0.0, 1.0); gl_FragColor = vec4(texel.rgb + bgColor * (1.0 - alpha), 1.0); }`,
+                  },
+                ]}
+              />
+            </Effects>
+          </Canvas>
+        </div>
+      )}
+
+      {/* ── 2. WELCOME PAGE: ANIMATED WELCOME + 3D ASTRONAUT + LOGIN BUTTON ── */}
+      {screen === 'astronaut' && (
+        <div className="screen-fade" style={{ position: 'absolute', inset: 0, zIndex: 10, pointerEvents: 'none' }}>
+          {/* Animated Welcome Heading */}
+          <div
+            style={{
+              position: 'absolute',
+              top: '56px',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              zIndex: 10,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              textAlign: 'center',
+              userSelect: 'none',
+              pointerEvents: 'none',
+            }}
+          >
+            <h1
+              className="welcome-title font-tech"
+              style={{
+                margin: 0,
+                fontSize: 'clamp(2.8rem, 6vw, 4.8rem)',
+                fontWeight: 600,
+                color: '#f6eedb',
+                textIndent: '0.34em',
+                lineHeight: 1.05,
+                textTransform: 'uppercase',
+              }}
+            >
+              Welcome
+            </h1>
+          </div>
+
+          {/* Single Login Button */}
+          <div
+            style={{
+              position: 'absolute',
+              bottom: '56px',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              zIndex: 10,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              pointerEvents: 'auto',
+            }}
+          >
+            <button
+              type="button"
+              onClick={() => {
+                setLoginMode('signin');
+                setScreen('login');
+              }}
+              className="tech-btn"
+              style={{
+                padding: '15px 52px',
+                fontSize: '0.92rem',
+                letterSpacing: '0.26em',
+                boxShadow: '0 0 28px rgba(246, 238, 219, 0.38)',
+                cursor: 'pointer',
+              }}
+            >
+              Login
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ── 3. MODERN SLIDING DUAL-PANEL LOGIN (EXACT MATCH TO login ui_files WITH CONTINUOUS 3D TRANSITION) ── */}
+      {screen === 'login' && (
+        <ModernSlidingLogin
+          activeAstronaut={activeAstronaut}
+          astronauts={astronauts}
+          loginMode={loginMode}
+          onToggleMode={(mode) => setLoginMode(mode)}
+          onLoginSuccess={(astro) => {
+            setActiveAstronaut(astro);
+            if (onAstronautChange) onAstronautChange(astro);
+            setFaceAuthLogs(getFaceAuthLogs());
+            setScreen('dashboard');
+          }}
+          onSignupSuccess={(newAstro) => {
+            saveAstronautToDb(newAstro);
+            setAstronauts(getStoredAstronauts());
+            setActiveAstronaut(newAstro);
+            if (onAstronautChange) onAstronautChange(newAstro);
+            setScreen('dashboard');
+          }}
+          onOpen3DFaceStudio={() => setShow3DFaceStudio(true)}
+          onBackToIntro={() => setScreen('astronaut')}
+        />
+      )}
+
+      {/* ── 4. MAIN ASTRONAUT DASHBOARD (FRAMELESS AESTHETIC & RIGHT SIDEBAR) ── */}
+      {screen === 'dashboard' && (
+        <div
+          className="screen-fade"
+          style={{
+            position: 'absolute',
+            inset: 0,
+            zIndex: 10,
+            display: 'flex',
+            backgroundColor: 'transparent',
+            overflow: 'hidden',
+          }}
+        >
+          {/* ── CLEAN INK BLUE SPACE BACKGROUND ── */}
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              zIndex: 0,
+              backgroundImage: 'radial-gradient(circle at 65% 45%, rgba(14, 40, 89, 0.55) 0%, rgba(6, 19, 43, 0.96) 85%)',
+              pointerEvents: 'none',
+            }}
+          />
+
+          {/* ── LEFT SIDE: /astro.jpg HELMET + 3D SPHERE FACE MESH OVER BLACK VISOR ── */}
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              bottom: 0,
+              width: '50vw',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '24px',
+              overflow: 'hidden',
+              pointerEvents: 'auto',
+              zIndex: 20,
+            }}
+            onMouseMove={(e) => {
+              const rect = e.currentTarget.getBoundingClientRect();
+              const normX = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
+              const normY = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
+              setVisorMouseX(normX);
+              setVisorMouseY(normY);
+            }}
+            onMouseLeave={() => {
+              setVisorMouseX(0);
+              setVisorMouseY(0);
+            }}
+          >
+            {/* Locked 3:2 stage matching astro.jpg (1080x720) so visor mesh aligns accurately at any resolution */}
+            <div
+              style={{
+                position: 'relative',
+                width: '100%',
+                maxWidth: '760px',
+                aspectRatio: '3 / 2',
+                borderRadius: '16px',
+                overflow: 'hidden',
+              }}
+            >
+              <img
+                src="/astro.jpg"
+                alt="RIDGE Suit Helmet Visor"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  display: 'block',
+                  userSelect: 'none',
+                  pointerEvents: 'none',
+                }}
+              />
+
+              {/* Radial fade blending astro.jpg outer dark field into Ink Blue (#06132b) canvas */}
+              <div
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  background:
+                    'radial-gradient(ellipse at 51% 48%, rgba(6,19,43,0) 44%, rgba(6,19,43,0.72) 78%, rgba(6,19,43,1) 100%)',
+                  pointerEvents: 'none',
+                  zIndex: 2,
+                }}
+              />
+
+              {/* 3D Face Sphere Mesh nested cleanly inside the black helmet visor region */}
+              <div
+                style={{
+                  position: 'absolute',
+                  left: '51%',
+                  top: '41.5%',
+                  width: '23.5%',
+                  aspectRatio: '1 / 1.06',
+                  transform: 'translate(-50%, -50%)',
+                  borderRadius: '50% 50% 47% 47%',
+                  overflow: 'hidden',
+                  background:
+                    'radial-gradient(circle at 50% 48%, rgba(10, 28, 63, 0.88) 0%, rgba(6, 19, 43, 0.96) 85%, rgba(4, 12, 28, 0.99) 100%)',
+                  boxShadow:
+                    'inset 0 0 24px rgba(4, 12, 28, 0.95), inset 0 0 14px rgba(246, 238, 219, 0.2)',
+                  zIndex: 5,
+                }}
+              >
+                <ThreeDFaceMesh
+                  faceSnaps={activeAstronaut.faceSnaps}
+                  faceTextureUrl={currentVisorFaceSnap}
+                  mouseX={visorMouseX}
+                  mouseY={visorMouseY}
+                  mode="textured"
+                  style={{ position: 'absolute', inset: 0 }}
+                />
+
+                {/* Subtle glass helmet curvature specular sheen */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    borderRadius: '50% 50% 47% 47%',
+                    pointerEvents: 'none',
+                    background:
+                      'linear-gradient(132deg, rgba(246,238,219,0.16) 0%, rgba(246,238,219,0.03) 34%, transparent 56%, rgba(234,217,178,0.1) 100%)',
+                    boxShadow: 'inset 0 0 18px rgba(4, 12, 28, 0.88)',
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* ── RIGHT/CENTER MAIN DASHBOARD VIEWPORT (SUIT TELEMETRY WITHOUT TOP NAV OR SIDEBAR) ── */}
+          <main
+            className="custom-scroll"
+            style={{
+              position: 'absolute',
+              top: '48px',
+              bottom: 0,
+              left: '50vw',
+              right: '4vw',
+              overflowY: 'auto',
+              padding: '20px 24px 40px 10px',
+              zIndex: 25,
+            }}
+          >
+            {/* TAB 1: HOME // SUIT TELEMETRY */}
+            {activeTab === 'home' && (
+              <div style={{ maxWidth: '560px', marginLeft: 'auto', marginRight: 'auto' }}>
+                {/* RIDGE Brand & Suit Telemetry Sub-View Switcher */}
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    flexWrap: 'wrap',
+                    gap: '10px',
+                    marginBottom: '14px',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#f6eedb', boxShadow: '0 0 10px #ead9b2' }} />
+                    <span className="font-mono" style={{ fontSize: '0.72rem', color: '#ead9b2', letterSpacing: '0.22em', textTransform: 'uppercase' }}>
+                      RIDGE // ALL SYSTEMS NOMINAL
+                    </span>
+                  </div>
+
+                  <div
+                    role="tablist"
+                    aria-label="Suit telemetry views"
+                    style={{
+                      display: 'inline-flex',
+                      gap: '4px',
+                      padding: '3px',
+                      background: 'rgba(10, 28, 63, 0.72)',
+                      border: '1px solid rgba(246, 238, 219, 0.2)',
+                      borderRadius: '6px',
+                    }}
+                  >
+                    <button
+                      type="button"
+                      role="tab"
+                      aria-selected={suitTelemetryView === 'metrics'}
+                      onClick={() => setSuitTelemetryView('metrics')}
+                      className="font-mono"
+                      style={{
+                        padding: '5px 11px',
+                        borderRadius: '4px',
+                        border: 'none',
+                        cursor: 'pointer',
+                        fontSize: '0.66rem',
+                        letterSpacing: '0.12em',
+                        fontWeight: suitTelemetryView === 'metrics' ? 700 : 500,
+                        background: suitTelemetryView === 'metrics' ? '#f6eedb' : 'transparent',
+                        color: suitTelemetryView === 'metrics' ? '#06132b' : '#9fb6da',
+                        transition: 'all 0.15s ease',
+                      }}
+                    >
+                      TELEMETRY
+                    </button>
+                    <button
+                      type="button"
+                      role="tab"
+                      aria-selected={suitTelemetryView === 'auth-log'}
+                      onClick={() => {
+                        setFaceAuthLogs(getFaceAuthLogs());
+                        setSuitTelemetryView('auth-log');
+                      }}
+                      className="font-mono"
+                      style={{
+                        padding: '5px 11px',
+                        borderRadius: '4px',
+                        border: 'none',
+                        cursor: 'pointer',
+                        fontSize: '0.66rem',
+                        letterSpacing: '0.12em',
+                        fontWeight: suitTelemetryView === 'auth-log' ? 700 : 500,
+                        background: suitTelemetryView === 'auth-log' ? '#f6eedb' : 'transparent',
+                        color: suitTelemetryView === 'auth-log' ? '#06132b' : '#9fb6da',
+                        transition: 'all 0.15s ease',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                      }}
+                    >
+                      <span>FACE AUTH LOG</span>
+                      <span
+                        style={{
+                          padding: '1px 5px',
+                          borderRadius: '3px',
+                          fontSize: '0.62rem',
+                          background: suitTelemetryView === 'auth-log' ? 'rgba(6, 19, 43, 0.16)' : 'rgba(246, 238, 219, 0.16)',
+                          color: suitTelemetryView === 'auth-log' ? '#06132b' : '#f6eedb',
+                        }}
+                      >
+                        {faceAuthLogs.length}
+                      </span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Main Heading */}
+                <h1
+                  style={{
+                    fontSize: '2.8rem',
+                    fontWeight: 400,
+                    color: '#f6eedb',
+                    margin: '0 0 6px 0',
+                    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                    letterSpacing: '-0.02em',
+                    lineHeight: 1.15,
+                  }}
+                >
+                  {suitTelemetryView === 'auth-log' ? 'Face auth log' : 'Suit telemetry'}
+                </h1>
+                <div className="font-mono" style={{ fontSize: '0.76rem', color: '#9fb6da', marginBottom: '30px', letterSpacing: '0.08em' }}>
+                  {suitTelemetryView === 'auth-log'
+                    ? 'EVA-04 / Biometric facial verification audit trail'
+                    : 'EVA-04 / Live link established • 0.8 s latency'}
+                </div>
+
+                {suitTelemetryView === 'auth-log' ? (
+                  <FaceAuthLogView
+                    logs={faceAuthLogs}
+                    onClearLogs={() => setFaceAuthLogs(clearFaceAuthLogs())}
+                    onOpenFaceStudio={() => setShow3DFaceStudio(true)}
+                  />
+                ) : (
+                  <>
+                    {/* ── FRAMELESS HAIRLINE TELEMETRY METRICS ───────────── */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
+                      {/* Metric 1: Oxygen Reserve */}
+                      <div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                          <span className="font-mono" style={{ fontSize: '0.74rem', color: '#9fb6da', letterSpacing: '0.18em', textTransform: 'uppercase' }}>
+                            OXYGEN RESERVE
+                          </span>
+                          <span style={{ fontSize: '2rem', fontWeight: 300, color: '#f6eedb', letterSpacing: '-0.02em' }}>
+                            99.4 <span style={{ fontSize: '1.25rem', fontWeight: 300, color: '#9fb6da' }}>%</span>
+                          </span>
+                        </div>
+                        <div className="hairline-bar-track">
+                          <div className="hairline-bar-fill" style={{ width: '99.4%' }} />
+                        </div>
+                      </div>
+
+                      {/* Metric 2: Suit Pressure */}
+                      <div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                          <span className="font-mono" style={{ fontSize: '0.74rem', color: '#9fb6da', letterSpacing: '0.18em', textTransform: 'uppercase' }}>
+                            SUIT PRESSURE
+                          </span>
+                          <span style={{ fontSize: '2rem', fontWeight: 300, color: '#f6eedb', letterSpacing: '-0.02em' }}>
+                            4.3 <span style={{ fontSize: '1.25rem', fontWeight: 300, color: '#9fb6da' }}>psi</span>
+                          </span>
+                        </div>
+                        <div className="hairline-bar-track">
+                          <div className="hairline-bar-fill" style={{ width: '86%' }} />
+                        </div>
+                      </div>
+
+                      {/* Metric 3: Battery Capacity / Life Support */}
+                      <div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                          <span className="font-mono" style={{ fontSize: '0.74rem', color: '#9fb6da', letterSpacing: '0.18em', textTransform: 'uppercase' }}>
+                            BATTERY CAPACITY
+                          </span>
+                          <span style={{ fontSize: '2rem', fontWeight: 300, color: '#f6eedb', letterSpacing: '-0.02em' }}>
+                            87 <span style={{ fontSize: '1.25rem', fontWeight: 300, color: '#9fb6da' }}>%</span>
+                          </span>
+                        </div>
+                        <div className="hairline-bar-track">
+                          <div className="hairline-bar-fill" style={{ width: '87%' }} />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Micro Stats Inline Row */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '26px', padding: '0 4px' }}>
+                      <div className="font-mono" style={{ fontSize: '0.75rem', color: '#9fb6da', letterSpacing: '0.12em' }}>
+                        HEART RATE <span style={{ color: '#f6eedb', fontWeight: 600 }}>{liveHeartRate} BPM</span>
+                      </div>
+                      <div className="font-mono" style={{ fontSize: '0.75rem', color: '#9fb6da', letterSpacing: '0.12em' }}>
+                        EVA SEAL <span style={{ color: '#f6eedb', fontWeight: 600 }}>100%</span>
+                      </div>
+                      <div className="font-mono" style={{ fontSize: '0.75rem', color: '#9fb6da', letterSpacing: '0.12em' }}>
+                        THERMAL <span style={{ color: '#f6eedb', fontWeight: 600 }}>+21°C</span>
+                      </div>
+                    </div>
+
+                    {/* Real-time Heart Rate Trend Line Chart (Recharts) */}
+                    <HeartRateTelemetryChart data={heartRateHistory} currentBpm={liveHeartRate} />
+
+                    {/* Primary CTA Button: Oat Yellow Accent Bar over Ink Blue */}
+                    <button
+                      type="button"
+                      id="scan-vital-btn"
+                      onClick={() => setShowBodyScanModal(true)}
+                      style={{
+                        position: 'relative',
+                        zIndex: 30,
+                        width: '100%',
+                        padding: '16px 24px',
+                        marginTop: '24px',
+                        marginBottom: '24px',
+                        background: '#f6eedb',
+                        color: '#06132b',
+                        border: 'none',
+                        borderRadius: '4px',
+                        fontWeight: 700,
+                        fontSize: '0.82rem',
+                        letterSpacing: '0.22em',
+                        textTransform: 'uppercase',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '12px',
+                        boxShadow: '0 0 25px rgba(246, 238, 219, 0.35)',
+                        transition: 'all 0.2s ease',
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = '#ead9b2';
+                        e.currentTarget.style.boxShadow = '0 0 35px rgba(246, 238, 219, 0.55)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = '#f6eedb';
+                        e.currentTarget.style.boxShadow = '0 0 25px rgba(246, 238, 219, 0.35)';
+                      }}
+                    >
+                      <span>3D VITAL</span>
+                      <span style={{ fontSize: '1.1rem', lineHeight: 1 }}>→</span>
+                    </button>
+
+                    {/* Mission Status Summary (Clean Unboxed Editorial Typography) */}
+                    <div style={{ borderTop: '1px solid rgba(246, 238, 219, 0.14)', paddingTop: '20px' }}>
+                      <div className="font-mono" style={{ fontSize: '0.72rem', color: '#ead9b2', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: '8px' }}>
+                        CURRENT FLIGHT MISSION STATUS: {activeAstronaut.mission}
+                      </div>
+                      <p style={{ fontSize: '0.84rem', color: '#9fb6da', lineHeight: 1.6, margin: 0 }}>
+                        Active crew member <strong style={{ color: '#f6eedb' }}>{activeAstronaut.name}</strong> is currently designated as <strong style={{ color: '#f6eedb' }}>{activeAstronaut.role}</strong>. Suit biometric telemetry channels 01–16 are transmitting in real-time. All zero-g autonomic reflexes, cardiac outputs, and metabolic oxygen consumption rates match baseline mission parameters.
+                      </p>
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
+
+            {/* TAB 2: PROJECTS */}
+            {activeTab === 'projects' && (
+              <div style={{ maxWidth: '620px', marginLeft: 'auto', marginRight: 'auto' }}>
+                <div className="font-mono" style={{ fontSize: '0.72rem', color: '#ead9b2', letterSpacing: '0.22em', marginBottom: '8px', textTransform: 'uppercase' }}>
+                  RIDGE // EXPEDITION CHECKLISTS
+                </div>
+                <h2 style={{ fontSize: '2.2rem', fontWeight: 400, color: '#f6eedb', margin: '0 0 24px 0' }}>Flight Missions & Tasks</h2>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  {[
+                    { title: 'Project Artemis VII Deep-Space Transfer', status: 'In Transit', progress: '68%', desc: 'Hohmann orbital transfer trajectory between Earth orbital habitat and Mars orbital insertion stage.', color: '#f6eedb' },
+                    { title: 'EVA Spacewalk Delta-4 Checklist', status: 'Scheduled 04:30 UTC', progress: 'Ready', desc: 'Depressurize airlock B, inspect primary photovoltaic array gimbal hinges, replace high-gain microwave antenna coupler.', color: '#ead9b2' },
+                    { title: 'Cryogenic Fuel Boil-Off Countermeasures', status: 'Continuous Active', progress: '98%', desc: 'Active cooling circulation loop monitoring LOX/CH4 storage tanks under direct solar exposure.', color: '#f6eedb' },
+                    { title: 'Autonomous Life Support Bio-Regen', status: 'Active Recycling', progress: '94%', desc: 'Chlorella algae closed-loop carbon dioxide scrubbing and potable water condensation reclaim system.', color: '#ead9b2' },
+                  ].map((p, i) => (
+                    <div key={i} style={{ borderBottom: '1px solid rgba(246,238,219,0.12)', paddingBottom: '16px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                        <span className="font-mono" style={{ fontSize: '0.72rem', color: p.color, letterSpacing: '0.12em' }}>{p.status}</span>
+                        <span className="font-mono" style={{ fontSize: '0.72rem', color: '#f6eedb' }}>{p.progress}</span>
+                      </div>
+                      <h3 style={{ fontSize: '1.05rem', color: '#f6eedb', margin: '0 0 6px 0', fontWeight: 500 }}>{p.title}</h3>
+                      <p style={{ fontSize: '0.82rem', color: '#9fb6da', lineHeight: 1.5, margin: 0 }}>{p.desc}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* TAB 3: MESSAGES */}
+            {activeTab === 'messages' && (
+              <div style={{ maxWidth: '620px', marginLeft: 'auto', marginRight: 'auto' }}>
+                <div className="font-mono" style={{ fontSize: '0.72rem', color: '#ead9b2', letterSpacing: '0.22em', marginBottom: '8px', textTransform: 'uppercase' }}>
+                  RIDGE // ORBITAL RELAYS
+                </div>
+                <h2 style={{ fontSize: '2.2rem', fontWeight: 400, color: '#f6eedb', margin: '0 0 24px 0' }}>Comms & Transmissions</h2>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                  {[
+                    { sender: 'HOUSTON FLIGHT DYNAMICS (CAPCOM)', time: '02:14 UTC', unread: true, subject: 'Telemetry verification confirmed on all 16 biometric channels.', body: 'Alex, telemetry locks look pristine from Johnson Space Center. Solar radiation levels remain below threshold. Next orbital burn scheduled at T+14:20:00.' },
+                    { sender: 'CREW MEDICAL OFFICER (DR. S. CHEN)', time: '01:45 UTC', unread: true, subject: '3D Full Body Scan sync complete.', body: 'Your latest zero-gravity cardiovascular adaptation readings show 0.02% bone mass change, well within optimal tolerances. Continue daily 45-minute resistance workout protocol.' },
+                    { sender: 'STARLINK DEEP-SPACE RELAY NODE 09', time: '00:12 UTC', unread: true, subject: 'Laser optical link synchronized.', body: 'Continuous 1.2 Gbps downlink established via Lunar Orbital Gateway optical terminal. High-bandwidth HD video feed ready for EVA mission sequence.' },
+                  ].map((m, i) => (
+                    <div key={i} style={{ borderBottom: '1px solid rgba(246,238,219,0.12)', paddingBottom: '16px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                        <span className="font-mono" style={{ fontSize: '0.75rem', color: '#ead9b2', fontWeight: 600 }}>{m.sender}</span>
+                        <span className="font-mono" style={{ fontSize: '0.7rem', color: '#9fb6da' }}>{m.time}</span>
+                      </div>
+                      <div style={{ fontSize: '0.95rem', color: '#f6eedb', fontWeight: 500, marginBottom: '6px' }}>{m.subject}</div>
+                      <div style={{ fontSize: '0.82rem', color: '#9fb6da', lineHeight: 1.5 }}>{m.body}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* TAB 4: CALENDAR */}
+            {activeTab === 'calendar' && (
+              <div style={{ maxWidth: '620px', marginLeft: 'auto', marginRight: 'auto' }}>
+                <div className="font-mono" style={{ fontSize: '0.72rem', color: '#ead9b2', letterSpacing: '0.22em', marginBottom: '8px', textTransform: 'uppercase' }}>
+                  RIDGE // TIMELINES
+                </div>
+                <h2 style={{ fontSize: '2.2rem', fontWeight: 400, color: '#f6eedb', margin: '0 0 24px 0' }}>Orbital Schedule</h2>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+                  {[
+                    { date: 'TODAY // 04:30 UTC', event: 'EVA Air-Lock Exit Delta-4', type: 'Extravehicular Activity', status: 'Confirmed' },
+                    { date: 'TODAY // 11:15 UTC', event: 'Orbital Perigee Booster Check', type: 'Navigation', status: 'Ready' },
+                    { date: 'TOMORROW // 02:00 UTC', event: 'Astronaut Sleep Cycle Sync (8 hrs)', type: 'Life Support', status: 'Scheduled' },
+                    { date: 'IN 2 DAYS // 09:45 UTC', event: 'Lunar Flyby Trajectory Observation', type: 'Deep Space Mission', status: 'Planned' },
+                  ].map((c, i) => (
+                    <div key={i} style={{ borderBottom: '1px solid rgba(246,238,219,0.12)', paddingBottom: '14px' }}>
+                      <div className="font-mono" style={{ fontSize: '0.72rem', color: '#ead9b2', marginBottom: '4px' }}>{c.date}</div>
+                      <h4 style={{ fontSize: '1rem', color: '#f6eedb', margin: '0 0 4px 0', fontWeight: 500 }}>{c.event}</h4>
+                      <div className="font-mono" style={{ fontSize: '0.72rem', color: '#9fb6da' }}>{c.type} // {c.status}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* TAB 5: ARCHIVE */}
+            {activeTab === 'archive' && (
+              <div style={{ maxWidth: '620px', marginLeft: 'auto', marginRight: 'auto' }}>
+                <div className="font-mono" style={{ fontSize: '0.72rem', color: '#ead9b2', letterSpacing: '0.22em', marginBottom: '8px', textTransform: 'uppercase' }}>
+                  RIDGE // STORAGE
+                </div>
+                <h2 style={{ fontSize: '2.2rem', fontWeight: 400, color: '#f6eedb', margin: '0 0 24px 0' }}>Blackbox & Biometric Archives</h2>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                  {[
+                    { id: 'LOG-78901', title: 'Suit Biometric Calibration #14', size: '24.5 MB', date: '2026-11-12' },
+                    { id: 'LOG-78899', title: 'Zero-G Autonomic Reflex Waveforms', size: '112.8 MB', date: '2026-11-11' },
+                    { id: 'LOG-78850', title: 'Orbital Insertion Blackbox Telemetry', size: '1.4 GB', date: '2026-11-10' },
+                  ].map((a, i) => (
+                    <div key={i} style={{ borderBottom: '1px solid rgba(246,238,219,0.12)', paddingBottom: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div>
+                        <span className="font-mono" style={{ fontSize: '0.72rem', color: '#ead9b2' }}>{a.id}</span>
+                        <div style={{ fontSize: '0.95rem', color: '#f6eedb', fontWeight: 500 }}>{a.title}</div>
+                      </div>
+                      <div className="font-mono" style={{ fontSize: '0.74rem', color: '#9fb6da' }}>
+                        {a.size} • {a.date}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* TAB 6: ANALYTICS */}
+            {activeTab === 'analytics' && (
+              <div style={{ maxWidth: '620px', marginLeft: 'auto', marginRight: 'auto' }}>
+                <div className="font-mono" style={{ fontSize: '0.72rem', color: '#ead9b2', letterSpacing: '0.22em', marginBottom: '8px', textTransform: 'uppercase' }}>
+                  RIDGE // DIAGNOSTICS
+                </div>
+                <h2 style={{ fontSize: '2.2rem', fontWeight: 400, color: '#f6eedb', margin: '0 0 24px 0' }}>Sensor Telemetry Trends</h2>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
+                  <div>
+                    <div className="font-mono" style={{ fontSize: '0.75rem', color: '#f6eedb', marginBottom: '14px', letterSpacing: '0.12em' }}>CARDIOVASCULAR VARIABILITY TRENDS</div>
+                    <div style={{ height: '120px', display: 'flex', alignItems: 'flex-end', gap: '10px', paddingBottom: '10px', borderBottom: '1px solid rgba(246,238,219,0.14)' }}>
+                      {[65, 72, 70, 74, 76, 74, 78, 74, 72, 74].map((h, i) => (
+                        <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
+                          <div style={{ width: '100%', height: `${h * 1.3}px`, background: 'linear-gradient(180deg, #f6eedb, #112957)', borderRadius: '2px' }} />
+                          <span className="font-mono" style={{ fontSize: '0.6rem', color: '#9fb6da' }}>T-{10 - i}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="font-mono" style={{ fontSize: '0.72rem', color: '#9fb6da', marginTop: '8px' }}>Average: 73.9 BPM // Sinus rhythm stable</div>
+                  </div>
+
+                  <div>
+                    <div className="font-mono" style={{ fontSize: '0.75rem', color: '#ead9b2', marginBottom: '14px', letterSpacing: '0.12em' }}>O2 CONSUMPTION & METABOLIC LOAD</div>
+                    <div style={{ height: '120px', display: 'flex', alignItems: 'flex-end', gap: '10px', paddingBottom: '10px', borderBottom: '1px solid rgba(246,238,219,0.14)' }}>
+                      {[0.24, 0.28, 0.26, 0.31, 0.25, 0.27, 0.29, 0.26, 0.25, 0.26].map((o, i) => (
+                        <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
+                          <div style={{ width: '100%', height: `${o * 320}px`, background: 'linear-gradient(180deg, #ead9b2, #0a1c3f)', borderRadius: '2px' }} />
+                          <span className="font-mono" style={{ fontSize: '0.6rem', color: '#9fb6da' }}>T-{10 - i}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="font-mono" style={{ fontSize: '0.72rem', color: '#9fb6da', marginTop: '8px' }}>Mean O2 Burn: 0.26 L/min // Optimal EVA reserve</div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* TAB 7: ACCOUNT */}
+            {activeTab === 'account' && (
+              <div style={{ maxWidth: '620px', marginLeft: 'auto', marginRight: 'auto' }}>
+                <div className="font-mono" style={{ fontSize: '0.72rem', color: '#ead9b2', letterSpacing: '0.22em', marginBottom: '8px', textTransform: 'uppercase' }}>
+                  RIDGE // ASTRONAUT PROFILE
+                </div>
+                <h2 style={{ fontSize: '2.2rem', fontWeight: 400, color: '#f6eedb', margin: '0 0 24px 0' }}>Crew Dossier</h2>
+                <div style={{ display: 'flex', gap: '20px', alignItems: 'center', marginBottom: '24px' }}>
+                  {activeAstronaut.faceSnaps?.center ? (
+                    <img src={activeAstronaut.faceSnaps.center} alt="Avatar" style={{ width: '80px', height: '80px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #f6eedb' }} />
+                  ) : (
+                    <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: '#0a1c3f', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', border: '2px solid #f6eedb' }}>
+                      👨‍🚀
+                    </div>
+                  )}
+                  <div>
+                    <h3 style={{ fontSize: '1.4rem', color: '#f6eedb', margin: 0, fontWeight: 500 }}>{activeAstronaut.name}</h3>
+                    <div className="font-mono" style={{ fontSize: '0.78rem', color: '#ead9b2', marginTop: '4px' }}>ID: {activeAstronaut.id} // {activeAstronaut.role}</div>
+                    <div className="font-mono" style={{ fontSize: '0.74rem', color: '#9fb6da' }}>MISSION: {activeAstronaut.mission}</div>
+                  </div>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '14px', marginBottom: '24px' }}>
+                  {['center', 'left', 'right'].map((ang) => (
+                    <div key={ang} style={{ background: 'rgba(10, 28, 63, 0.72)', padding: '10px', borderRadius: '4px', textAlign: 'center', border: '1px solid rgba(246,238,219,0.16)' }}>
+                      <div className="font-mono" style={{ fontSize: '0.65rem', color: '#ead9b2', marginBottom: '6px', textTransform: 'uppercase' }}>Face Scan: {ang}</div>
+                      {activeAstronaut.faceSnaps?.[ang] ? (
+                        <img src={activeAstronaut.faceSnaps[ang]} alt={ang} style={{ width: '100%', height: '85px', objectFit: 'cover', borderRadius: '2px' }} />
+                      ) : (
+                        <div style={{ height: '85px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9fb6da', fontSize: '0.72rem' }}>No photo</div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                <div className="font-mono" style={{ fontSize: '0.78rem', color: '#9fb6da', lineHeight: 1.6, borderTop: '1px solid rgba(246,238,219,0.12)', paddingTop: '16px' }}>
+                  Blood Type: <strong style={{ color: '#f6eedb' }}>{activeAstronaut.bloodType || 'O-Positive'}</strong> • Fingerprint Hash: <strong style={{ color: '#f6eedb' }}>{activeAstronaut.fingerprint || 'FP-SYNTH-89012'}</strong> • Clearance: <strong style={{ color: '#ead9b2' }}>ORBITAL CLEARANCE A-1</strong>
+                </div>
+              </div>
+            )}
+
+            {/* TAB 8: SETTINGS */}
+            {activeTab === 'settings' && (
+              <div style={{ maxWidth: '620px', marginLeft: 'auto', marginRight: 'auto' }}>
+                <div className="font-mono" style={{ fontSize: '0.72rem', color: '#ead9b2', letterSpacing: '0.22em', marginBottom: '8px', textTransform: 'uppercase' }}>
+                  RIDGE // SYSTEM PREFERENCES
+                </div>
+                <h2 style={{ fontSize: '2.2rem', fontWeight: 400, color: '#f6eedb', margin: '0 0 24px 0' }}>Configuration</h2>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 0', borderBottom: '1px solid rgba(246,238,219,0.12)' }}>
+                    <div>
+                      <div style={{ fontSize: '0.9rem', color: '#f6eedb', fontWeight: 500 }}>Zero-G Touch Avoidance Sensors</div>
+                      <div className="font-mono" style={{ fontSize: '0.72rem', color: '#9fb6da' }}>Astronaut cursor evasion in welcome screen</div>
+                    </div>
+                    <span className="font-mono" style={{ color: '#f6eedb', fontSize: '0.78rem' }}>ACTIVE [100%]</span>
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 0', borderBottom: '1px solid rgba(246,238,219,0.12)' }}>
+                    <div>
+                      <div style={{ fontSize: '0.9rem', color: '#f6eedb', fontWeight: 500 }}>Helmet Visor Reticle Tracking</div>
+                      <div className="font-mono" style={{ fontSize: '0.72rem', color: '#9fb6da' }}>Interactive 3D angle parallax on mouse move</div>
+                    </div>
+                    <span className="font-mono" style={{ color: '#f6eedb', fontSize: '0.78rem' }}>ONLINE [30°]</span>
+                  </div>
+
+                  <div style={{ marginTop: '20px' }}>
+                    <button
+                      type="button"
+                      onClick={() => setScreen('login')}
+                      style={{
+                        background: 'rgba(246, 238, 219, 0.12)',
+                        border: '1px solid rgba(246, 238, 219, 0.4)',
+                        color: '#f6eedb',
+                        width: '100%',
+                        padding: '14px',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        fontWeight: 600,
+                        letterSpacing: '0.12em',
+                        textTransform: 'uppercase',
+                        fontSize: '0.8rem',
+                      }}
+                    >
+                      LOG OUT OF RIDGE HUD
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </main>
+        </div>
+      )}
+
+      {/* ── 5. VITAL HUMAN SYSTEMS OBSERVATORY (ENLARGED scene.gltf & INTERNAL ORGAN ZOOM) ── */}
+      {showBodyScanModal && (
+        <VitalObservatory
+          astronaut={activeAstronaut}
+          onClose={() => {
+            setShowBodyScanModal(false);
+            if (initialShowBodyScan && onBackToOverview) {
+              onBackToOverview();
+            }
+          }}
+        />
+      )}
+
+      {/* ── 6. JARVIS TOUCHLESS DESKTOP HUD ── */}
+      {showJarvisHud && (
+        <JarvisTouchlessHud
+          onClose={() => setShowJarvisHud(false)}
+          onLaunchObservatory={() => {
+            setShowJarvisHud(false);
+            setShowBodyScanModal(true);
+          }}
+        />
+      )}
+
+      {/* ── 7. OFFLINE AR PALM GESTURE MISSION HUD (5-STEP HEALTH BRIEFING) ── */}
+      {showMissionHUD && (
+        <MissionHUD
+          astronaut={activeAstronaut}
+          onClose={() => setShowMissionHUD(false)}
+        />
+      )}
+
+      {/* ── 7. 3D FACE VISOR STUDIO & BIOMETRIC CAMERA RECOGNITION ── */}
+      <ThreeDFaceStudioModal
+        isOpen={show3DFaceStudio}
+        onClose={() => setShow3DFaceStudio(false)}
+        activeAstronaut={activeAstronaut}
+        onSaveFaceData={handleSaveFaceData}
+        onFaceAuthRecorded={(updatedLogs) => setFaceAuthLogs(updatedLogs)}
+        onLoginSuccess={(astro) => {
+          setActiveAstronaut(astro);
+          setFaceAuthLogs(getFaceAuthLogs());
+          setScreen('dashboard');
+        }}
+      />
+    </div>
+  );
+}
