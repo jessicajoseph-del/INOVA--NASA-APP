@@ -23,7 +23,11 @@ import {
   Rocket,
   UserCheck,
   Dna,
-  LogIn
+  LogIn,
+  LogOut,
+  Settings,
+  Glasses,
+  User
 } from 'lucide-react';
 import TrendAnalytics from './components/TrendAnalytics';
 import LogoMarquee from './components/LogoMarquee';
@@ -33,6 +37,8 @@ import AstroCareDashboard from './components/AstroCareDashboard';
 import AuraDashboard from './pages/AuraDashboard';
 import InovavPortal from './inovav/App';
 import VitalObservatory from './inovav/VitalObservatory';
+import JarvisTouchlessHud from './inovav/JarvisTouchlessHud';
+import ThreeDFaceStudioModal from './inovav/components/ThreeDFaceStudioModal';
 
 /**
  * TOPIC & EXECUTIVE KPI DATA CONFIGURATION:
@@ -90,8 +96,11 @@ export const TOPIC_DATA = {
 };
 
 export default function App() {
-  // Navigation State: 'overview' | 'start' | 'login' | 'vital' | 'astrocare' | 'roadmap' | 'behavioral' | 'aura'
-  const [activeView, setActiveView] = useState('overview');
+  // Navigation State: 'portal' (Suit & Vitals continuous flow) | 'aura' | 'overview' | 'behavioral' | 'roadmap'
+  const [activeView, setActiveView] = useState('portal');
+  const [portalInitialScreen, setPortalInitialScreen] = useState('intro');
+  const [showARVisor, setShowARVisor] = useState(false);
+  const [showProfileSettings, setShowProfileSettings] = useState(false);
   const [activeAstronaut, setActiveAstronaut] = useState({
     id: 'ASTRO-01',
     name: 'CDR. Alex Vance',
@@ -99,6 +108,19 @@ export default function App() {
     role: 'Mission Commander',
     bloodType: 'O-Negative',
   });
+
+  const handleLogout = () => {
+    setActiveAstronaut({
+      id: 'ASTRO-01',
+      name: 'CDR. Alex Vance',
+      mission: 'Artemis VII // Mars Transfer',
+      role: 'Mission Commander',
+      bloodType: 'O-Negative',
+    });
+    setPortalInitialScreen('intro');
+    setActiveView('portal');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const scrollToRoadmap = () => {
     if (activeView !== 'overview') {
@@ -129,189 +151,154 @@ export default function App() {
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#1E293B0a_1px,transparent_1px),linear-gradient(to_bottom,#1E293B0a_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none" />
 
-      {/* 1. HEADER / NAVIGATION BAR WITH MULTI-PAGE SWITCHER */}
-      <header className="border-b border-blue-900/40 bg-[#060D21]/80 backdrop-blur-md sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3">
-          <div className="flex items-center space-x-3 shrink-0 cursor-pointer" onClick={() => setActiveView('overview')}>
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#FF7300] to-orange-400 flex items-center justify-center text-white shadow-lg shadow-orange-500/20">
-              <Layers className="w-5 h-5" />
+      {/* 1. HEADER / FLOATING CAPSULE NAVIGATION BAR (INSPIRED BY side bar.jpg) */}
+      <header className="sticky top-0 z-50 w-full px-3 py-2.5 sm:px-6 pointer-events-none">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-3 pointer-events-auto bg-[#06132b]/85 backdrop-blur-2xl border border-white/10 shadow-[0_12px_40px_rgba(0,0,0,0.6)] rounded-2xl sm:rounded-full px-3 sm:px-4 py-2">
+          
+          {/* Brand Pill (Emblem pill inspired by side bar.jpg) */}
+          <div 
+            onClick={() => { setActiveView('portal'); setPortalInitialScreen('intro'); }}
+            className="flex items-center space-x-2.5 shrink-0 cursor-pointer group"
+            title="Return to Mission Start"
+          >
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gradient-to-tr from-cyan-400 via-blue-500 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-cyan-500/30 group-hover:scale-105 transition-transform">
+              <Layers className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
-            <div>
-              <span className="font-extrabold text-xl tracking-tight text-white">
-                INOVA<span className="text-[#FF7300]">.</span>
+            <div className="hidden sm:block">
+              <span className="font-extrabold text-base tracking-tight text-white group-hover:text-cyan-300 transition-colors">
+                INOVA<span className="text-amber-400">.</span>
               </span>
-              <span className="ml-2 text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-950/80 text-cyan-300 border border-cyan-500/30 hidden xl:inline-block">
-                Mission Telemetry
+              <span className="ml-1.5 text-[10px] font-mono uppercase tracking-wider text-cyan-300/80">
+                NASA
               </span>
             </div>
           </div>
 
-          {/* Primary View Switcher Navigation Tabs */}
-          <nav className="flex items-center p-1 rounded-xl bg-blue-950/60 border border-blue-800/40 backdrop-blur-md overflow-x-auto gap-1">
-            {/* Tab 1: Overview */}
+          {/* Primary View Switcher Navigation Tabs (Pill cutout active state matching side bar.jpg) */}
+          <nav className="flex items-center p-1 rounded-xl sm:rounded-full bg-blue-950/60 border border-blue-800/40 backdrop-blur-md overflow-x-auto gap-1">
+            {/* Tab 1: Start / Suit & Vitals (Continuous Start -> Login/Signup -> Suit Telemetry -> Health Monitor below) */}
             <button
               type="button"
               onClick={() => {
-                setActiveView('overview');
+                setActiveView('portal');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
-              className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap ${
-                activeView === 'overview'
-                  ? 'bg-gradient-to-r from-[#FF7300] to-orange-500 text-white shadow-md shadow-orange-500/20'
-                  : 'text-slate-400 hover:text-white hover:bg-white/5'
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-full transition-all cursor-pointer whitespace-nowrap ${
+                activeView === 'portal'
+                  ? 'bg-[#f6eedb] text-[#06132b] shadow-md shadow-white/20 font-bold scale-[1.02]'
+                  : 'text-slate-300 hover:text-white hover:bg-white/10'
               }`}
             >
-              <Activity className="w-3.5 h-3.5" />
-              <span>Telemetry</span>
+              <Rocket className="w-3.5 h-3.5" />
+              <span>Suit & Vitals</span>
+              <span className={`h-1.5 w-1.5 rounded-full ${activeView === 'portal' ? 'bg-amber-600' : 'bg-amber-400 animate-pulse'} hidden md:inline-block`} />
             </button>
 
-            {/* Tab 2: Mission Start (from inovav) */}
-            <button
-              type="button"
-              onClick={() => {
-                setActiveView('start');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-              className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap ${
-                activeView === 'start'
-                  ? 'bg-gradient-to-r from-amber-300 to-yellow-500 text-slate-950 shadow-md shadow-yellow-500/20 font-bold'
-                  : 'text-slate-400 hover:text-[#f6eedb] hover:bg-white/5'
-              }`}
-            >
-              <Rocket className="w-3.5 h-3.5 text-yellow-400" />
-              <span>Start</span>
-              <span className="h-1.5 w-1.5 rounded-full bg-yellow-400 animate-pulse hidden sm:inline-block" />
-            </button>
-
-            {/* Tab 3: Login & Biometrics (from inovav) */}
-            <button
-              type="button"
-              onClick={() => {
-                setActiveView('login');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-              className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap ${
-                activeView === 'login'
-                  ? 'bg-gradient-to-r from-cyan-400 to-blue-500 text-slate-950 shadow-md shadow-cyan-400/20 font-bold'
-                  : 'text-slate-400 hover:text-cyan-300 hover:bg-white/5'
-              }`}
-            >
-              <UserCheck className="w-3.5 h-3.5 text-cyan-400" />
-              <span>Login</span>
-            </button>
-
-            {/* Tab 4: 3D Vital Observatory (from inovav) */}
-            <button
-              type="button"
-              onClick={() => {
-                setActiveView('vital');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-              className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap ${
-                activeView === 'vital'
-                  ? 'bg-gradient-to-r from-rose-400 to-pink-500 text-slate-950 shadow-md shadow-rose-400/20 font-bold'
-                  : 'text-slate-400 hover:text-rose-300 hover:bg-white/5'
-              }`}
-            >
-              <Dna className="w-3.5 h-3.5 text-rose-400" />
-              <span>3D Vital</span>
-              <span className="h-1.5 w-1.5 rounded-full bg-rose-400 animate-pulse hidden sm:inline-block" />
-            </button>
-
-            {/* Tab 5: AURA 3D ISS Model */}
+            {/* Tab 2: 3D ISS Station Twin */}
             <button
               type="button"
               onClick={() => {
                 setActiveView('aura');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
-              className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap ${
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-full transition-all cursor-pointer whitespace-nowrap ${
                 activeView === 'aura'
-                  ? 'bg-gradient-to-r from-purple-500 to-indigo-600 text-white shadow-md shadow-purple-500/20 font-bold'
-                  : 'text-slate-400 hover:text-purple-300 hover:bg-white/5'
+                  ? 'bg-[#f6eedb] text-[#06132b] shadow-md shadow-white/20 font-bold scale-[1.02]'
+                  : 'text-slate-300 hover:text-purple-300 hover:bg-white/10'
               }`}
             >
               <Box className="w-3.5 h-3.5 text-purple-400" />
-              <span>AURA 3D</span>
+              <span>3D ISS Station Twin</span>
             </button>
 
-            {/* Tab 6: AstroCare ISS Telemetry */}
+            {/* Tab 3: Trend & Telemetry */}
             <button
               type="button"
-              onClick={scrollToAstroCare}
-              className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap ${
-                activeView === 'astrocare'
-                  ? 'bg-gradient-to-r from-amber-400 to-[#F5B82E] text-slate-950 shadow-md shadow-amber-400/20 font-bold'
-                  : 'text-slate-400 hover:text-[#FDE047] hover:bg-white/5'
+              onClick={() => {
+                setActiveView('overview');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-full transition-all cursor-pointer whitespace-nowrap ${
+                activeView === 'overview'
+                  ? 'bg-[#f6eedb] text-[#06132b] shadow-md shadow-white/20 font-bold scale-[1.02]'
+                  : 'text-slate-300 hover:text-white hover:bg-white/10'
               }`}
             >
-              <Radio className="w-3.5 h-3.5 text-amber-400" />
-              <span>AstroCare</span>
+              <TrendingUp className="w-3.5 h-3.5 text-cyan-400" />
+              <span>Trend & Telemetry</span>
             </button>
 
-            {/* Tab 7: Roadmap Game */}
-            <button
-              type="button"
-              onClick={scrollToRoadmap}
-              className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap ${
-                activeView === 'roadmap'
-                  ? 'bg-gradient-to-r from-amber-400 to-[#F5B82E] text-slate-950 shadow-md shadow-amber-400/20 font-bold'
-                  : 'text-slate-400 hover:text-white hover:bg-white/5'
-              }`}
-            >
-              <Gamepad2 className="w-3.5 h-3.5 text-amber-400" />
-              <span>Roadmap</span>
-            </button>
-
-            {/* Tab 8: Behavioral Health */}
+            {/* Tab 4: Behavioural */}
             <button
               type="button"
               onClick={() => {
                 setActiveView('behavioral');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
-              className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer whitespace-nowrap ${
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-full transition-all cursor-pointer whitespace-nowrap ${
                 activeView === 'behavioral'
-                  ? 'bg-gradient-to-r from-emerald-400 to-teal-500 text-slate-950 shadow-md shadow-emerald-400/20 font-bold'
-                  : 'text-slate-400 hover:text-white hover:bg-white/5'
+                  ? 'bg-[#f6eedb] text-[#06132b] shadow-md shadow-white/20 font-bold scale-[1.02]'
+                  : 'text-slate-300 hover:text-emerald-300 hover:bg-white/10'
               }`}
             >
-              <HeartPulse className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Behavioral</span>
+              <HeartPulse className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Behavioural</span>
             </button>
-          </nav>
 
-          {/* Right Header: Active Astronaut Pill & Return Button */}
-          <div className="flex items-center space-x-2 shrink-0">
-            {/* Astronaut Quick-Profile Chip */}
+            {/* Tab 5: Road Map */}
             <button
               type="button"
               onClick={() => {
-                setActiveView('login');
+                setActiveView('roadmap');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
-              className="hidden lg:inline-flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-blue-950/80 border border-[#f6eedb]/20 hover:border-[#f6eedb]/50 text-xs text-[#f6eedb] transition-all cursor-pointer"
-              title="Crew Bio-Link / Click to open Login & Biometrics"
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-full transition-all cursor-pointer whitespace-nowrap ${
+                activeView === 'roadmap'
+                  ? 'bg-[#f6eedb] text-[#06132b] shadow-md shadow-white/20 font-bold scale-[1.02]'
+                  : 'text-slate-300 hover:text-amber-300 hover:bg-white/10'
+              }`}
             >
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="font-mono text-[11px] font-semibold">{activeAstronaut.name}</span>
-              <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#f6eedb]/15 text-[#f6eedb] font-mono">{activeAstronaut.id}</span>
+              <Gamepad2 className="w-3.5 h-3.5 text-amber-400" />
+              <span>Road Map</span>
+            </button>
+          </nav>
+
+          {/* Right Header Utility Controls (inspired by side bar.jpg): AR Visor, Profile Settings, Log Out */}
+          <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
+            {/* Action 1: AR Visor Toggle */}
+            <button
+              type="button"
+              onClick={() => setShowARVisor(true)}
+              className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full bg-blue-950/80 border border-cyan-400/30 hover:border-cyan-400 text-xs text-cyan-200 hover:bg-cyan-500/15 transition-all cursor-pointer shadow-sm active:scale-95 whitespace-nowrap"
+              title="Open Jarvis Touchless AR Visor HUD"
+            >
+              <Glasses className="w-3.5 h-3.5 text-cyan-400" />
+              <span className="hidden xl:inline">AR Visor</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse hidden sm:inline-block" />
             </button>
 
-            {/* Action CTA: Return button only when in dedicated view mode */}
-            {activeView !== 'overview' && (
-              <button 
-                type="button" 
-                onClick={() => {
-                  setActiveView('overview');
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
-                className="inline-flex items-center justify-center text-xs font-semibold text-white bg-blue-900/60 hover:bg-blue-800/80 border border-blue-700/50 px-3 py-1.5 rounded-lg transition-all active:scale-95 cursor-pointer whitespace-nowrap"
-              >
-                <ArrowLeft className="w-3.5 h-3.5 mr-1" />
-                <span>Overview</span>
-              </button>
-            )}
+            {/* Action 2: Profile Settings */}
+            <button
+              type="button"
+              onClick={() => setShowProfileSettings(true)}
+              className="inline-flex items-center gap-2 px-2.5 sm:px-3 py-1.5 rounded-full bg-blue-950/80 border border-[#f6eedb]/20 hover:border-[#f6eedb]/60 text-xs text-[#f6eedb] transition-all cursor-pointer shadow-sm active:scale-95 whitespace-nowrap"
+              title="Astronaut Profile & 3D Face Visor Studio"
+            >
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="font-mono text-[11px] font-semibold hidden md:inline">{activeAstronaut.name || 'Alex Vance'}</span>
+              <Settings className="w-3.5 h-3.5 text-[#ead9b2]" />
+            </button>
+
+            {/* Action 3: Log Out */}
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="inline-flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-full bg-rose-950/40 border border-rose-500/30 hover:border-rose-400 hover:bg-rose-900/50 text-xs text-rose-300 transition-all cursor-pointer active:scale-95 whitespace-nowrap"
+              title="Sign Out of Astronaut Session & Return to Start"
+            >
+              <LogOut className="w-3.5 h-3.5 text-rose-400" />
+              <span className="hidden sm:inline">Log Out</span>
+            </button>
           </div>
         </div>
       </header>
@@ -609,42 +596,20 @@ export default function App() {
         </main>
       )}
 
-      {/* ── INOVA RIDGE: MISSION START SCREEN (3D HOHMANN PARTICLE SWARM & 8S COUNTDOWN) ── */}
-      {activeView === 'start' && (
+      {/* ── 1. SUIT & VITALS FLOW: START -> LOGIN/SIGNUP -> SUIT TELEMETRY -> MONITOR HEALTH DIRECTLY BELOW ── */}
+      {activeView === 'portal' && (
         <main className="flex-1 w-full relative z-10">
           <InovavPortal
-            initialScreen="intro"
+            initialScreen={portalInitialScreen}
             onBackToOverview={() => setActiveView('overview')}
             onNavigateView={(view) => setActiveView(view)}
             activeAstronaut={activeAstronaut}
             onAstronautChange={setActiveAstronaut}
-          />
-        </main>
-      )}
-
-      {/* ── INOVA RIDGE: CREW LOGIN & BIOMETRICS (3D ASTRONAUT & DUAL-PANEL SLIDING LOGIN) ── */}
-      {activeView === 'login' && (
-        <main className="flex-1 w-full relative z-10">
-          <InovavPortal
-            initialScreen="login"
-            onBackToOverview={() => setActiveView('overview')}
-            onNavigateView={(view) => setActiveView(view)}
-            activeAstronaut={activeAstronaut}
-            onAstronautChange={setActiveAstronaut}
-          />
-        </main>
-      )}
-
-      {/* ── INOVA RIDGE: 3D VITAL HUMAN SYSTEMS OBSERVATORY (ORGAN ZOOM & AR PALM GESTURES) ── */}
-      {activeView === 'vital' && (
-        <main className="flex-1 w-full relative z-10">
-          <InovavPortal
-            initialScreen="dashboard"
-            initialShowBodyScan={true}
-            onBackToOverview={() => setActiveView('overview')}
-            onNavigateView={(view) => setActiveView(view)}
-            activeAstronaut={activeAstronaut}
-            onAstronautChange={setActiveAstronaut}
+            onLogout={handleLogout}
+            showARVisor={showARVisor}
+            onCloseARVisor={() => setShowARVisor(false)}
+            showProfileSettings={showProfileSettings}
+            onCloseProfileSettings={() => setShowProfileSettings(false)}
           />
         </main>
       )}
@@ -676,6 +641,40 @@ export default function App() {
           <BehavioralHealthPage onBack={() => setActiveView('overview')} />
         </main>
       )}
+
+      {/* GLOBAL AR VISOR HUD (JARVIS TOUCHLESS DESKTOP HUD) */}
+      {showARVisor && (
+        <JarvisTouchlessHud
+          onClose={() => setShowARVisor(false)}
+          onLaunchObservatory={() => {
+            setShowARVisor(false);
+            setActiveView('portal');
+            setPortalInitialScreen('dashboard');
+            setTimeout(() => {
+              document.getElementById('monitor-health-section')?.scrollIntoView({ behavior: 'smooth' });
+            }, 300);
+          }}
+        />
+      )}
+
+      {/* GLOBAL PROFILE SETTINGS & 3D FACE VISOR STUDIO MODAL */}
+      <ThreeDFaceStudioModal
+        isOpen={showProfileSettings}
+        onClose={() => setShowProfileSettings(false)}
+        activeAstronaut={activeAstronaut}
+        onSaveFaceData={(snaps) => {
+          setActiveAstronaut((prev) => ({
+            ...prev,
+            faceSnaps: { ...(prev.faceSnaps || {}), ...snaps },
+          }));
+        }}
+        onLoginSuccess={(astro) => {
+          setActiveAstronaut(astro);
+          setShowProfileSettings(false);
+          setActiveView('portal');
+          setPortalInitialScreen('dashboard');
+        }}
+      />
 
       {/* 5. BOTTOM CREDITS / STATUS BAR */}
       <footer className="w-full mt-auto relative z-10 border-t border-blue-900/30 bg-[#040816]/70 py-4">

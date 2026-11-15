@@ -8,7 +8,7 @@ import BottomNavigation from './BottomNavigation';
 import PalmMouse from '../ar/PalmMouse';
 import MissionHUD from '../experience/MissionHUD';
 
-export default function VitalObservatoryApp({ astronaut, onClose }) {
+export default function VitalObservatoryApp({ astronaut, onClose, isEmbedded = false }) {
   // activeSystem: null represents Initial Overview Screen (frame_0.5s.jpg)
   // 'cardiovascular' | 'skeletal' | 'immune' | 'nutrition' | 'sleep'
   const [activeSystem, setActiveSystem] = useState(null);
@@ -74,10 +74,14 @@ export default function VitalObservatoryApp({ astronaut, onClose }) {
 
   return (
     <div
+      id="monitor-health-section"
       style={{
-        position: 'fixed',
-        inset: 0,
-        zIndex: 9999,
+        position: isEmbedded ? 'relative' : 'fixed',
+        inset: isEmbedded ? 'auto' : 0,
+        width: '100%',
+        height: isEmbedded ? '980px' : '100%',
+        minHeight: isEmbedded ? '850px' : '100vh',
+        zIndex: isEmbedded ? 20 : 9999,
         backgroundColor: '#06132b',
         backgroundImage: `
           radial-gradient(circle at 50% 45%, rgba(14, 40, 89, 0.72) 0%, rgba(6, 19, 43, 0.98) 85%),

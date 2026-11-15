@@ -937,6 +937,11 @@ export default function InovavPortal({
   onNavigateView,
   activeAstronaut: propActiveAstronaut,
   onAstronautChange,
+  onLogout,
+  showARVisor = false,
+  onCloseARVisor,
+  showProfileSettings = false,
+  onCloseProfileSettings,
 }) {
   const [screen, setScreen] = useState(initialScreen); // 'intro' | 'astronaut' | 'login' | 'dashboard'
   const [loginMode, setLoginMode] = useState('signin'); // 'signin' | 'signup'
@@ -957,6 +962,14 @@ export default function InovavPortal({
       setShowBodyScanModal(initialShowBodyScan);
     }
   }, [initialShowBodyScan]);
+
+  useEffect(() => {
+    if (showARVisor) setShowJarvisHud(true);
+  }, [showARVisor]);
+
+  useEffect(() => {
+    if (showProfileSettings) setShow3DFaceStudio(true);
+  }, [showProfileSettings]);
 
   // Astronaut DB & Active User
   const [astronauts, setAstronauts] = useState(getStoredAstronauts);
@@ -1322,20 +1335,23 @@ export default function InovavPortal({
       {/* ── 4. MAIN ASTRONAUT DASHBOARD (FRAMELESS AESTHETIC & RIGHT SIDEBAR) ── */}
       {screen === 'dashboard' && (
         <div
-          className="screen-fade"
+          id="suit-and-vitals-container"
+          className="screen-fade custom-scroll"
           style={{
-            position: 'absolute',
-            inset: 0,
-            zIndex: 10,
-            display: 'flex',
-            backgroundColor: 'transparent',
-            overflow: 'hidden',
+            position: 'relative',
+            width: '100%',
+            height: '100vh',
+            minHeight: '100vh',
+            overflowY: 'auto',
+            overflowX: 'hidden',
+            backgroundColor: '#06132b',
+            scrollBehavior: 'smooth',
           }}
         >
           {/* ── CLEAN INK BLUE SPACE BACKGROUND ── */}
           <div
             style={{
-              position: 'absolute',
+              position: 'fixed',
               inset: 0,
               zIndex: 0,
               backgroundImage: 'radial-gradient(circle at 65% 45%, rgba(14, 40, 89, 0.55) 0%, rgba(6, 19, 43, 0.96) 85%)',
@@ -1343,34 +1359,44 @@ export default function InovavPortal({
             }}
           />
 
-          {/* ── LEFT SIDE: /astro.jpg HELMET + 3D SPHERE FACE MESH OVER BLACK VISOR ── */}
+          {/* ── SECTION 1: SUIT TELEMETRY (HELMET VISOR & LIVE SUIT BIOMETRICS) ── */}
           <div
             style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              bottom: 0,
-              width: '50vw',
+              position: 'relative',
+              width: '100%',
+              minHeight: '100vh',
               display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '24px',
-              overflow: 'hidden',
-              pointerEvents: 'auto',
-              zIndex: 20,
-            }}
-            onMouseMove={(e) => {
-              const rect = e.currentTarget.getBoundingClientRect();
-              const normX = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
-              const normY = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
-              setVisorMouseX(normX);
-              setVisorMouseY(normY);
-            }}
-            onMouseLeave={() => {
-              setVisorMouseX(0);
-              setVisorMouseY(0);
+              flexWrap: 'wrap',
+              zIndex: 10,
             }}
           >
+            {/* ── LEFT SIDE: /astro.jpg HELMET + 3D SPHERE FACE MESH OVER BLACK VISOR ── */}
+            <div
+              style={{
+                position: 'relative',
+                width: '50vw',
+                minWidth: '320px',
+                height: '100vh',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '24px',
+                overflow: 'hidden',
+                pointerEvents: 'auto',
+                zIndex: 20,
+              }}
+              onMouseMove={(e) => {
+                const rect = e.currentTarget.getBoundingClientRect();
+                const normX = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
+                const normY = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
+                setVisorMouseX(normX);
+                setVisorMouseY(normY);
+              }}
+              onMouseLeave={() => {
+                setVisorMouseX(0);
+                setVisorMouseY(0);
+              }}
+            >
             {/* Locked 3:2 stage matching astro.jpg (1080x720) so visor mesh aligns accurately at any resolution */}
             <div
               style={{
@@ -1450,17 +1476,16 @@ export default function InovavPortal({
             </div>
           </div>
 
-          {/* ── RIGHT/CENTER MAIN DASHBOARD VIEWPORT (SUIT TELEMETRY WITHOUT TOP NAV OR SIDEBAR) ── */}
+          {/* ── RIGHT/CENTER MAIN DASHBOARD VIEWPORT (SUIT TELEMETRY) ── */}
           <main
             className="custom-scroll"
             style={{
-              position: 'absolute',
-              top: '48px',
-              bottom: 0,
-              left: '50vw',
-              right: '4vw',
+              position: 'relative',
+              width: '50vw',
+              minWidth: '320px',
+              height: '100vh',
               overflowY: 'auto',
-              padding: '20px 24px 40px 10px',
+              padding: '60px 24px 40px 10px',
               zIndex: 25,
             }}
           >
@@ -1651,11 +1676,18 @@ export default function InovavPortal({
                     {/* Real-time Heart Rate Trend Line Chart (Recharts) */}
                     <HeartRateTelemetryChart data={heartRateHistory} currentBpm={liveHeartRate} />
 
-                    {/* Primary CTA Button: Oat Yellow Accent Bar over Ink Blue */}
+                    {/* Primary CTA Button: Smooth scroll downwards to Monitor Health & Organ Scan */}
                     <button
                       type="button"
                       id="scan-vital-btn"
-                      onClick={() => setShowBodyScanModal(true)}
+                      onClick={() => {
+                        const target = document.getElementById('monitor-health-section');
+                        if (target) {
+                          target.scrollIntoView({ behavior: 'smooth' });
+                        } else {
+                          setShowBodyScanModal(true);
+                        }
+                      }}
                       style={{
                         position: 'relative',
                         zIndex: 30,
@@ -1688,8 +1720,8 @@ export default function InovavPortal({
                         e.currentTarget.style.boxShadow = '0 0 25px rgba(246, 238, 219, 0.35)';
                       }}
                     >
-                      <span>3D VITAL</span>
-                      <span style={{ fontSize: '1.1rem', lineHeight: 1 }}>→</span>
+                      <span>INSPECT ORGANS & SCAN HEALTH ↓</span>
+                      <span style={{ fontSize: '1.1rem', lineHeight: 1 }}>↓</span>
                     </button>
 
                     {/* Mission Status Summary (Clean Unboxed Editorial Typography) */}
@@ -1915,7 +1947,11 @@ export default function InovavPortal({
                   <div style={{ marginTop: '20px' }}>
                     <button
                       type="button"
-                      onClick={() => setScreen('login')}
+                      onClick={() => {
+                        setActiveAstronaut(DEFAULT_ASTRONAUT);
+                        setScreen('intro');
+                        if (onLogout) onLogout();
+                      }}
                       style={{
                         background: 'rgba(246, 238, 219, 0.12)',
                         border: '1px solid rgba(246, 238, 219, 0.4)',
@@ -1938,7 +1974,74 @@ export default function InovavPortal({
             )}
           </main>
         </div>
-      )}
+
+        {/* ── SECTION 2: MONITOR HEALTH PAGE (CONTINUING DOWNWARDS DIRECTLY ON THE SAME PAGE) ── */}
+        <div
+          id="monitor-health-section"
+          style={{
+            position: 'relative',
+            width: '100%',
+            minHeight: '960px',
+            borderTop: '1px solid rgba(246, 238, 219, 0.18)',
+            zIndex: 20,
+            backgroundColor: '#06132b',
+          }}
+        >
+          {/* Section Header Anchor */}
+          <div
+            style={{
+              padding: '20px 32px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flexWrap: 'wrap',
+              gap: '12px',
+              borderBottom: '1px solid rgba(246, 238, 219, 0.12)',
+              background: 'rgba(10, 28, 63, 0.8)',
+              backdropFilter: 'blur(16px)',
+            }}
+          >
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981', boxShadow: '0 0 10px #10b981' }} />
+                <span className="font-mono" style={{ fontSize: '0.72rem', color: '#ead9b2', letterSpacing: '0.22em', textTransform: 'uppercase' }}>
+                  // STEP 4 // MONITOR HEALTH & 3D HUMAN SYSTEMS OBSERVATORY
+                </span>
+              </div>
+              <h2 style={{ fontSize: '1.75rem', fontWeight: 600, color: '#f6eedb', margin: 0, letterSpacing: '-0.02em' }}>
+                Inspect Organs & Scan Physiological Health
+              </h2>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <span className="font-mono" style={{ fontSize: '0.75rem', color: '#9fb6da' }}>
+                Scroll up for Suit Visor Telemetry ↑
+              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  document.getElementById('suit-and-vitals-container')?.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="tech-btn"
+                style={{
+                  padding: '8px 16px',
+                  fontSize: '0.7rem',
+                  letterSpacing: '0.14em',
+                }}
+              >
+                ↑ SUIT TELEMETRY
+              </button>
+            </div>
+          </div>
+
+          {/* Embedded 3D Vital Human Systems Observatory */}
+          <VitalObservatory
+            astronaut={activeAstronaut}
+            isEmbedded={true}
+          />
+        </div>
+      </div>
+    )}
 
       {/* ── 5. VITAL HUMAN SYSTEMS OBSERVATORY (ENLARGED scene.gltf & INTERNAL ORGAN ZOOM) ── */}
       {showBodyScanModal && (
