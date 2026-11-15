@@ -8,6 +8,8 @@ import { TaskRectCard } from './components/TaskRectCard';
 import { MilestoneSummitCard } from './components/MilestoneSummitCard';
 import { TaskInspectorRail } from './components/TaskInspectorRail';
 import { ConfettiBurst } from './components/ConfettiBurst';
+import { CollapsedRoadmapView } from './components/CollapsedRoadmapView';
+import { WeeklyPuzzle } from './components/WeeklyPuzzle';
 
 const STORAGE_KEY = 'lumina-quest-stages-v3';
 
@@ -63,6 +65,14 @@ export default function RoadmapGame({ onBack, isEmbedded = false }: RoadmapGameP
   const [justUnlockedId, setJustUnlockedId] = useState<string | null>(null);
   const [confettiTrigger, setConfettiTrigger] = useState<number>(0);
   const [reducedMotion, setReducedMotion] = useState<boolean>(false);
+  const [streakDays, setStreakDays] = useState<number>(() => {
+    try {
+      const saved = localStorage.getItem('lumina-streak-days');
+      return saved ? parseInt(saved, 10) : 0;
+    } catch {
+      return 0;
+    }
+  });
 
   const mapViewportRef = useRef<HTMLDivElement | null>(null);
   const surgeTimerRef = useRef<number | null>(null);
@@ -188,6 +198,13 @@ export default function RoadmapGame({ onBack, isEmbedded = false }: RoadmapGameP
       }
 
       if (allDoneNow) {
+        if (!allCompleted) {
+          setStreakDays((prev) => {
+            const next = Math.min(prev + 1, 7);
+            try { localStorage.setItem('lumina-streak-days', String(next)); } catch {}
+            return next;
+          });
+        }
         setConfettiTrigger((c) => c + 1);
         playVictoryFanfare(soundEnabled);
         window.setTimeout(() => {
@@ -499,6 +516,26 @@ export default function RoadmapGame({ onBack, isEmbedded = false }: RoadmapGameP
                 />
               );
             })}
+          </div>
+
+          {/* Full-Width Side-by-Side: Task Deck and Weekly Puzzle */}
+          <div className="w-full mt-24 mb-32 flex flex-col xl:flex-row items-center justify-center gap-12 xl:gap-8 px-2 sm:px-10 2xl:px-20 overflow-visible">
+            {/* Left Side: Scattered Task Deck */}
+            <div className="w-full xl:w-1/2 flex justify-center xl:justify-end xl:pr-12 relative z-20">
+              <CollapsedRoadmapView 
+                tasks={tasks} 
+                onSelectTask={(id) => {
+                  setSelectedTaskId(id);
+                  const idx = tasks.findIndex((t) => t.id === id);
+                  if (idx >= 0) scrollToStage(idx);
+                }} 
+              />
+            </div>
+            
+            {/* Right Side: 7-Day Puzzle */}
+            <div className="w-full xl:w-1/2 flex justify-center xl:justify-start xl:pl-12 relative z-10">
+              <WeeklyPuzzle streakDays={streakDays} />
+            </div>
           </div>
         </main>
 

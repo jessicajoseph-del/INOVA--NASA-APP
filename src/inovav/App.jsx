@@ -406,10 +406,10 @@ const HohmannParticleSwarm = () => {
   const e = transferEccentricity;
   const b = a * Math.sqrt(Math.abs(1.0 - e * e));
 
-  const p1 = count * 0.1;
-  const p2 = count * 0.3;
-  const p3 = count * 0.5;
-  const p4 = count * 0.8;
+  const p1 = 0;
+  const p2 = 0;
+  const p3 = 0;
+  const p4 = count * 0.7;
 
   useFrame((state) => {
     if (!meshRef.current) return;
@@ -500,7 +500,7 @@ const PetrovaParticleSwarm = () => {
     if (!meshRef.current) return;
     const time = state.clock.getElapsedTime() * speedMult;
     const t = time * speed;
-    const sunX = 0.0, sunY = 0.0, sunZ = 0.0, venusX = orbitRadius;
+    const sunX = -110.0, sunY = -25.0, sunZ = 0.0, venusX = 110.0;
 
     for (let i = 0; i < count; i++) {
       const u = i / count;
@@ -510,8 +510,8 @@ const PetrovaParticleSwarm = () => {
       const baseX = sunX + (venusX - sunX) * p;
       const angle = u * 6.28318530718 * lineDensity;
       const radius = 2.0 + 3.0 * Math.sin(u * 50.0 + t);
-      const swirlY = Math.cos(angle + t * dir) * radius;
-      const swirlZ = Math.sin(angle + t * dir) * radius;
+      const swirlY = sunY + Math.cos(angle + t * dir) * radius;
+      const swirlZ = sunZ + Math.sin(angle + t * dir) * radius;
       const n = Math.sin((baseX) * 0.01 + t * 3.0) * chaos;
       target.set(baseX + n, swirlY, swirlZ);
 
@@ -1312,16 +1312,31 @@ export default function InovavPortal({
                 setLoginMode('signin');
                 setScreen('login');
               }}
-              className="tech-btn"
+              className="tech-btn font-mono"
               style={{
-                padding: '15px 52px',
-                fontSize: '0.92rem',
+                padding: '16px 56px',
+                fontSize: '0.9rem',
+                fontWeight: 600,
                 letterSpacing: '0.26em',
-                boxShadow: '0 0 28px rgba(246, 238, 219, 0.38)',
+                background: '#f6eedb',
+                color: '#06132b',
+                border: 'none',
+                borderRadius: '8px',
+                boxShadow: '0 0 25px rgba(246, 238, 219, 0.4)',
                 cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                textTransform: 'uppercase',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.boxShadow = '0 0 40px rgba(246, 238, 219, 0.6)';
+                e.currentTarget.style.transform = 'scale(1.02)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.boxShadow = '0 0 25px rgba(246, 238, 219, 0.4)';
+                e.currentTarget.style.transform = 'scale(1)';
               }}
             >
-              Login
+              Initiate Login
             </button>
           </div>
         </div>
@@ -2458,10 +2473,21 @@ export default function InovavPortal({
           </div>
 
           {/* Embedded 3D Vital Human Systems Observatory */}
-          <VitalObservatory
-            astronaut={activeAstronaut}
-            isEmbedded={true}
-          />
+          <div 
+            style={{ position: 'relative', width: '100%', height: 'calc(100vh - 90px)' }}
+            onWheelCapture={(e) => {
+              // Force the parent container to scroll even if the 3D canvas intercepts the wheel event
+              const container = document.getElementById('suit-and-vitals-container');
+              if (container) {
+                container.scrollTop += e.deltaY;
+              }
+            }}
+          >
+            <VitalObservatory
+              astronaut={activeAstronaut}
+              isEmbedded={true}
+            />
+          </div>
         </div>
       </div>
     )}
