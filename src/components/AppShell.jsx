@@ -49,6 +49,7 @@ export default function AppShell({
         activeModuleId={currentMod.id}
         activeModuleTitle={currentMod.title}
         activeModuleIndex={currentMod.index}
+        onSelectModule={onSelectModule}
         isARHandActive={isARHandActive}
         onToggleARHand={onToggleARHand}
         activeAstronaut={activeAstronaut}
@@ -92,3 +93,4 @@ export default function AppShell({
     </div>
   );
 }
+
