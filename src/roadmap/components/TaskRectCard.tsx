@@ -40,8 +40,9 @@ export const TaskRectCard: React.FC<TaskRectCardProps> = ({
   const isUnlocked = task.status === 'unlocked';
   const isCompleted = task.status === 'completed';
 
-  const completedSubtasks = task.subtasks.filter((s) => s.done).length;
-  const totalSubtasks = task.subtasks.length;
+  const subtasks = Array.isArray(task?.subtasks) ? task.subtasks : [];
+  const completedSubtasks = subtasks.filter((s) => s?.done).length;
+  const totalSubtasks = subtasks.length;
   const stageNumber = String(index + 1).padStart(2, '0');
 
   return (

@@ -214,13 +214,13 @@ export const TaskInspectorRail: React.FC<TaskInspectorRailProps> = ({
                   isSelectedLocked ? 'text-sky-100' : 'text-[#334155]'
                 }`}
               >
-                {selectedTask.subtasks.filter((s) => s.done).length}/
-                {selectedTask.subtasks.length}
+                {(selectedTask.subtasks || []).filter((s) => s.done).length}/
+                {(selectedTask.subtasks || []).length}
               </span>
             </div>
 
             <div className="space-y-2">
-              {selectedTask.subtasks.map((sub) => (
+              {(selectedTask.subtasks || []).map((sub) => (
                 <button
                   key={sub.id}
                   type="button"

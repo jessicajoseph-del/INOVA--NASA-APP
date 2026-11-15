@@ -11,14 +11,33 @@ import { ConfettiBurst } from './components/ConfettiBurst';
 
 const STORAGE_KEY = 'lumina-quest-stages-v3';
 
+function isValidTaskNode(node: unknown): node is TaskNode {
+  return (
+    typeof node === 'object' &&
+    node !== null &&
+    'id' in node &&
+    'title' in node &&
+    'status' in node
+  );
+}
+
 function loadInitialTasks(): TaskNode[] {
   if (typeof window === 'undefined') return INITIAL_TASKS;
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (!raw) return INITIAL_TASKS;
-    const parsed = JSON.parse(raw) as TaskNode[];
-    if (Array.isArray(parsed) && parsed.length === INITIAL_TASKS.length && parsed[0]?.title.includes('Urine Test')) {
-      return parsed;
+    const parsed = JSON.parse(raw);
+    if (
+      Array.isArray(parsed) &&
+      parsed.length === INITIAL_TASKS.length &&
+      parsed.every(isValidTaskNode) &&
+      typeof parsed[0]?.title === 'string' &&
+      parsed[0].title.includes('Urine Test')
+    ) {
+      return parsed.map((t: TaskNode) => ({
+        ...t,
+        subtasks: Array.isArray(t.subtasks) ? t.subtasks : [],
+      }));
     }
   } catch {
     // Fallback to initial stages
@@ -148,7 +167,7 @@ export default function RoadmapGame({ onBack, isEmbedded = false }: RoadmapGameP
             ...t,
             status: 'completed' as const,
             stars: Math.max(t.stars, 3),
-            subtasks: t.subtasks.map((s) => ({ ...s, done: true })),
+            subtasks: (t.subtasks || []).map((s) => ({ ...s, done: true })),
             completedAt: new Date().toISOString(),
           };
         }
@@ -226,7 +245,7 @@ export default function RoadmapGame({ onBack, isEmbedded = false }: RoadmapGameP
     setTasks((prev) =>
       prev.map((t) => {
         if (t.id !== taskId || t.status === 'locked') return t;
-        const updatedSubs = t.subtasks.map((s) =>
+        const updatedSubs = (t.subtasks || []).map((s) =>
           s.id === subtaskId ? { ...s, done: !s.done } : s
         );
         const doneCount = updatedSubs.filter((s) => s.done).length;
@@ -249,7 +268,7 @@ export default function RoadmapGame({ onBack, isEmbedded = false }: RoadmapGameP
       ...t,
       status: idx === 0 ? ('unlocked' as const) : ('locked' as const),
       stars: 0,
-      subtasks: t.subtasks.map((s) => ({ ...s, done: false })),
+      subtasks: (t.subtasks || []).map((s) => ({ ...s, done: false })),
       completedAt: undefined,
     }));
     setTasks(resetTasks);
