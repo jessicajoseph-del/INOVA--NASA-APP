@@ -301,14 +301,15 @@ export function SemiCircularGauge({
   const dotY = cy - radius * Math.sin(angleRad);
 
   const displayVal = formatFn ? formatFn(value) : value.toFixed(1);
+  const isDarkCard = !cardClassName.includes('bg-white') && !cardClassName.includes('bg-[#F');
 
   return (
     <div
-      className={`${cardClassName} flex flex-col items-center justify-between shadow-sm relative overflow-hidden group hover:border-[#0B1736]/40 transition-all duration-300 w-full`}
+      className={`${cardClassName} flex flex-col items-center justify-between shadow-sm relative overflow-hidden group hover:border-cyan-400/50 transition-all duration-300 w-full`}
     >
       {/* Header Row: Label & Optional Action */}
       <div className="w-full flex items-center justify-between gap-2 mb-1.5 relative z-10">
-        <span className="text-[11px] font-mono uppercase tracking-wider text-[#5A657D] font-semibold text-center flex-1">
+        <span className={`text-[11px] font-mono uppercase tracking-wider font-bold text-center flex-1 ${isDarkCard ? 'text-cyan-200' : 'text-[#0B1736]'}`}>
           {label}
         </span>
         {headerAction && <div className="shrink-0">{headerAction}</div>}
@@ -317,11 +318,11 @@ export function SemiCircularGauge({
       {/* Semicircular SVG Meter */}
       <div className="relative w-[150px] h-[85px] flex items-center justify-center my-0.5">
         <svg width="150" height="85" viewBox="0 0 150 85" className="overflow-visible">
-          {/* Background Track Arc (Soft Flax / Linen #EDE8DE per RIDGE Brand Kit) */}
+          {/* Background Track Arc */}
           <path
             d="M 19 70 A 56 56 0 0 1 131 70"
             fill="none"
-            stroke="#EDE8DE"
+            stroke={isDarkCard ? '#1B2C52' : '#EDE8DE'}
             strokeWidth="10"
             strokeLinecap="round"
           />
@@ -364,15 +365,15 @@ export function SemiCircularGauge({
         {/* Numeric Readout Centered at Bottom */}
         <div className="absolute bottom-1 flex flex-col items-center text-center">
           <div className="flex items-baseline gap-1">
-            <span className="text-2xl font-black tracking-tight text-[#0B1736] font-sans">
+            <span className={`text-2xl font-black tracking-tight font-sans drop-shadow-sm ${isDarkCard ? 'text-white' : 'text-[#0B1736]'}`}>
               {displayVal}
             </span>
-            <span className="text-[11px] text-[#5A657D] font-mono font-bold">
+            <span className={`text-[11px] font-mono font-bold ${isDarkCard ? 'text-[#FACC15]' : 'text-[#0284C7]'}`}>
               {unit}
             </span>
           </div>
           {subtitle && (
-            <span className="text-[10px] text-[#5A657D] font-mono font-semibold">
+            <span className={`text-[10px] font-mono font-bold ${isDarkCard ? 'text-cyan-300' : 'text-[#0284C7]'}`}>
               {subtitle}
             </span>
           )}
@@ -380,8 +381,8 @@ export function SemiCircularGauge({
       </div>
 
       {/* Target baseline caption */}
-      <p className="text-[10px] font-mono text-[#5A657D] mt-1 flex items-center gap-1.5 text-center">
-        <span className="w-1.5 h-1.5 rounded-full bg-[#0B1736]"></span>
+      <p className={`text-[10px] font-mono mt-1 flex items-center gap-1.5 text-center font-medium ${isDarkCard ? 'text-cyan-100' : 'text-[#0B1736]'}`}>
+        <span className={`w-1.5 h-1.5 rounded-full ${isDarkCard ? 'bg-cyan-400' : 'bg-[#0B1736]'}`}></span>
         <span>{targetText}</span>
       </p>
 
@@ -597,23 +598,23 @@ export default function AstroCareDashboard({
       {/* 2. MAIN CONTENT STAGE */}
       <main className="max-w-7xl mx-auto p-4 sm:p-6 space-y-6 w-full">
         {/* 1. CREW WELLBEING GAUGES - HORIZONTAL SECTION BELOW PROFILE RIBBON */}
-        <div className="bg-[#F7F3E9] border border-[#DCD5C7] p-5 sm:p-6 rounded-2xl shadow-[0_8px_24px_rgba(11,23,54,0.08)] space-y-4 text-left">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#DCD5C7] pb-3">
+        <div className="bg-[#0B1736]/95 border border-blue-400/25 p-5 sm:p-6 rounded-2xl shadow-xl space-y-4 text-left">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-blue-900/40 pb-3">
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-base sm:text-lg font-bold text-[#0B1736] tracking-wide">
+                <h2 className="text-base sm:text-lg font-bold text-white tracking-wide">
                   Crew Wellbeing Gauges
                 </h2>
-                <span className="text-[10px] font-mono text-[#8A5A00] font-semibold px-2 py-0.5 rounded bg-[#FDE047]/20 border border-[#D6A31E]/40">
+                <span className="text-[10px] font-mono text-[#FDE047] font-semibold px-2 py-0.5 rounded bg-[#FDE047]/10 border border-[#FDE047]/30">
                   OAT YELLOW METRICS
                 </span>
               </div>
-              <p className="text-xs text-[#5A657D] mt-0.5">
+              <p className="text-xs text-slate-300 mt-0.5">
                 Restorative sleep, countermeasure exercise &amp; cognitive readiness across mission timeline.
               </p>
             </div>
-            <div className="text-xs font-mono text-[#5A657D]">
-              Selected: <span className="text-[#9A5B00] font-bold">Day {currentRecord.day} ({currentRecord.date})</span>
+            <div className="text-xs font-mono text-slate-300">
+              Selected: <span className="text-[#FDE047] font-bold">Day {currentRecord.day} ({currentRecord.date})</span>
             </div>
           </div>
 
@@ -627,7 +628,7 @@ export default function AstroCareDashboard({
               unit="h"
               targetText="Target: 8.0h Rest Baseline"
               colorHex="#F5B82E"
-              cardClassName="bg-white border border-[#DCD5C7] rounded-xl p-4 sm:p-5 flex flex-col justify-between"
+              cardClassName="bg-[#0B152C]/90 border border-blue-500/30 rounded-xl p-4 sm:p-5 flex flex-col justify-between hover:border-cyan-400/50 transition-all shadow-md"
             />
 
             {/* 2. Daily Exercise Countermeasure */}
@@ -644,27 +645,27 @@ export default function AstroCareDashboard({
                 <button
                   type="button"
                   onClick={() => setIsLogModalOpen(true)}
-                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[10px] font-mono font-bold bg-[#FACC15]/10 hover:bg-[#FACC15]/20 text-[#FACC15] border border-[#FACC15]/35 transition-all cursor-pointer active:scale-95 shadow-sm"
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[10px] font-mono font-bold bg-[#FACC15]/20 hover:bg-[#FACC15]/30 text-[#FACC15] border border-[#FACC15]/40 transition-all cursor-pointer active:scale-95 shadow-sm"
                   title="Log ARED or T2 Workout Session"
                 >
                   <Plus className="w-3 h-3" />
                   <span>Log Session</span>
                 </button>
               }
-              cardClassName="bg-white border border-[#DCD5C7] rounded-xl p-4 sm:p-5 hover:border-[#D6A31E]/60 transition-all flex flex-col justify-between"
+              cardClassName="bg-[#0B152C]/90 border border-blue-500/30 rounded-xl p-4 sm:p-5 hover:border-[#FACC15]/50 transition-all flex flex-col justify-between shadow-md"
               footerContent={
-                <div className="flex items-center gap-2 mt-2 w-full justify-center flex-wrap pt-2 border-t border-[#DCD5C7]">
-                  <div className="px-2.5 py-1 rounded-lg bg-[#F7F4EE] border border-[#DCD5C7] font-mono text-[10px] text-[#0B1736] flex items-center gap-1.5 shadow-sm">
+                <div className="flex items-center gap-2 mt-2 w-full justify-center flex-wrap pt-2 border-t border-blue-900/60">
+                  <div className="px-2.5 py-1 rounded-lg bg-[#060F28] border border-blue-400/30 font-mono text-[10px] text-cyan-200 flex items-center gap-1.5 shadow-sm">
                     <Dumbbell className="w-3 h-3 text-[#FACC15]" />
-                    <span className="text-[#5A657D]">ARED LOAD:</span>
-                    <span className="font-bold text-[#0B1736]">
+                    <span className="text-cyan-300 font-semibold">ARED LOAD:</span>
+                    <span className="font-bold text-white">
                       {effectiveAredLoad.toLocaleString()} kg
                     </span>
                   </div>
-                  <div className="px-2.5 py-1 rounded-lg bg-[#F7F4EE] border border-[#DCD5C7] font-mono text-[10px] text-[#0B1736] flex items-center gap-1.5 shadow-sm">
+                  <div className="px-2.5 py-1 rounded-lg bg-[#060F28] border border-blue-400/30 font-mono text-[10px] text-cyan-200 flex items-center gap-1.5 shadow-sm">
                     <Activity className="w-3 h-3 text-cyan-400" />
-                    <span className="text-[#5A657D]">T2 / CEVIS:</span>
-                    <span className="font-bold text-[#0B1736]">
+                    <span className="text-cyan-300 font-semibold">T2 / CEVIS:</span>
+                    <span className="font-bold text-white">
                       {currentRecord.cardioMinutes} min • {currentRecord.cardioBpm} bpm
                     </span>
                   </div>
@@ -680,18 +681,18 @@ export default function AstroCareDashboard({
               unit="/10"
               targetText="Behavioral Stability Normal"
               colorHex="#FDE047"
-              cardClassName="bg-white border border-[#DCD5C7] rounded-xl p-4 sm:p-5 flex flex-col justify-between"
+              cardClassName="bg-[#0B152C]/90 border border-blue-500/30 rounded-xl p-4 sm:p-5 flex flex-col justify-between hover:border-cyan-400/50 transition-all shadow-md"
             />
           </div>
 
           {/* Contextual Daily Flight Journal Entry */}
-          <div className="bg-white border border-[#DCD5C7] rounded-xl p-3.5 text-left flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm">
+          <div className="bg-[#060F28] border border-blue-400/25 rounded-xl p-3.5 text-left flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-md">
             <div className="flex-1">
-              <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-[#9A5B00] mb-1">
-                <Radio className="w-3.5 h-3.5 text-[#C17A00]" />
+              <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-[#F5B82E] mb-1">
+                <Radio className="w-3.5 h-3.5 text-[#F5B82E]" />
                 <span>Mission Journal Log: Day {currentRecord.day}</span>
               </div>
-              <p className="text-xs text-[#334155] leading-relaxed italic">
+              <p className="text-xs text-slate-200 leading-relaxed italic">
                 {currentRecord.journal ||
                   `Standard orbital shift. Physical countermeasure workout complete on ARED. Microgravity vitals logged in accordance with Flight Rule 4.2.`}
               </p>
@@ -700,10 +701,10 @@ export default function AstroCareDashboard({
               <div
                 className={`p-2 rounded-lg text-[11px] font-mono flex items-center gap-1.5 shrink-0 ${
                   currentRecord.alert.type === 'critical'
-                    ? 'bg-rose-500/10 text-rose-300 border border-rose-500/30'
+                    ? 'bg-rose-500/20 text-rose-200 border border-rose-500/40'
                     : currentRecord.alert.type === 'advisory'
-                    ? 'bg-amber-500/10 text-[#FDE047] border border-amber-500/30'
-                    : 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/30'
+                    ? 'bg-amber-500/20 text-amber-200 border border-amber-500/40'
+                    : 'bg-emerald-500/20 text-emerald-200 border border-emerald-500/40'
                 }`}
               >
                 <ShieldAlert className="w-3.5 h-3.5 shrink-0" />
