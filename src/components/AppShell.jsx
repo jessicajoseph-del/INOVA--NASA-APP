@@ -63,19 +63,18 @@ export default function AppShell({
         onSelectModule={onSelectModule}
       />
 
-      {/* ── 3. VIEWPORT WITH RIGHTWARD SWIPE PAGE TRANSITION ── */}
-      <main
-        className="overflow-x-hidden relative w-full min-h-screen pt-24 pr-0 lg:pr-64 px-4 sm:px-6 pb-12 z-10"
-      >
+      {/* ── 3. VIEWPORT WITH RIGHTWARD SWIPE PAGE TRANSITION (FULL WIDTH, NO SQUEEZING) ── */}
+      <div className="w-full min-h-screen flex flex-col justify-between pt-20 relative z-10">
         <div
           key={activeModuleId}
+          className="w-full flex-1"
           style={{
             animation: 'flightDeckSwipeRight 380ms cubic-bezier(0.22, 1, 0.36, 1) forwards',
           }}
         >
           {children}
         </div>
-      </main>
+      </div>
 
       {/* Inline styles for keyframe swipe right */}
       <style>{`
