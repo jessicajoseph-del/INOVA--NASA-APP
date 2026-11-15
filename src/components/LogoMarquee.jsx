@@ -48,8 +48,8 @@ export default function LogoMarquee() {
   return (
     <section className="w-full py-12 bg-transparent border-t border-blue-900/40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Heading - Clean White for Ink Blue Theme */}
-        <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight text-white text-center mb-8">
+        {/* Section Heading - Ink Blue for Oat Ivory Theme */}
+        <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight text-[#0B1736] text-center mb-8">
           Functioning status
         </h2>
 
