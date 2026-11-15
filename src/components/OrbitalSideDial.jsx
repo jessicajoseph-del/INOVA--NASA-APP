@@ -2,7 +2,6 @@ import React, { useRef, useEffect, useState } from 'react';
 import {
   Box,
   TrendingUp,
-  Activity,
   Gamepad2,
   HeartPulse,
   Utensils,
@@ -30,16 +29,8 @@ export const MODULES = [
     accent: '#0F2557', // Deep Orbital Navy
   },
   {
-    id: 'portal',
-    index: '03',
-    title: '3D Human Vital',
-    subtitle: 'VITAL // Anatomical Observatory',
-    icon: Activity,
-    accent: '#E06D06', // Solar Amber
-  },
-  {
     id: 'roadmap',
-    index: '04',
+    index: '03',
     title: 'Roadmap',
     subtitle: 'Lumina Quest // Daily Protocol',
     icon: Gamepad2,
@@ -47,7 +38,7 @@ export const MODULES = [
   },
   {
     id: 'behavioral',
-    index: '05',
+    index: '04',
     title: 'Behavioral Health',
     subtitle: 'CrewMind // Mood & ABC Trajectory',
     icon: HeartPulse,
@@ -55,13 +46,19 @@ export const MODULES = [
   },
   {
     id: 'mealplan',
-    index: '06',
+    index: '05',
     title: 'Meal Plan',
     subtitle: 'NutriOrbit // Microgravity Nutrition',
     icon: Utensils,
     accent: '#E06D06', // Solar Amber
   },
 ];
+
+export const PORTAL_MODULE = {
+  id: 'portal',
+  index: 'V',
+  title: '3D Human Vital',
+};
 
 export default function OrbitalSideDial({ activeModuleId, onSelectModule }) {
   const [isHidden, setIsHidden] = useState(false);
@@ -180,14 +177,16 @@ export default function OrbitalSideDial({ activeModuleId, onSelectModule }) {
         </svg>
 
         {/* ── DYNAMIC ACTIVE INDICATOR NOTCH (TRACKS ACTIVE MODULE ON RIGHT EDGE) ── */}
-        <div
-          style={{
-            transform: `translate3d(0, calc(-50% + ${(safeActiveIdx - 2.5) * 76}px), 0)`,
-            transition: 'transform 360ms cubic-bezier(0.22, 1, 0.36, 1)',
-          }}
-          className="absolute right-0 top-1/2 w-4 h-3 rounded-l-full bg-[#E06D06] shadow-sm z-30"
-          title="Active Module Indicator"
-        />
+        {activeIdx >= 0 && (
+          <div
+            style={{
+              transform: `translate3d(0, calc(-50% + ${(safeActiveIdx - 2) * 90}px), 0)`,
+              transition: 'transform 360ms cubic-bezier(0.22, 1, 0.36, 1)',
+            }}
+            className="absolute right-0 top-1/2 w-4 h-3 rounded-l-full bg-[#E06D06] shadow-sm z-30"
+            title="Active Module Indicator"
+          />
+        )}
 
         {/* ── HIDE TOGGLE HANDLE (LEFT APEX OF THE SEMICIRCLE) ── */}
         <button
@@ -199,14 +198,14 @@ export default function OrbitalSideDial({ activeModuleId, onSelectModule }) {
           <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
         </button>
 
-        {/* ── MODULE ITEMS ALONG THE CURVED ARC (STARTING SEQUENTIALLY FROM 01 TO 06) ── */}
+        {/* ── MODULE ITEMS ALONG THE CURVED ARC (STARTING SEQUENTIALLY FROM 01 TO 05) ── */}
         <div className="relative w-full h-full flex items-center justify-end">
           {MODULES.map((mod, idx) => {
-            const isActive = idx === safeActiveIdx;
+            const isActive = mod.id === activeModuleId;
 
-            // Sequential arc positioning: 01 at the top (-190px) down to 06 at the bottom (+190px)
-            const offsetFromCenter = idx - 2.5;
-            const slotSpacing = 76; // px vertical distance between items
+            // Sequential arc positioning: 01 at the top (-180px) down to 05 at the bottom (+180px)
+            const offsetFromCenter = idx - 2;
+            const slotSpacing = 90; // px vertical distance between items
             const y = offsetFromCenter * slotSpacing;
             const x = Math.pow(offsetFromCenter, 2) * 5.8; // Parabolic arc depth
 

@@ -567,7 +567,17 @@ export default function RoadmapGame({
                   </div>
                   <div>
                     <dt className="font-extrabold text-[#9A5B00]">HOW</dt>
-                    <dd>Collect a midstream sample, check specific gravity, and transmit the results.</dd>
+                    <dd>
+                      Collect a midstream sample, check specific gravity, and transmit the results.{' '}
+                      <a
+                        href="/assets/aistudio/INOVA_Astronaut_Health_Monitoring_SOP_Manual_v0.1.pdf"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-semibold text-blue-800 underline underline-offset-2 hover:text-blue-600"
+                      >
+                        Open the SOP manual (PDF)
+                      </a>
+                    </dd>
                   </div>
                   <div>
                     <dt className="font-extrabold text-[#9A5B00]">WHAT</dt>

@@ -63,7 +63,7 @@ export default function LogoMarquee() {
   const renderCard = (card, trackKey) => {
     const currentFreq = frequencies[card.id] || card.defaultFrequency;
     const isDaily = currentFreq === 'Daily';
-    const isWeekly = currentFreq === 'Weekly';
+    const nextFrequency = isDaily ? 'Weekly' : 'Daily';
 
     return (
       <div
@@ -91,50 +91,28 @@ export default function LogoMarquee() {
           />
         </div>
 
-        {/* Daily & Weekly Status Buttons (Green / Red) */}
+        {/* Show only the current interval; activate to switch to the other interval. */}
         <div className="mt-3.5 w-full flex items-center justify-center gap-1.5 z-10">
-          {/* Daily Button */}
           <button
             type="button"
             onClick={(e) => {
               e.stopPropagation();
-              handleSetFrequency(card.id, 'Daily');
+              handleSetFrequency(card.id, nextFrequency);
             }}
             className={`px-3 py-1 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1 border ${
               isDaily
                 ? 'bg-emerald-500/25 text-emerald-300 border-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.35)] scale-102 ring-1 ring-emerald-400/50'
-                : 'bg-rose-500/10 text-rose-300/70 border-rose-500/30 hover:bg-rose-500/20 hover:text-rose-200'
+                : 'bg-rose-500/10 text-rose-300 border-rose-500/30 hover:bg-rose-500/20 hover:text-rose-200'
             }`}
-            title="Set sampling interval to Daily"
+            title={`Switch sampling interval to ${nextFrequency}`}
+            aria-label={`Current sampling interval: ${currentFreq}. Activate to switch to ${nextFrequency}.`}
           >
             <span
               className={`w-1.5 h-1.5 rounded-full ${
                 isDaily ? 'bg-emerald-400 animate-pulse' : 'bg-rose-400/60'
               }`}
             />
-            <span>Daily</span>
-          </button>
-
-          {/* Weekly Button */}
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleSetFrequency(card.id, 'Weekly');
-            }}
-            className={`px-3 py-1 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1 border ${
-              isWeekly
-                ? 'bg-emerald-500/25 text-emerald-300 border-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.35)] scale-102 ring-1 ring-emerald-400/50'
-                : 'bg-rose-500/10 text-rose-300/70 border-rose-500/30 hover:bg-rose-500/20 hover:text-rose-200'
-            }`}
-            title="Set sampling interval to Weekly"
-          >
-            <span
-              className={`w-1.5 h-1.5 rounded-full ${
-                isWeekly ? 'bg-emerald-400 animate-pulse' : 'bg-rose-400/60'
-              }`}
-            />
-            <span>Weekly</span>
+            <span>{currentFreq}</span>
           </button>
         </div>
       </div>
@@ -153,11 +131,6 @@ export default function LogoMarquee() {
             <span className="flex items-center gap-1.5 text-emerald-700 font-semibold">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               Active Protocol (Green)
-            </span>
-            <span>•</span>
-            <span className="flex items-center gap-1.5 text-rose-700 font-semibold">
-              <span className="w-2 h-2 rounded-full bg-rose-500" />
-              Alternative Interval (Red)
             </span>
           </div>
         </div>

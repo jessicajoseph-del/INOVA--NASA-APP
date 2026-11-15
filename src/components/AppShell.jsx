@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import TopNavPill from './TopNavPill';
-import OrbitalSideDial, { MODULES } from './OrbitalSideDial';
+import OrbitalSideDial, { MODULES, PORTAL_MODULE } from './OrbitalSideDial';
 
 export default function AppShell({
   activeModuleId,
@@ -12,7 +12,9 @@ export default function AppShell({
   onLogoutClick,
   children,
 }) {
-  const currentMod = MODULES.find((m) => m.id === activeModuleId) || MODULES[0];
+  const currentMod =
+    MODULES.find((m) => m.id === activeModuleId) ||
+    (activeModuleId === PORTAL_MODULE.id ? PORTAL_MODULE : MODULES[0]);
 
   // Optional Keyboard navigation: ArrowUp/ArrowDown to switch orbital modules
   useEffect(() => {

@@ -265,9 +265,7 @@ function buildSmoothPath(coords) {
 }
 
 export default function AuraDashboard({
-    onBackToHome,
     arEnabled = false,
-    onToggleAR,
     onGlobalHandUpdate,
     onHandError,
     handSessionKey = 0,
@@ -488,27 +486,8 @@ export default function AuraDashboard({
                         </span>
                     </div>
 
-                    {/* Center: AR Visor Button + Vertical Divider + Station Mode Pill */}
+                    {/* Center: Station Mode */}
                     <div className="flex items-center gap-3.5">
-                        <button
-                            onClick={onToggleAR}
-                            className={`px-4 py-2 text-[11px] rounded-xl font-bold uppercase tracking-wider border transition-all cursor-pointer flex items-center gap-2 ${
-                                arEnabled
-                                    ? 'bg-blue-950 border-blue-950 text-[#FFFFF0] shadow-sm'
-                                    : 'bg-white border-stone-200/90 text-slate-800 shadow-[0_2px_8px_rgba(15,23,42,0.05)] hover:border-slate-300 hover:bg-slate-50/70'
-                            }`}
-                        >
-                            <svg className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.75">
-                                <rect x="2.5" y="5" width="15" height="9" rx="2.5" />
-                                <path d="M6.5 16.5h7" strokeLinecap="round" />
-                                <circle cx="7" cy="9.5" r="1" fill="currentColor" stroke="none" />
-                                <circle cx="13" cy="9.5" r="1" fill="currentColor" stroke="none" />
-                            </svg>
-                            {arEnabled ? 'AR VISOR ACTIVE' : 'ENABLE AR VISOR'}
-                        </button>
-
-                        <div className="h-6 w-[1px] bg-stone-200 hidden sm:block"></div>
-
                         <div className="px-3.5 py-2 rounded-xl bg-white/80 border border-stone-200/80 text-xs font-sans text-slate-500 flex items-center gap-1.5 shadow-[0_1px_4px_rgba(15,23,42,0.03)]">
                             <span>Station Mode:</span>
                             <strong className="text-slate-900 font-bold">{stationMode}</strong>
@@ -518,28 +497,6 @@ export default function AuraDashboard({
                         </div>
                     </div>
 
-                    {/* Right: Back Pill Button + User Profile Avatar */}
-                    <div className="flex items-center gap-3">
-                        {onBackToHome && (
-                            <button
-                                onClick={onBackToHome}
-                                className="shrink-0 px-4 py-2 bg-[#0f2557] hover:bg-blue-900 rounded-full text-[11px] font-bold uppercase tracking-wider text-white transition-colors shadow-xs cursor-pointer flex items-center gap-1.5"
-                            >
-                                <span>←</span> Back to Ridge
-                            </button>
-                        )}
-
-                        <div className="flex items-center gap-1 cursor-pointer group">
-                            <div className="w-8 h-8 rounded-full bg-slate-200/90 border border-stone-300/80 flex items-center justify-center text-[#0f2557] group-hover:bg-slate-300/80 transition-colors">
-                                <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
-                                    <path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" />
-                                </svg>
-                            </div>
-                            <svg className="w-3 h-3 text-slate-400" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2">
-                                <path d="M6 8l4 4 4-4" strokeLinecap="round" strokeLinejoin="round" />
-                            </svg>
-                        </div>
-                    </div>
                 </div>
 
                 {/* MIDDLE ROW: Orbital Telemetry, UTC Space Clock, & Mission Duration Progress */}
@@ -827,7 +784,7 @@ export default function AuraDashboard({
                             <circle cx="12" cy="12" r="4" fill="currentColor" />
                             <path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12" strokeLinecap="round" />
                         </svg>
-                        Inject X-Class Flare
+                        Simulate High Radiation
                     </button>
                 </div>
 

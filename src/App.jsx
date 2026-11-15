@@ -435,12 +435,7 @@ export default function App() {
           {activeView === 'aura' && (
             <main className="flex-1 w-full relative z-10">
               <AuraDashboard
-                onBackToHome={() => setActiveView('overview')}
                 arEnabled={isARHandActive}
-                onToggleAR={() => {
-                  setGestureArError('');
-                  setIsARHandActive((enabled) => !enabled);
-                }}
                 onGlobalHandUpdate={handleGlobalHandUpdate}
                 onHandError={setGestureArError}
                 handSessionKey={handSessionKey}
