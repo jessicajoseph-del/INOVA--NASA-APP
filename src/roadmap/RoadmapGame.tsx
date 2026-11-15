@@ -8,6 +8,8 @@ import { TaskRectCard } from './components/TaskRectCard';
 import { MilestoneSummitCard } from './components/MilestoneSummitCard';
 import { TaskInspectorRail } from './components/TaskInspectorRail';
 import { ConfettiBurst } from './components/ConfettiBurst';
+import { CollapsedRoadmapView } from './components/CollapsedRoadmapView';
+import { WeeklyPuzzle } from './components/WeeklyPuzzle';
 
 const STORAGE_KEY = 'lumina-quest-stages-v2';
 
@@ -38,12 +40,16 @@ export default function RoadmapGame({ onBack, isEmbedded = false }: RoadmapGameP
     const firstUnlocked = initial.find((t) => t.status === 'unlocked');
     return firstUnlocked?.id ?? initial[0]?.id ?? '';
   });
+  
   const [freeUnlockMode, setFreeUnlockMode] = useState<boolean>(false);
   const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
   const [surgingSegment, setSurgingSegment] = useState<number | null>(null);
   const [justUnlockedId, setJustUnlockedId] = useState<string | null>(null);
   const [confettiTrigger, setConfettiTrigger] = useState<number>(0);
   const [reducedMotion, setReducedMotion] = useState<boolean>(false);
+  
+  // New state to track the 7-day puzzle streak
+  const [streakDays, setStreakDays] = useState<number>(0);
 
   const mapViewportRef = useRef<HTMLDivElement | null>(null);
   const surgeTimerRef = useRef<number | null>(null);
@@ -169,6 +175,10 @@ export default function RoadmapGame({ onBack, isEmbedded = false }: RoadmapGameP
       }
 
       if (allDoneNow) {
+        // Increment streak if not previously completed
+        if (!allCompleted) {
+          setStreakDays((prev) => Math.min(prev + 1, 7));
+        }
         setConfettiTrigger((c) => c + 1);
         playVictoryFanfare(soundEnabled);
         window.setTimeout(() => {
@@ -481,6 +491,29 @@ export default function RoadmapGame({ onBack, isEmbedded = false }: RoadmapGameP
               );
             })}
           </div>
+
+       {/* Full-Width Side-by-Side: Task Deck and Weekly Puzzle */}
+          <div className="w-full mt-24 mb-32 flex flex-col xl:flex-row items-center justify-center gap-12 xl:gap-8 px-2 sm:px-10 2xl:px-20 overflow-visible">
+            
+            {/* Left Side: Scattered Task Deck */}
+            <div className="w-full xl:w-1/2 flex justify-center xl:justify-end xl:pr-12 relative z-20">
+              <CollapsedRoadmapView 
+                tasks={tasks} 
+                onSelectTask={(id) => {
+                  setSelectedTaskId(id);
+                  const idx = tasks.findIndex(t => t.id === id);
+                  if (idx >= 0) scrollToStage(idx);
+                }} 
+              />
+            </div>
+            
+            {/* Right Side: 7-Day Puzzle */}
+            <div className="w-full xl:w-1/2 flex justify-center xl:justify-start xl:pl-12 relative z-10">
+              <WeeklyPuzzle streakDays={streakDays} />
+            </div>
+
+          </div>
+
         </main>
 
         {/* Oat Ivory Companion Game Quest Panel */}
