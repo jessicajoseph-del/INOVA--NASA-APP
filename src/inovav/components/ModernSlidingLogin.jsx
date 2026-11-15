@@ -4,6 +4,7 @@ import {
   matchLiveFaceAgainstCrew,
 } from '../utils/faceRecognition';
 import { recordFaceAuthSuccess } from '../utils/faceAuthLog';
+import { firebaseAuthSignIn, firebaseAuthSignUp, isFirebaseOnline } from '../firebase';
 
 // Palette: Oat Yellow (#f6eedb) & Ink Blue (#06132b)
 const OAT_BG = '#f6eedb';
@@ -180,22 +181,27 @@ export default function ModernSlidingLogin({
     };
   }, [isSignUp, authMethod, cameraActive, astronauts]);
 
-  const handleSignInSubmit = (e) => {
+  const handleSignInSubmit = async (e) => {
     e.preventDefault();
     setSignInError('');
+    setSignInSuccessMsg('');
 
-    const targetId = signInId.trim().toLowerCase();
-    const found = (astronauts || []).find(
-      (a) => a.id.toLowerCase() === targetId && a.password === signInPassword
-    );
-
-    if (found) {
-      setSignInSuccessMsg(`Welcome, ${found.name}`);
-      setTimeout(() => {
-        onLoginSuccess(found);
-      }, 650);
-    } else {
-      setSignInError('Invalid Callsign or Password.');
+    try {
+      const res = await firebaseAuthSignIn(signInId, signInPassword, astronauts);
+      if (res.success && res.astronaut) {
+        setSignInSuccessMsg(
+          res.mode === 'cloud'
+            ? `Firebase Verified // Welcome, ${res.astronaut.name}`
+            : `Offline Verified // Welcome, ${res.astronaut.name}`
+        );
+        setTimeout(() => {
+          onLoginSuccess(res.astronaut);
+        }, 650);
+      } else {
+        setSignInError(res.error || 'Invalid Callsign or Password.');
+      }
+    } catch {
+      setSignInError('Authentication error. Please retry.');
     }
   };
 
@@ -303,7 +309,11 @@ export default function ModernSlidingLogin({
         faceDescriptors,
         createdAt: new Date().toISOString(),
       };
-      onSignupSuccess(newAstro);
+      const authRes = await firebaseAuthSignUp(newAstro);
+      onSignupSuccess(authRes.astronaut || newAstro);
+    } catch (err) {
+      console.warn('Sign up error:', err);
+      setSignUpError('Failed to complete registration.');
     } finally {
       setIsSavingSignUp(false);
     }
@@ -367,6 +377,20 @@ export default function ModernSlidingLogin({
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <span
+            className="font-mono"
+            style={{
+              fontSize: '0.68rem',
+              color: isFirebaseOnline() ? '#34d399' : '#ead9b2',
+              letterSpacing: '0.08em',
+              background: 'rgba(246, 238, 219, 0.1)',
+              padding: '4px 10px',
+              borderRadius: '12px',
+              border: '1px solid rgba(246, 238, 219, 0.2)',
+            }}
+          >
+            {isFirebaseOnline() ? '● FIREBASE CLOUD' : '○ OFFLINE LOCAL NOSQL'}
+          </span>
           <span
             className="font-mono"
             style={{
