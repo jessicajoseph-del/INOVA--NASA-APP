@@ -1127,9 +1127,20 @@ export default function InovavPortal({
         </div>
       )}
 
-      {/* ── 1. STARTING SCREEN: HOHMANN TRANSFER SIMULATION & RIDGE 8S COUNTDOWN ── */}
+      {/* ── 1. STARTING SCREEN: RIDGE IN THE CENTER & 8S TIMEOUT ── */}
       {screen === 'intro' && (
-        <div className="screen-fade" style={{ position: 'absolute', inset: 0, zIndex: 10 }}>
+        <div
+          className="screen-fade"
+          onClick={() => setScreen('astronaut')}
+          style={{
+            position: 'absolute',
+            inset: 0,
+            zIndex: 10,
+            cursor: 'pointer',
+            backgroundColor: '#06132b',
+          }}
+          title="Click to proceed"
+        >
           <Canvas camera={{ position: [0, 0, 100], fov: 60 }} style={{ position: 'absolute', inset: 0 }}>
             <HohmannParticleSwarm />
             <OrbitControls autoRotate={true} autoRotateSpeed={0.8} enableDamping={true} />
@@ -1147,7 +1158,7 @@ export default function InovavPortal({
             </Effects>
           </Canvas>
 
-          {/* RIDGE Branding & 8s Countdown in the Middle */}
+          {/* RIDGE in the center & 8s timeout below it */}
           <div
             style={{
               position: 'absolute',
@@ -1165,53 +1176,64 @@ export default function InovavPortal({
               maxWidth: '680px',
             }}
           >
-            <span className="font-mono" style={{ fontSize: '0.8rem', letterSpacing: '0.3em', color: '#ead9b2', marginBottom: '12px' }}>
-              // NASA BIO-TELEMETRY & ASTRONAUT SUIT PORTAL
-            </span>
-            <h1 className="ridge-title font-tech" style={{ margin: 0, fontSize: 'clamp(2.8rem, 6.5vw, 5.2rem)', fontWeight: 600, color: '#06132b', textIndent: '0.4em', lineHeight: 1 }}>
-              INOVA
+            <h1
+              className="font-tech"
+              style={{
+                margin: 0,
+                fontSize: 'clamp(3.8rem, 10vw, 7.2rem)',
+                fontWeight: 700,
+                color: '#f6eedb',
+                letterSpacing: '0.34em',
+                textIndent: '0.34em',
+                lineHeight: 1,
+                textShadow: '0 0 50px rgba(246, 238, 219, 0.4), 0 0 100px rgba(56, 189, 248, 0.25)',
+              }}
+            >
+              RIDGE
             </h1>
-            <p style={{ margin: '18px 0 28px', fontSize: '0.92rem', letterSpacing: '0.28em', color: '#1e3a8a', textTransform: 'uppercase' }}>
-              NASA ASTRONAUT HEALTH MONITORING & 3D VITALS SYSTEM
-            </p>
 
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '14px', pointerEvents: 'auto', width: '100%' }}>
-              <div className="font-mono" style={{ fontSize: '0.85rem', color: '#1e3a8a', letterSpacing: '0.15em' }}>
-                INITIALIZING IN <span style={{ fontWeight: 'bold', color: '#06132b' }}>{countdown}S</span>
-              </div>
-              <div style={{ width: '220px', height: '3px', background: 'rgba(6, 19, 43, 0.15)', borderRadius: '2px', overflow: 'hidden' }}>
-                <div style={{ width: `${((8 - countdown) / 8) * 100}%`, height: '100%', background: 'linear-gradient(90deg, #1e3a8a, #06132b)', transition: 'width 1s linear' }} />
-              </div>
-              
-              <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '12px', marginTop: '12px' }}>
-                <button
-                  type="button"
-                  onClick={() => setScreen('astronaut')}
-                  className="tech-btn"
-                  style={{ cursor: 'pointer' }}
-                >
-                  ENTER CREW PORTAL →
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setLoginMode('signin');
-                    setScreen('login');
+            {/* 8-second timeout indicator below RIDGE */}
+            <div
+              style={{
+                marginTop: '36px',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '12px',
+              }}
+            >
+              <div
+                style={{
+                  width: '240px',
+                  height: '3px',
+                  background: 'rgba(246, 238, 219, 0.15)',
+                  borderRadius: '3px',
+                  overflow: 'hidden',
+                  boxShadow: '0 0 12px rgba(246, 238, 219, 0.2)',
+                }}
+              >
+                <div
+                  style={{
+                    width: `${((8 - countdown) / 8) * 100}%`,
+                    height: '100%',
+                    background: 'linear-gradient(90deg, #38bdf8, #f6eedb)',
+                    transition: 'width 1s linear',
+                    boxShadow: '0 0 10px #f6eedb',
                   }}
-                  className="tech-btn"
-                  style={{ cursor: 'pointer', background: 'rgba(10, 28, 63, 0.85)', color: '#f6eedb', border: '1px solid rgba(246, 238, 219, 0.4)' }}
-                >
-                  CREW LOGIN & BIOMETRICS 👤
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setShowBodyScanModal(true)}
-                  className="tech-btn"
-                  style={{ cursor: 'pointer', background: 'rgba(234, 217, 178, 0.15)', color: '#f6eedb', border: '1px solid #ead9b2' }}
-                >
-                  3D VITALS OBSERVATORY 🧬
-                </button>
+                />
               </div>
+              <span
+                className="font-mono"
+                style={{
+                  fontSize: '0.78rem',
+                  color: '#ead9b2',
+                  letterSpacing: '0.22em',
+                  fontWeight: 600,
+                  opacity: 0.85,
+                }}
+              >
+                0{countdown}S
+              </span>
             </div>
           </div>
         </div>

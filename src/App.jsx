@@ -505,7 +505,8 @@ export default function App() {
               {/* Card 1: Mission Start */}
               <div 
                 onClick={() => {
-                  setActiveView('start');
+                  setPortalInitialScreen('intro');
+                  setActiveView('portal');
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
                 className="rounded-2xl bg-gradient-to-b from-[#0e2859]/90 to-[#06132b]/95 border border-amber-400/30 p-6 backdrop-blur-md shadow-xl hover:border-amber-400 hover:shadow-amber-500/10 transition-all duration-300 cursor-pointer group flex flex-col justify-between"
