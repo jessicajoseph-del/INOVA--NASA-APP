@@ -399,10 +399,11 @@ const HohmannParticleSwarm = () => {
   const e = transferEccentricity;
   const b = a * Math.sqrt(Math.abs(1.0 - e * e));
 
-  const p1 = count * 0.1;
-  const p2 = count * 0.3;
-  const p3 = count * 0.5;
-  const p4 = count * 0.8;
+  const p1 = 0;          
+  const p2 = 0;          
+  const p3 = 0;         
+  const p4 = count * 0.7; 
+  
 
   useFrame((state) => {
     if (!meshRef.current) return;
