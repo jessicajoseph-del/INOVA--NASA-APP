@@ -986,6 +986,7 @@ export default function InovavPortal({
   const [show3DFaceStudio, setShow3DFaceStudio] = useState(false);
   const [suitTelemetryView, setSuitTelemetryView] = useState('metrics'); // 'metrics' | 'auth-log'
   const [faceAuthLogs, setFaceAuthLogs] = useState(getFaceAuthLogs);
+  const [telemetrySide, setTelemetrySide] = useState('left'); // 'left' = Suit Telemetry on the left, Astronaut with 3D Face on the right
 
   // Real-time Heart Rate Telemetry Buffer for Suit Telemetry Line Chart
   const [heartRateHistory, setHeartRateHistory] = useState(() => {
@@ -1359,18 +1360,20 @@ export default function InovavPortal({
             }}
           />
 
-          {/* ── SECTION 1: SUIT TELEMETRY (HELMET VISOR & LIVE SUIT BIOMETRICS) ── */}
+          {/* ── SECTION 1: SUIT TELEMETRY & ASTRONAUT 3D FACE VISOR ── */}
           <div
             style={{
               position: 'relative',
               width: '100%',
               minHeight: '100vh',
               display: 'flex',
+              flexDirection: telemetrySide === 'left' ? 'row-reverse' : 'row',
               flexWrap: 'wrap',
               zIndex: 10,
+              transition: 'flex-direction 0.3s ease',
             }}
           >
-            {/* ── LEFT SIDE: /astro.jpg HELMET + 3D SPHERE FACE MESH OVER BLACK VISOR ── */}
+            {/* ── ASTRONAUT SIDE: /astro.jpg HELMET + 3D SPHERE FACE MESH OVER BLACK VISOR ── */}
             <div
               style={{
                 position: 'relative',
@@ -1378,9 +1381,10 @@ export default function InovavPortal({
                 minWidth: '320px',
                 height: '100vh',
                 display: 'flex',
+                flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
-                padding: '24px',
+                padding: '30px 24px',
                 overflow: 'hidden',
                 pointerEvents: 'auto',
                 zIndex: 20,
@@ -1397,98 +1401,219 @@ export default function InovavPortal({
                 setVisorMouseY(0);
               }}
             >
-            {/* Locked 3:2 stage matching astro.jpg (1080x720) so visor mesh aligns accurately at any resolution */}
-            <div
-              style={{
-                position: 'relative',
-                width: '100%',
-                maxWidth: '760px',
-                aspectRatio: '3 / 2',
-                borderRadius: '16px',
-                overflow: 'hidden',
-              }}
-            >
-              <img
-                src="/astro.jpg"
-                alt="RIDGE Suit Helmet Visor"
+              {/* Astronaut Status & HUD Callsign Pill */}
+              <div
                 style={{
                   width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  display: 'block',
-                  userSelect: 'none',
-                  pointerEvents: 'none',
-                }}
-              />
-
-              {/* Radial fade blending astro.jpg outer dark field into Ink Blue (#06132b) canvas */}
-              <div
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  background:
-                    'radial-gradient(ellipse at 51% 48%, rgba(6,19,43,0) 44%, rgba(6,19,43,0.72) 78%, rgba(6,19,43,1) 100%)',
-                  pointerEvents: 'none',
-                  zIndex: 2,
-                }}
-              />
-
-              {/* 3D Face Sphere Mesh nested cleanly inside the black helmet visor region */}
-              <div
-                style={{
-                  position: 'absolute',
-                  left: '51%',
-                  top: '41.5%',
-                  width: '23.5%',
-                  aspectRatio: '1 / 1.06',
-                  transform: 'translate(-50%, -50%)',
-                  borderRadius: '50% 50% 47% 47%',
-                  overflow: 'hidden',
-                  background:
-                    'radial-gradient(circle at 50% 48%, rgba(10, 28, 63, 0.88) 0%, rgba(6, 19, 43, 0.96) 85%, rgba(4, 12, 28, 0.99) 100%)',
-                  boxShadow:
-                    'inset 0 0 24px rgba(4, 12, 28, 0.95), inset 0 0 14px rgba(246, 238, 219, 0.2)',
-                  zIndex: 5,
+                  maxWidth: '760px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  marginBottom: '10px',
+                  padding: '8px 14px',
+                  background: 'rgba(10, 28, 63, 0.76)',
+                  border: '1px solid rgba(246, 238, 219, 0.22)',
+                  borderRadius: '10px',
+                  backdropFilter: 'blur(12px)',
                 }}
               >
-                <ThreeDFaceMesh
-                  faceSnaps={activeAstronaut.faceSnaps}
-                  faceTextureUrl={currentVisorFaceSnap}
-                  mouseX={visorMouseX}
-                  mouseY={visorMouseY}
-                  mode="textured"
-                  style={{ position: 'absolute', inset: 0 }}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981', boxShadow: '0 0 10px #10b981' }} />
+                  <div>
+                    <div className="font-mono" style={{ fontSize: '0.74rem', color: '#f6eedb', fontWeight: 700, letterSpacing: '0.08em' }}>
+                      {activeAstronaut.name || 'CDR. Alex Mercer'} • <span style={{ color: '#ead9b2' }}>{activeAstronaut.role || 'Commander'}</span>
+                    </div>
+                    <div className="font-mono" style={{ fontSize: '0.62rem', color: '#9fb6da' }}>
+                      {activeAstronaut.mission || 'EXPEDITION 72'} // USER 3D FACE ACTIVE
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <button
+                    type="button"
+                    onClick={() => setShow3DFaceStudio(true)}
+                    style={{
+                      background: 'rgba(246, 238, 219, 0.12)',
+                      border: '1px solid rgba(246, 238, 219, 0.3)',
+                      color: '#f6eedb',
+                      fontSize: '0.68rem',
+                      fontFamily: 'monospace',
+                      padding: '4px 10px',
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                    }}
+                    title="Open 3D Face Studio & Enrollment"
+                  >
+                    👤 3D Face Studio
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setTelemetrySide((prev) => (prev === 'left' ? 'right' : 'left'))}
+                    style={{
+                      background: 'rgba(246, 238, 219, 0.14)',
+                      border: '1px solid rgba(246, 238, 219, 0.35)',
+                      color: '#ead9b2',
+                      fontSize: '0.68rem',
+                      fontFamily: 'monospace',
+                      padding: '4px 10px',
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                    }}
+                    title="Switch sides between Suit Telemetry and Astronaut Visor"
+                  >
+                    ⇄ {telemetrySide === 'left' ? 'Astronaut Left' : 'Telemetry Left'}
+                  </button>
+                </div>
+              </div>
+
+              {/* Locked 3:2 stage matching astro.jpg (1080x720) so visor mesh aligns accurately at any resolution */}
+              <div
+                style={{
+                  position: 'relative',
+                  width: '100%',
+                  maxWidth: '760px',
+                  aspectRatio: '3 / 2',
+                  borderRadius: '16px',
+                  overflow: 'hidden',
+                }}
+              >
+                <img
+                  src="/astro.jpg"
+                  alt="RIDGE Suit Helmet Visor"
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    display: 'block',
+                    userSelect: 'none',
+                    pointerEvents: 'none',
+                  }}
                 />
 
-                {/* Subtle glass helmet curvature specular sheen */}
+                {/* Radial fade blending astro.jpg outer dark field into Ink Blue (#06132b) canvas */}
                 <div
                   style={{
                     position: 'absolute',
                     inset: 0,
-                    borderRadius: '50% 50% 47% 47%',
-                    pointerEvents: 'none',
                     background:
-                      'linear-gradient(132deg, rgba(246,238,219,0.16) 0%, rgba(246,238,219,0.03) 34%, transparent 56%, rgba(234,217,178,0.1) 100%)',
-                    boxShadow: 'inset 0 0 18px rgba(4, 12, 28, 0.88)',
+                      'radial-gradient(ellipse at 51% 48%, rgba(6,19,43,0) 44%, rgba(6,19,43,0.72) 78%, rgba(6,19,43,1) 100%)',
+                    pointerEvents: 'none',
+                    zIndex: 2,
                   }}
                 />
+
+                {/* 3D Face Sphere Mesh nested cleanly inside the black helmet visor region */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    left: '51%',
+                    top: '41.5%',
+                    width: '23.5%',
+                    aspectRatio: '1 / 1.06',
+                    transform: 'translate(-50%, -50%)',
+                    borderRadius: '50% 50% 47% 47%',
+                    overflow: 'hidden',
+                    background:
+                      'radial-gradient(circle at 50% 48%, rgba(10, 28, 63, 0.88) 0%, rgba(6, 19, 43, 0.96) 85%, rgba(4, 12, 28, 0.99) 100%)',
+                    boxShadow:
+                      'inset 0 0 24px rgba(4, 12, 28, 0.95), inset 0 0 14px rgba(246, 238, 219, 0.2)',
+                    zIndex: 5,
+                  }}
+                >
+                  <ThreeDFaceMesh
+                    faceSnaps={activeAstronaut.faceSnaps}
+                    faceTextureUrl={currentVisorFaceSnap}
+                    mouseX={visorMouseX}
+                    mouseY={visorMouseY}
+                    mode="textured"
+                    style={{ position: 'absolute', inset: 0 }}
+                  />
+
+                  {/* Subtle glass helmet curvature specular sheen */}
+                  <div
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      borderRadius: '50% 50% 47% 47%',
+                      pointerEvents: 'none',
+                      background:
+                        'linear-gradient(132deg, rgba(246,238,219,0.16) 0%, rgba(246,238,219,0.03) 34%, transparent 56%, rgba(234,217,178,0.1) 100%)',
+                      boxShadow: 'inset 0 0 18px rgba(4, 12, 28, 0.88)',
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* Visor Angle Quick Selector & Telemetry Sub-Status */}
+              <div
+                style={{
+                  width: '100%',
+                  maxWidth: '760px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  marginTop: '10px',
+                  padding: '8px 14px',
+                  background: 'rgba(10, 28, 63, 0.65)',
+                  border: '1px solid rgba(246, 238, 219, 0.16)',
+                  borderRadius: '10px',
+                  backdropFilter: 'blur(10px)',
+                  flexWrap: 'wrap',
+                  gap: '8px',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <span className="font-mono" style={{ fontSize: '0.65rem', color: '#9fb6da' }}>VISOR ANGLE:</span>
+                  {['left', 'center', 'right'].map((ang) => (
+                    <button
+                      key={ang}
+                      type="button"
+                      onClick={() => {
+                        if (ang === 'left') setVisorMouseX(-0.5);
+                        else if (ang === 'right') setVisorMouseX(0.5);
+                        else setVisorMouseX(0);
+                      }}
+                      style={{
+                        background: (ang === 'left' && visorMouseX < -0.2) || (ang === 'right' && visorMouseX > 0.2) || (ang === 'center' && Math.abs(visorMouseX) <= 0.2)
+                          ? 'rgba(246, 238, 219, 0.25)'
+                          : 'rgba(246, 238, 219, 0.08)',
+                        border: '1px solid rgba(246, 238, 219, 0.25)',
+                        color: '#f6eedb',
+                        fontSize: '0.65rem',
+                        fontFamily: 'monospace',
+                        textTransform: 'uppercase',
+                        padding: '3px 8px',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      {ang}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="font-mono" style={{ fontSize: '0.68rem', color: '#9fb6da' }}>
+                  RETICLE: <strong style={{ color: '#f6eedb' }}>ACTIVE 30°</strong> • O₂ CONSUMPTION: <strong style={{ color: '#10b981' }}>0.38 L/min</strong>
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* ── RIGHT/CENTER MAIN DASHBOARD VIEWPORT (SUIT TELEMETRY) ── */}
-          <main
-            className="custom-scroll"
-            style={{
-              position: 'relative',
-              width: '50vw',
-              minWidth: '320px',
-              height: '100vh',
-              overflowY: 'auto',
-              padding: '60px 24px 40px 10px',
-              zIndex: 25,
-            }}
-          >
+            {/* ── SUIT TELEMETRY VIEWPORT (ON THE OTHER SIDE OF ASTRONAUT) ── */}
+            <main
+              className="custom-scroll"
+              style={{
+                position: 'relative',
+                width: '50vw',
+                minWidth: '320px',
+                height: '100vh',
+                overflowY: 'auto',
+                padding: '60px 24px 40px 24px',
+                zIndex: 25,
+              }}
+            >
             {/* TAB 1: HOME // SUIT TELEMETRY */}
             {activeTab === 'home' && (
               <div style={{ maxWidth: '560px', marginLeft: 'auto', marginRight: 'auto' }}>
@@ -1510,76 +1635,97 @@ export default function InovavPortal({
                     </span>
                   </div>
 
-                  <div
-                    role="tablist"
-                    aria-label="Suit telemetry views"
-                    style={{
-                      display: 'inline-flex',
-                      gap: '4px',
-                      padding: '3px',
-                      background: 'rgba(10, 28, 63, 0.72)',
-                      border: '1px solid rgba(246, 238, 219, 0.2)',
-                      borderRadius: '6px',
-                    }}
-                  >
-                    <button
-                      type="button"
-                      role="tab"
-                      aria-selected={suitTelemetryView === 'metrics'}
-                      onClick={() => setSuitTelemetryView('metrics')}
-                      className="font-mono"
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                    <div
+                      role="tablist"
+                      aria-label="Suit telemetry views"
                       style={{
-                        padding: '5px 11px',
-                        borderRadius: '4px',
-                        border: 'none',
-                        cursor: 'pointer',
-                        fontSize: '0.66rem',
-                        letterSpacing: '0.12em',
-                        fontWeight: suitTelemetryView === 'metrics' ? 700 : 500,
-                        background: suitTelemetryView === 'metrics' ? '#f6eedb' : 'transparent',
-                        color: suitTelemetryView === 'metrics' ? '#06132b' : '#9fb6da',
-                        transition: 'all 0.15s ease',
-                      }}
-                    >
-                      TELEMETRY
-                    </button>
-                    <button
-                      type="button"
-                      role="tab"
-                      aria-selected={suitTelemetryView === 'auth-log'}
-                      onClick={() => {
-                        setFaceAuthLogs(getFaceAuthLogs());
-                        setSuitTelemetryView('auth-log');
-                      }}
-                      className="font-mono"
-                      style={{
-                        padding: '5px 11px',
-                        borderRadius: '4px',
-                        border: 'none',
-                        cursor: 'pointer',
-                        fontSize: '0.66rem',
-                        letterSpacing: '0.12em',
-                        fontWeight: suitTelemetryView === 'auth-log' ? 700 : 500,
-                        background: suitTelemetryView === 'auth-log' ? '#f6eedb' : 'transparent',
-                        color: suitTelemetryView === 'auth-log' ? '#06132b' : '#9fb6da',
-                        transition: 'all 0.15s ease',
                         display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '6px',
+                        gap: '4px',
+                        padding: '3px',
+                        background: 'rgba(10, 28, 63, 0.72)',
+                        border: '1px solid rgba(246, 238, 219, 0.2)',
+                        borderRadius: '6px',
                       }}
                     >
-                      <span>FACE AUTH LOG</span>
-                      <span
+                      <button
+                        type="button"
+                        role="tab"
+                        aria-selected={suitTelemetryView === 'metrics'}
+                        onClick={() => setSuitTelemetryView('metrics')}
+                        className="font-mono"
                         style={{
-                          padding: '1px 5px',
-                          borderRadius: '3px',
-                          fontSize: '0.62rem',
-                          background: suitTelemetryView === 'auth-log' ? 'rgba(6, 19, 43, 0.16)' : 'rgba(246, 238, 219, 0.16)',
-                          color: suitTelemetryView === 'auth-log' ? '#06132b' : '#f6eedb',
+                          padding: '5px 11px',
+                          borderRadius: '4px',
+                          border: 'none',
+                          cursor: 'pointer',
+                          fontSize: '0.66rem',
+                          letterSpacing: '0.12em',
+                          fontWeight: suitTelemetryView === 'metrics' ? 700 : 500,
+                          background: suitTelemetryView === 'metrics' ? '#f6eedb' : 'transparent',
+                          color: suitTelemetryView === 'metrics' ? '#06132b' : '#9fb6da',
+                          transition: 'all 0.15s ease',
                         }}
                       >
-                        {faceAuthLogs.length}
-                      </span>
+                        TELEMETRY
+                      </button>
+                      <button
+                        type="button"
+                        role="tab"
+                        aria-selected={suitTelemetryView === 'auth-log'}
+                        onClick={() => {
+                          setFaceAuthLogs(getFaceAuthLogs());
+                          setSuitTelemetryView('auth-log');
+                        }}
+                        className="font-mono"
+                        style={{
+                          padding: '5px 11px',
+                          borderRadius: '4px',
+                          border: 'none',
+                          cursor: 'pointer',
+                          fontSize: '0.66rem',
+                          letterSpacing: '0.12em',
+                          fontWeight: suitTelemetryView === 'auth-log' ? 700 : 500,
+                          background: suitTelemetryView === 'auth-log' ? '#f6eedb' : 'transparent',
+                          color: suitTelemetryView === 'auth-log' ? '#06132b' : '#9fb6da',
+                          transition: 'all 0.15s ease',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                        }}
+                      >
+                        <span>FACE AUTH LOG</span>
+                        <span
+                          style={{
+                            padding: '1px 5px',
+                            borderRadius: '3px',
+                            fontSize: '0.62rem',
+                            background: suitTelemetryView === 'auth-log' ? 'rgba(6, 19, 43, 0.16)' : 'rgba(246, 238, 219, 0.16)',
+                            color: suitTelemetryView === 'auth-log' ? '#06132b' : '#f6eedb',
+                          }}
+                        >
+                          {faceAuthLogs.length}
+                        </span>
+                      </button>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => setTelemetrySide((prev) => (prev === 'left' ? 'right' : 'left'))}
+                      style={{
+                        background: 'rgba(246, 238, 219, 0.12)',
+                        border: '1px solid rgba(246, 238, 219, 0.25)',
+                        color: '#ead9b2',
+                        fontSize: '0.66rem',
+                        fontFamily: 'monospace',
+                        padding: '6px 10px',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        transition: 'all 0.15s ease',
+                      }}
+                      title="Switch side: Telemetry on left or right of astronaut with 3D face"
+                    >
+                      ⇄ {telemetrySide === 'left' ? 'Astronaut Left' : 'Telemetry Left'}
                     </button>
                   </div>
                 </div>
