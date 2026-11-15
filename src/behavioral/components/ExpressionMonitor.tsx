@@ -33,7 +33,7 @@ function loadFaceApi() {
         return (window as any).faceapi;
       }
       try {
-        const mod = await import('face-api.js');
+        const mod = await import(/* @vite-ignore */ 'face-api.js');
         return mod.default || mod;
       } catch {
         if (typeof window !== 'undefined' && (window as any).faceapi) {

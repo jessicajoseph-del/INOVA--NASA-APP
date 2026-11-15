@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { NasaOsd569TrendChart } from './NasaOsd569TrendChart';
-import { AstronautVisorCard } from './AstronautVisorCard';
 import {
   Activity,
   Heart,
@@ -716,31 +715,12 @@ export default function AstroCareDashboard({
 
         {/* 2. MULTI-METRIC TREND OBSERVATORY & ASTRONAUT TELEMETRY DECK */}
         <div className="space-y-4">
-          {/* EXPANDED SPACE: ASTRONAUT ("HIM") + LESS WIDE, LESS LONG TELEMETRY GRAPH */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
-            {/* Left Column (5 cols): "HIM" - Astronaut Helmet Visor Card */}
-            <div className="lg:col-span-5 w-full flex flex-col">
-              <AstronautVisorCard
-                astronautName={
-                  trendSourceTab === 'osd569' ? 'Astronaut C001' : selectedAstronaut.name
-                }
-                role={
-                  trendSourceTab === 'osd569' ? 'Inspiration4 Mission Crew' : selectedAstronaut.role
-                }
-                mission={
-                  trendSourceTab === 'osd569'
-                    ? 'SpaceX Inspiration4 // NASA OSD-569'
-                    : `${selectedAstronaut.expedition} // USER 3D FACE ACTIVE`
-                }
-              />
-            </div>
-
-            {/* Right Column (7 cols): The Trend Graph (less long, less wide) */}
-            <div className="lg:col-span-7 w-full flex flex-col">
-              {trendSourceTab === 'osd569' ? (
-                <NasaOsd569TrendChart />
-              ) : (
-                <div className="w-full bg-white border border-[#DCD5C7] p-4 sm:p-5 rounded-3xl shadow-sm flex flex-col justify-between">
+          {/* FULL-WIDTH TELEMETRY TREND OBSERVATORY */}
+          <div className="w-full flex flex-col">
+            {trendSourceTab === 'osd569' ? (
+              <NasaOsd569TrendChart />
+            ) : (
+              <div className="w-full bg-white border border-[#DCD5C7] p-4 sm:p-5 rounded-3xl shadow-sm flex flex-col justify-between">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
                   <div>
                     <div className="flex items-center gap-2">
@@ -974,7 +954,6 @@ export default function AstroCareDashboard({
             </div>
           </div>
           )}
-            </div>
           </div>
         </div>
       </main>

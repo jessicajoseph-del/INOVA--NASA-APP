@@ -345,56 +345,56 @@ export const NasaOsd569TrendChart: React.FC<NasaOsd569TrendChartProps> = ({
           </h3>
 
           {/* Metric Toggle Filter Chips */}
-          <div className="flex flex-wrap items-center gap-1 text-[11px] font-mono">
+          <div className="flex flex-wrap items-center gap-1.5 text-xs font-mono">
             <button
               type="button"
               onClick={() => setActiveMetrics((p) => ({ ...p, hr: !p.hr }))}
-              className={`px-2 py-0.5 rounded-md border font-semibold transition-all cursor-pointer ${
+              className={`px-2.5 py-1 rounded-lg border font-semibold transition-all cursor-pointer ${
                 activeMetrics.hr
-                  ? 'bg-cyan-50 border-cyan-400 text-cyan-800'
+                  ? 'bg-cyan-50 border-cyan-400 text-cyan-800 shadow-xs'
                   : 'bg-slate-100 border-slate-300 text-slate-400'
               }`}
             >
-              ● HR
+              ● Heart Rate (BPM)
             </button>
             <button
               type="button"
               onClick={() => setActiveMetrics((p) => ({ ...p, bp: !p.bp }))}
-              className={`px-2 py-0.5 rounded-md border font-semibold transition-all cursor-pointer ${
+              className={`px-2.5 py-1 rounded-lg border font-semibold transition-all cursor-pointer ${
                 activeMetrics.bp
-                  ? 'bg-amber-50 border-amber-400 text-amber-800'
+                  ? 'bg-amber-50 border-amber-400 text-amber-800 shadow-xs'
                   : 'bg-slate-100 border-slate-300 text-slate-400'
               }`}
             >
-              ● BP
+              ● Blood Pressure (mmHg)
             </button>
             <button
               type="button"
               onClick={() => setActiveMetrics((p) => ({ ...p, temp: !p.temp }))}
-              className={`px-2 py-0.5 rounded-md border font-semibold transition-all cursor-pointer ${
+              className={`px-2.5 py-1 rounded-lg border font-semibold transition-all cursor-pointer ${
                 activeMetrics.temp
-                  ? 'bg-rose-50 border-rose-400 text-rose-800'
+                  ? 'bg-rose-50 border-rose-400 text-rose-800 shadow-xs'
                   : 'bg-slate-100 border-slate-300 text-slate-400'
               }`}
             >
-              ● Temp
+              ● Body Temp (°C)
             </button>
             <button
               type="button"
               onClick={() => setActiveMetrics((p) => ({ ...p, sugar: !p.sugar }))}
-              className={`px-2 py-0.5 rounded-md border font-semibold transition-all cursor-pointer ${
+              className={`px-2.5 py-1 rounded-lg border font-semibold transition-all cursor-pointer ${
                 activeMetrics.sugar
-                  ? 'bg-emerald-50 border-emerald-400 text-emerald-800'
+                  ? 'bg-emerald-50 border-emerald-400 text-emerald-800 shadow-xs'
                   : 'bg-slate-100 border-slate-300 text-slate-400'
               }`}
             >
-              ● Glucose
+              ● Blood Sugar (mg/dL)
             </button>
           </div>
         </div>
 
-        {/* Compact Chart Canvas (Reduced height) */}
-        <div className="h-44 sm:h-48 w-full">
+        {/* Chart Canvas */}
+        <div className="h-64 sm:h-72 w-full">
           <ResponsiveContainer width="100%" height="100%">
             <ComposedChart
               data={chartData}
@@ -602,7 +602,7 @@ export const NasaOsd569TrendChart: React.FC<NasaOsd569TrendChartProps> = ({
             </span>
           </div>
 
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-thin">
+          <div className="grid grid-cols-2 sm:grid-cols-5 lg:grid-cols-10 gap-1.5 w-full">
             {C001_MILESTONES.map((milestone, idx) => {
               const isSelected = selectedMilestoneIndex === idx;
               return (
@@ -610,14 +610,14 @@ export const NasaOsd569TrendChart: React.FC<NasaOsd569TrendChartProps> = ({
                   key={milestone.id}
                   type="button"
                   onClick={() => handleMilestoneClick(idx)}
-                  className={`px-3 py-2 rounded-xl text-xs font-mono font-bold transition-all whitespace-nowrap cursor-pointer flex-shrink-0 flex items-center gap-1.5 border ${
+                  className={`w-full px-2 py-2 rounded-xl text-xs font-mono font-bold transition-all whitespace-nowrap cursor-pointer flex items-center justify-center gap-1.5 border shadow-2xs ${
                     isSelected
                       ? 'bg-[#0B1736] text-[#F5B82E] border-[#0B1736] shadow-md scale-102'
                       : 'bg-[#F4F1EA] text-[#5A657D] border-[#DCD5C7] hover:bg-[#EAE5DA] hover:text-[#0B1736]'
                   }`}
                 >
-                  <span className={`w-2 h-2 rounded-full ${isSelected ? 'bg-[#F5B82E]' : 'bg-slate-400'}`} />
-                  {milestone.timelineLabel}
+                  <span className={`w-2 h-2 rounded-full shrink-0 ${isSelected ? 'bg-[#F5B82E]' : 'bg-slate-400'}`} />
+                  <span className="truncate">{milestone.timelineLabel}</span>
                 </button>
               );
             })}
