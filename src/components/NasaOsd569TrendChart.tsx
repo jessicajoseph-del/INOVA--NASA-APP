@@ -602,7 +602,7 @@ export const NasaOsd569TrendChart: React.FC<NasaOsd569TrendChartProps> = ({
             </span>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-5 lg:grid-cols-10 gap-1.5 w-full">
+          <div className="grid grid-cols-2 sm:grid-cols-5 xl:grid-cols-10 gap-1.5 w-full">
             {C001_MILESTONES.map((milestone, idx) => {
               const isSelected = selectedMilestoneIndex === idx;
               return (
