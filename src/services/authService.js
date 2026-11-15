@@ -411,3 +411,4 @@ export async function signInWithFingerprint(usernameOrEmail) {
 
   return targetUser;
 }
+

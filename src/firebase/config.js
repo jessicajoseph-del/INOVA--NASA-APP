@@ -38,3 +38,4 @@ export const FIRESTORE_BASE_URL = firebaseConfig.projectId
 export const AUTH_BASE_URL = 'https://identitytoolkit.googleapis.com/v1/accounts';
 
 export default firebaseConfig;
+

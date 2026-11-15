@@ -47,6 +47,9 @@ import SignUpScreen from './pages/SignUpScreen';
 import LoginScreen from './pages/LoginScreen';
 import useIdleTimeout from './hooks/useIdleTimeout';
 import { getCurrentUser, signOutUser } from './services/authService';
+import AppShell from './components/AppShell';
+import MealPlanPage from './pages/MealPlanPage';
+import HandTracker from './components/HandTracker';
 
 /**
  * TOPIC & EXECUTIVE KPI DATA CONFIGURATION:
@@ -109,6 +112,8 @@ export default function App() {
   const [portalInitialScreen, setPortalInitialScreen] = useState('dashboard');
   const [showARVisor, setShowARVisor] = useState(false);
   const [showProfileSettings, setShowProfileSettings] = useState(false);
+  const [isARHandActive, setIsARHandActive] = useState(false);
+  const [handCursor, setHandCursor] = useState({ x: 0, y: 0, isPinching: false, active: false });
 
   // Banking-grade Authentication & Route Visibility State
   const [currentUser, setCurrentUser] = useState(() => getCurrentUser());
@@ -216,177 +221,7 @@ export default function App() {
       <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(11,23,54,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(11,23,54,0.04)_1px,transparent_1px)] bg-[size:4rem_4rem] pointer-events-none" />
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-blue-900/5 rounded-full blur-[120px] pointer-events-none" />
 
-      {/* 1. HEADER / FLOATING CAPSULE NAVIGATION BAR (STRICTLY HIDDEN ON PRE-AUTH SCREENS) */}
-      {currentUser && authScreen === 'dashboard' && (
-      <header className="sticky top-0 z-50 w-full px-3 py-2.5 sm:px-6 pointer-events-none">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-3 pointer-events-auto bg-[#0B1736] text-[#F7F4EE] backdrop-blur-2xl border border-[#DCD5C7]/30 shadow-[0_12px_40px_rgba(11,23,54,0.35)] rounded-2xl sm:rounded-full px-3 sm:px-4 py-2">
-          
-          {/* Brand Pill (Emblem pill inspired by side bar.jpg) */}
-          <div 
-            onClick={() => { setActiveView('portal'); setPortalInitialScreen('dashboard'); }}
-            className="flex items-center space-x-2.5 shrink-0 cursor-pointer group"
-            title="Return to Suit & Vitals Dashboard"
-          >
-            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gradient-to-tr from-cyan-400 via-blue-500 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-cyan-500/30 group-hover:scale-105 transition-transform">
-              <Layers className="w-4 h-4 sm:w-5 sm:h-5" />
-            </div>
-            <div className="flex items-center">
-              <span className="font-extrabold text-base tracking-tight text-white group-hover:text-cyan-300 transition-colors">
-                RIDGE<span className="text-amber-400">.</span>
-              </span>
-              <span className="ml-1.5 text-[10px] font-mono uppercase tracking-wider text-cyan-300/80">
-                NASA
-              </span>
-            </div>
-          </div>
 
-          {/* Primary View Switcher Navigation Tabs (Pill cutout active state matching side bar.jpg) */}
-          <nav className="flex items-center p-1 rounded-xl sm:rounded-full bg-blue-950/70 border border-blue-900/40 backdrop-blur-md overflow-x-auto gap-1">
-            {/* Tab 1: Start / Suit & Vitals (Continuous Start -> Login/Signup -> Suit Telemetry -> Health Monitor below) */}
-            <button
-              type="button"
-              onClick={() => {
-                setActiveView('portal');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-full transition-all cursor-pointer whitespace-nowrap ${
-                activeView === 'portal'
-                  ? 'bg-[#F7F4EE] text-[#0B1736] shadow-md shadow-white/20 font-bold scale-[1.02]'
-                  : 'text-slate-300 hover:text-white hover:bg-white/10'
-              }`}
-            >
-              <Rocket className="w-3.5 h-3.5" />
-              <span>Suit & Vitals</span>
-              <span className={`h-1.5 w-1.5 rounded-full ${activeView === 'portal' ? 'bg-amber-600' : 'bg-amber-400 animate-pulse'} hidden md:inline-block`} />
-            </button>
-
-            {/* Tab 2: 3D ISS Station Twin */}
-            <button
-              type="button"
-              onClick={() => {
-                setActiveView('aura');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-full transition-all cursor-pointer whitespace-nowrap ${
-                activeView === 'aura'
-                  ? 'bg-[#F7F4EE] text-[#0B1736] shadow-md shadow-white/20 font-bold scale-[1.02]'
-                  : 'text-slate-300 hover:text-purple-300 hover:bg-white/10'
-              }`}
-            >
-              <Box className="w-3.5 h-3.5 text-purple-400" />
-              <span>3D ISS Station Twin</span>
-            </button>
-
-            {/* Tab 3: Trend & Telemetry */}
-            <button
-              type="button"
-              onClick={() => {
-                setActiveView('overview');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-full transition-all cursor-pointer whitespace-nowrap ${
-                activeView === 'overview'
-                  ? 'bg-[#F7F4EE] text-[#0B1736] shadow-md shadow-white/20 font-bold scale-[1.02]'
-                  : 'text-slate-300 hover:text-white hover:bg-white/10'
-              }`}
-            >
-              <TrendingUp className="w-3.5 h-3.5 text-cyan-400" />
-              <span>Trend & Telemetry</span>
-            </button>
-
-            {/* Tab 4: Behavioural */}
-            <button
-              type="button"
-              onClick={() => {
-                setActiveView('behavioral');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-full transition-all cursor-pointer whitespace-nowrap ${
-                activeView === 'behavioral'
-                  ? 'bg-[#F7F4EE] text-[#0B1736] shadow-md shadow-white/20 font-bold scale-[1.02]'
-                  : 'text-slate-300 hover:text-emerald-300 hover:bg-white/10'
-              }`}
-            >
-              <HeartPulse className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Behavioural</span>
-            </button>
-
-            {/* Tab 5: Road Map */}
-            <button
-              type="button"
-              onClick={() => {
-                setActiveView('roadmap');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-full transition-all cursor-pointer whitespace-nowrap ${
-                activeView === 'roadmap'
-                  ? 'bg-[#F7F4EE] text-[#0B1736] shadow-md shadow-white/20 font-bold scale-[1.02]'
-                  : 'text-slate-300 hover:text-amber-300 hover:bg-white/10'
-              }`}
-            >
-              <Gamepad2 className="w-3.5 h-3.5 text-amber-400" />
-              <span>Road Map</span>
-            </button>
-
-            {/* Tab 6: ASTRI AI Chatbot */}
-            <button
-              type="button"
-              onClick={() => {
-                setActiveView('astri');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-full transition-all cursor-pointer whitespace-nowrap ${
-                activeView === 'astri'
-                  ? 'bg-[#F7F4EE] text-[#0B1736] shadow-md shadow-white/20 font-bold scale-[1.02]'
-                  : 'text-slate-300 hover:text-cyan-300 hover:bg-white/10'
-              }`}
-            >
-              <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-              <span>ASTRI AI</span>
-              <span className={`h-1.5 w-1.5 rounded-full ${activeView === 'astri' ? 'bg-cyan-600' : 'bg-cyan-400 animate-pulse'} hidden md:inline-block`} />
-            </button>
-          </nav>
-
-          {/* Right Header Utility Controls (inspired by side bar.jpg): AR Visor, Profile Settings, Log Out */}
-          <div className="flex items-center space-x-1.5 sm:space-x-2 shrink-0">
-            {/* Action 1: AR Visor Toggle */}
-            <button
-              type="button"
-              onClick={() => setShowARVisor(true)}
-              className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full bg-blue-950/80 border border-cyan-400/30 hover:border-cyan-400 text-xs text-cyan-200 hover:bg-cyan-500/15 transition-all cursor-pointer shadow-sm active:scale-95 whitespace-nowrap"
-              title="Open Jarvis Touchless AR Visor HUD"
-            >
-              <Glasses className="w-3.5 h-3.5 text-cyan-400" />
-              <span className="hidden xl:inline">AR Visor</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse hidden sm:inline-block" />
-            </button>
-
-            {/* Action 2: Profile Settings */}
-            <button
-              type="button"
-              onClick={() => setShowProfileSettings(true)}
-              className="inline-flex items-center gap-2 px-2.5 sm:px-3 py-1.5 rounded-full bg-blue-950/80 border border-[#f6eedb]/20 hover:border-[#f6eedb]/60 text-xs text-[#f6eedb] transition-all cursor-pointer shadow-sm active:scale-95 whitespace-nowrap"
-              title="Astronaut Profile & 3D Face Visor Studio"
-            >
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="font-mono text-[11px] font-semibold hidden md:inline">{activeAstronaut.name || 'Alex Vance'}</span>
-              <Settings className="w-3.5 h-3.5 text-[#ead9b2]" />
-            </button>
-
-            {/* Action 3: Log Out */}
-            <button
-              type="button"
-              onClick={handleLogout}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-rose-950/40 border border-rose-500/40 hover:border-rose-400 hover:bg-rose-900/60 text-xs font-bold text-rose-300 transition-all cursor-pointer active:scale-95 whitespace-nowrap shadow-xs"
-              title="Sign Out of Astronaut Session"
-            >
-              <LogOut className="w-3.5 h-3.5 text-rose-400" />
-              <span className="hidden sm:inline">Log Out</span>
-            </button>
-          </div>
-        </div>
-      </header>
-      )}
 
       {/* ── PRE-AUTH BANKING-GRADE ENTRY FLOW (NAVBAR & DASHBOARDS STRICTLY HIDDEN) ── */}
       {(!currentUser || authScreen !== 'dashboard') && (
@@ -419,9 +254,20 @@ export default function App() {
         </main>
       )}
 
-      {/* ── AUTHENTICATED DASHBOARD APPLICATION VIEWS ── */}
+      {/* ── AUTHENTICATED DASHBOARD APPLICATION VIEWS INSIDE APPSHELL ── */}
       {currentUser && authScreen === 'dashboard' && (
-        <>
+        <AppShell
+          activeModuleId={activeView}
+          onSelectModule={(id) => {
+            setActiveView(id);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          isARHandActive={isARHandActive}
+          onToggleARHand={() => setIsARHandActive((prev) => !prev)}
+          activeAstronaut={activeAstronaut}
+          onOpenProfile={() => setShowProfileSettings(true)}
+          onLogoutClick={handleLogout}
+        >
       {/* 2. DYNAMIC PAGE CONTENT: OVERVIEW, ROADMAP GAME, OR BEHAVIORAL HEALTH */}
       {activeView === 'overview' && (
         <main className="flex-1 w-full relative z-10">
@@ -762,6 +608,13 @@ export default function App() {
         </main>
       )}
 
+      {/* ── 6. ASTRONAUT MEAL PLAN & HYDRATION TAB ── */}
+      {activeView === 'mealplan' && (
+        <main className="flex-1 w-full relative z-10">
+          <MealPlanPage />
+        </main>
+      )}
+
       {/* ASTRI AI CHATBOT VIEW WITH 3D ASTRONAUT IN THE MIDDLE */}
       {activeView === 'astri' && (
         <main className="flex-1 w-full relative z-10">
@@ -836,6 +689,36 @@ export default function App() {
           </div>
         </div>
       </footer>
+        </AppShell>
+      )}
+
+      {/* GLOBAL AR HAND GESTURE RETICLE CURSOR */}
+      {isARHandActive && (
+        <>
+          <HandTracker onHandUpdate={setHandCursor} />
+          {handCursor.active && (
+            <div
+              className="fixed z-[9999] pointer-events-none transition-transform duration-75 ease-out select-none"
+              style={{
+                left: `${handCursor.x}px`,
+                top: `${handCursor.y}px`,
+                transform: 'translate(-50%, -50%)',
+              }}
+            >
+              <div
+                className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all ${
+                  handCursor.isPinching
+                    ? 'border-[#0284C7] bg-[#0284C7]/30 scale-125 shadow-[0_0_20px_#0284C7]'
+                    : 'border-[#0284C7] bg-white/50 scale-100 shadow-[0_0_10px_rgba(2,132,199,0.5)]'
+                }`}
+              >
+                <div className="w-1.5 h-1.5 rounded-full bg-[#0284C7]" />
+              </div>
+              <span className="absolute -bottom-5 left-1/2 -translate-x-1/2 text-[9px] font-mono font-bold text-[#0284C7] bg-white/95 px-1.5 py-0.5 rounded shadow-xs border border-[#0284C7]/30">
+                {handCursor.isPinching ? 'PINCH' : 'PALM'}
+              </span>
+            </div>
+          )}
         </>
       )}
 
