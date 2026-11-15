@@ -6,6 +6,10 @@ import {
   RotateCcw,
   Timer,
   UserCheck,
+  CheckCircle2,
+  ArrowRight,
+  Sparkles,
+  X,
 } from 'lucide-react';
 import { PartAForm } from './components/PartAForm';
 import { PartBForm } from './components/PartBForm';
@@ -116,6 +120,13 @@ export default function BehavioralHealthPage({ onBack }: BehavioralHealthPagePro
   const [consultationChoice, setConsultationChoice] = useState<'yes' | 'no' | null>(null);
   const [expressionMatchChoice, setExpressionMatchChoice] = useState<'yes' | 'no' | null>(null);
   const [isConsentModalOpen, setIsConsentModalOpen] = useState(false);
+  const [completedAssessmentData, setCompletedAssessmentData] = useState<{
+    day: number;
+    negSum: number;
+    posSum: number;
+    hoursSlept: number;
+    status: string;
+  } | null>(null);
   const hasPromptedModalRef = useRef(false);
   const expressionSamplesRef = useRef<ExpressionSample[]>([]);
 
@@ -202,6 +213,7 @@ export default function BehavioralHealthPage({ onBack }: BehavioralHealthPagePro
   };
 
   const handleLogDailyCheck = () => {
+    const completedDayNumber = draft.day;
     const completedExpressionSummary = summarizeExpressionSamples(
       expressionSamplesRef.current
     );
@@ -223,17 +235,30 @@ export default function BehavioralHealthPage({ onBack }: BehavioralHealthPagePro
     setJustSavedDay(draft.day);
     setSelectedReportDay(draft.day);
 
+    const currentNegSum = (draft.mood[1] || 1) + (draft.mood[2] || 1) + (draft.mood[3] || 1);
+    const currentPosSum = (draft.mood[4] || 3) + (draft.mood[5] || 3) + (draft.mood[6] || 3);
+    const dayHoursSlept = draft.hoursSlept;
+
     const maxLoggedDay = updatedLog.reduce((max, e) => Math.max(max, e.day), 0);
     const nextDayNum = maxLoggedDay + 1;
     setDraft(createBlankDayEntry(nextDayNum));
 
     setTimeout(() => {
       setJustSavedDay(null);
-    }, 2400);
+    }, 4000);
 
-    // Automatically jump straight to Part C Assessment Report after completing assessment
-    setActiveTab('report');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Compute status for the completion modal
+    const completedScored = scoredDays.find((d) => d.day === completedDayNumber);
+    const completedStatus = completedScored?.status || (currentNegSum >= 9 ? 'Watch' : 'On track');
+
+    // Trigger Assessment Done Modal with prominent "Click to Open Report" button
+    setCompletedAssessmentData({
+      day: completedDayNumber,
+      negSum: currentNegSum,
+      posSum: currentPosSum,
+      hoursSlept: dayHoursSlept,
+      status: completedStatus,
+    });
   };
 
   const handleSavePartA = () => {
@@ -485,6 +510,11 @@ export default function BehavioralHealthPage({ onBack }: BehavioralHealthPagePro
                   setSelectedReportDay(updated.day);
                 }}
                 onSubmit={handleLogDailyCheck}
+                onOpenReport={(day) => {
+                  setSelectedReportDay(day);
+                  setActiveTab('report');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
                 justSavedDay={justSavedDay}
                 onOpenExpressionModal={() => setIsConsentModalOpen(true)}
                 expressionStatus={expressionCollectionStatus}
@@ -510,6 +540,10 @@ export default function BehavioralHealthPage({ onBack }: BehavioralHealthPagePro
             result={partAResult}
             onChange={setPartA}
             onSaveProfile={handleSavePartA}
+            onOpenReport={() => {
+              setActiveTab('report');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
             savedToast={savedPartAToast}
           />
         )}
@@ -764,14 +798,117 @@ export default function BehavioralHealthPage({ onBack }: BehavioralHealthPagePro
               )}
             </div>
 
-            <button
-              type="button"
-              onClick={handleCloseExpressionSummary}
-              className="mt-5 min-h-11 w-full rounded-full bg-[#145252] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#0F3F3F]"
-            >
-              Close and clear temporary summary
-            </button>
+            <div className="mt-5 flex flex-col sm:flex-row gap-2.5">
+              <button
+                type="button"
+                onClick={() => {
+                  handleCloseExpressionSummary();
+                  setActiveTab('report');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="min-h-11 flex-1 rounded-full bg-[#145252] hover:bg-[#0F3F3F] px-5 py-2.5 text-sm font-semibold text-white flex items-center justify-center gap-2 cursor-pointer shadow-md active:scale-95 transition-all"
+              >
+                <FileBarChart2 className="w-4 h-4 text-[#FDE047]" />
+                <span>Click to Open Report</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+              <button
+                type="button"
+                onClick={handleCloseExpressionSummary}
+                className="min-h-11 rounded-full border border-[#12233B]/25 hover:bg-[#12233B]/5 px-5 py-2.5 text-sm font-semibold text-[#12233B] cursor-pointer transition-colors"
+              >
+                Close Summary
+              </button>
+            </div>
           </section>
+        </div>
+      )}
+
+      {/* Assessment Completed Modal with prominent "Click to Open Report" button */}
+      {completedAssessmentData && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-[#071121]/80 p-4 backdrop-blur-sm"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="assessment-complete-title"
+        >
+          <div className="w-full max-w-md rounded-3xl bg-[#FCF9F0] border-2 border-[#145252]/30 p-6 text-[#12233B] shadow-2xl space-y-5 animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-full bg-[#145252]/15 text-[#145252] flex items-center justify-center shrink-0">
+                  <CheckCircle2 className="w-7 h-7 stroke-[2.5]" />
+                </div>
+                <div>
+                  <span className="text-[11px] font-mono uppercase tracking-wider text-[#145252] font-bold">
+                    Telemetry Synced
+                  </span>
+                  <h3 id="assessment-complete-title" className="font-display text-xl font-bold text-[#12233B]">
+                    Assessment Done!
+                  </h3>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setCompletedAssessmentData(null)}
+                className="w-8 h-8 rounded-full bg-[#12233B]/5 hover:bg-[#12233B]/10 flex items-center justify-center text-[#566A86] transition-colors cursor-pointer"
+                title="Dismiss"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <p className="text-sm text-[#4A5C75] leading-relaxed">
+              Flight Day <strong className="text-[#12233B] font-bold">{completedAssessmentData.day}</strong> behavioural check, mood ratings, and sleep metrics have been recorded successfully.
+            </p>
+
+            {/* Score summary cards */}
+            <div className="grid grid-cols-3 gap-2.5 py-1">
+              <div className="rounded-xl bg-white border border-[#12233B]/10 p-2.5 text-center">
+                <span className="block text-[10px] font-semibold uppercase text-[#566A86]">Neg Affect</span>
+                <span className="font-mono text-base font-bold text-[#12233B]">
+                  {completedAssessmentData.negSum}<span className="text-xs text-[#566A86]">/15</span>
+                </span>
+              </div>
+              <div className="rounded-xl bg-white border border-[#12233B]/10 p-2.5 text-center">
+                <span className="block text-[10px] font-semibold uppercase text-[#566A86]">Vitality</span>
+                <span className="font-mono text-base font-bold text-[#12233B]">
+                  {completedAssessmentData.posSum}<span className="text-xs text-[#566A86]">/15</span>
+                </span>
+              </div>
+              <div className="rounded-xl bg-white border border-[#12233B]/10 p-2.5 text-center">
+                <span className="block text-[10px] font-semibold uppercase text-[#566A86]">Status</span>
+                <span className="font-mono text-xs font-bold text-[#145252] capitalize">
+                  {completedAssessmentData.status}
+                </span>
+              </div>
+            </div>
+
+            {/* Main Action: Click to Open Report */}
+            <div className="pt-2 flex flex-col gap-2.5">
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedReportDay(completedAssessmentData.day);
+                  setActiveTab('report');
+                  setCompletedAssessmentData(null);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="w-full min-h-[50px] px-6 py-3 rounded-full bg-[#145252] hover:bg-[#0F3F3F] text-white font-display font-semibold text-base flex items-center justify-center gap-2.5 shadow-lg shadow-[#145252]/25 transition-all cursor-pointer active:scale-95"
+              >
+                <FileBarChart2 className="w-5 h-5 text-[#FDE047]" />
+                <span>Click to Open Report</span>
+                <ArrowRight className="w-4 h-4 ml-0.5" />
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setCompletedAssessmentData(null)}
+                className="w-full min-h-[42px] px-4 py-2 rounded-full border border-[#12233B]/20 hover:bg-[#12233B]/5 text-xs font-semibold text-[#12233B] transition-colors cursor-pointer"
+              >
+                Stay on Daily Check
+              </button>
+            </div>
+          </div>
         </div>
       )}
       {/* Expression Privacy & Consent Modal */}

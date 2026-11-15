@@ -9,6 +9,8 @@ import {
   Unlock,
   Volume2,
   VolumeX,
+  FileBarChart2,
+  ArrowRight,
 } from 'lucide-react';
 import { TaskNode } from '../types';
 
@@ -24,6 +26,7 @@ interface TaskInspectorRailProps {
   onToggleComplete: (taskId: string) => void;
   onUnlockDirect: (taskId: string) => void;
   onToggleSubtask: (taskId: string, subtaskId: string) => void;
+  onOpenReport?: () => void;
 }
 
 export const TaskInspectorRail: React.FC<TaskInspectorRailProps> = ({
@@ -38,6 +41,7 @@ export const TaskInspectorRail: React.FC<TaskInspectorRailProps> = ({
   onToggleComplete,
   onUnlockDirect,
   onToggleSubtask,
+  onOpenReport,
 }) => {
   const totalTasks = tasks.length;
   const completedTasks = tasks.filter((t) => t.status === 'completed').length;
@@ -289,6 +293,22 @@ export const TaskInspectorRail: React.FC<TaskInspectorRailProps> = ({
                 </span>
               </button>
             )}
+
+            {/* Direct Link to Assessment Report */}
+            {onOpenReport &&
+              (selectedTask.id === 'stage-8' ||
+                selectedTask.description.toLowerCase().includes('assessment') ||
+                selectedTask.title.toLowerCase().includes('medical support')) && (
+                <button
+                  type="button"
+                  onClick={onOpenReport}
+                  className="mt-3 flex w-full items-center justify-center gap-2 rounded-[5px] bg-[#145252] hover:bg-[#0F3F3F] border border-white/20 px-4 py-2.5 text-xs font-bold text-white transition-all cursor-pointer shadow-sm active:scale-95"
+                >
+                  <FileBarChart2 className="h-4 w-4 text-[#FDE047]" aria-hidden="true" />
+                  <span>Click to Open Assessment Report</span>
+                  <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+                </button>
+              )}
           </div>
         </div>
       )}

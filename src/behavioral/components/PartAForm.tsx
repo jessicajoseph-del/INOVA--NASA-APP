@@ -1,5 +1,5 @@
 import React from 'react';
-import { AlertTriangle, CheckCircle2, Info } from 'lucide-react';
+import { AlertTriangle, CheckCircle2, Info, FileBarChart2, ArrowRight } from 'lucide-react';
 import {
   PART_A_ICE_ITEMS,
   PART_A_SOCIAL_DESIRABILITY,
@@ -13,6 +13,7 @@ interface PartAFormProps {
   result: PartAResult;
   onChange: (updated: PartAAnswers) => void;
   onSaveProfile: () => void;
+  onOpenReport?: () => void;
   savedToast: boolean;
 }
 
@@ -21,6 +22,7 @@ export const PartAForm: React.FC<PartAFormProps> = ({
   result,
   onChange,
   onSaveProfile,
+  onOpenReport,
   savedToast,
 }) => {
   const updateTrait = (id: number, value: number) => {
@@ -285,20 +287,34 @@ export const PartAForm: React.FC<PartAFormProps> = ({
           </div>
         </div>
 
-        <button
-          type="button"
-          onClick={onSaveProfile}
-          className="w-full min-h-[52px] px-6 py-3.5 rounded-full bg-[#145252] hover:bg-[#0F3F3F] text-[#FCF9F0] font-display font-semibold text-base flex items-center justify-center gap-2 shadow-lg shadow-[#145252]/25 transition-all cursor-pointer"
-        >
-          {savedToast ? (
-            <>
-              <span>Part A Baseline Saved</span>
-              <CheckCircle2 className="w-5 h-5" />
-            </>
-          ) : (
-            <span>Save Part A Baseline Profile</span>
+        <div className="space-y-2.5">
+          <button
+            type="button"
+            onClick={onSaveProfile}
+            className="w-full min-h-[52px] px-6 py-3.5 rounded-full bg-[#145252] hover:bg-[#0F3F3F] text-[#FCF9F0] font-display font-semibold text-base flex items-center justify-center gap-2 shadow-lg shadow-[#145252]/25 transition-all cursor-pointer"
+          >
+            {savedToast ? (
+              <>
+                <span>Part A Baseline Saved</span>
+                <CheckCircle2 className="w-5 h-5" />
+              </>
+            ) : (
+              <span>Save Part A Baseline Profile</span>
+            )}
+          </button>
+
+          {onOpenReport && (
+            <button
+              type="button"
+              onClick={onOpenReport}
+              className="w-full min-h-[46px] px-5 py-2.5 rounded-full bg-white hover:bg-[#FCF9F0] border border-[#12233B]/20 text-[#12233B] font-semibold text-sm flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm active:scale-95"
+            >
+              <FileBarChart2 className="w-4 h-4 text-[#145252]" />
+              <span>Click to Open Report</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
           )}
-        </button>
+        </div>
       </div>
 
       {/* Right: Live Scored Part A Summary */}

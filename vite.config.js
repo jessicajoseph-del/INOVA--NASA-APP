@@ -13,5 +13,12 @@ export default defineConfig({
     port: 800,
     strictPort: false,
     host: true,
+    proxy: {
+      '/api/nasa-osdr': {
+        target: 'https://osdr.nasa.gov',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/nasa-osdr/, ''),
+      },
+    },
   },
 })

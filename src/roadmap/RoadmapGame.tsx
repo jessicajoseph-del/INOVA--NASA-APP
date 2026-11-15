@@ -8,6 +8,8 @@ import { TaskRectCard } from './components/TaskRectCard';
 import { MilestoneSummitCard } from './components/MilestoneSummitCard';
 import { TaskInspectorRail } from './components/TaskInspectorRail';
 import { ConfettiBurst } from './components/ConfettiBurst';
+import { CollapsedRoadmapView } from './components/CollapsedRoadmapView';
+import { WeeklyPuzzle } from './components/WeeklyPuzzle';
 
 const STORAGE_KEY = 'lumina-quest-stages-v3';
 
@@ -48,9 +50,14 @@ function loadInitialTasks(): TaskNode[] {
 interface RoadmapGameProps {
   onBack?: () => void;
   isEmbedded?: boolean;
+  onOpenReport?: () => void;
 }
 
-export default function RoadmapGame({ onBack, isEmbedded = false }: RoadmapGameProps = {}) {
+export default function RoadmapGame({
+  onBack,
+  isEmbedded = false,
+  onOpenReport,
+}: RoadmapGameProps = {}) {
   const [tasks, setTasks] = useState<TaskNode[]>(loadInitialTasks);
   const [selectedTaskId, setSelectedTaskId] = useState<string>(() => {
     const initial = loadInitialTasks();
@@ -588,9 +595,29 @@ export default function RoadmapGame({ onBack, isEmbedded = false }: RoadmapGameP
             onToggleComplete={handleToggleComplete}
             onUnlockDirect={handleUnlockDirect}
             onToggleSubtask={handleToggleSubtask}
+            onOpenReport={onOpenReport}
           />
         </div>
       </div>
+
+      {/* Single Task Tracker (Task Deck) & Weekly Consistency Puzzle Section */}
+      <section className="w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12 border-t border-white/10 bg-[#06132B]">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 items-start gap-8 xl:gap-12">
+          <div className="relative z-20 min-w-0 w-full flex justify-center">
+            <CollapsedRoadmapView
+              tasks={tasks}
+              onSelectTask={(id) => {
+                setSelectedTaskId(id);
+                const idx = tasks.findIndex((t) => t.id === id);
+                if (idx >= 0) scrollToStage(idx);
+              }}
+            />
+          </div>
+          <div className="relative z-10 min-w-0 w-full flex justify-center">
+            <WeeklyPuzzle streakDays={streakDays} />
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { NasaOsd569TrendChart } from './NasaOsd569TrendChart';
 import {
   Activity,
   Heart,
@@ -403,6 +404,7 @@ export default function AstroCareDashboard({
   isEmbedded = false,
 }: AstroCareDashboardProps) {
   const [selectedAstronautId, setSelectedAstronautId] = useState<string>('mercer');
+  const [trendSourceTab, setTrendSourceTab] = useState<'osd569' | 'iss'>('osd569');
   const [currentDay, setCurrentDay] = useState<number>(112);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [playSpeed, setPlaySpeed] = useState<number>(1);
@@ -556,9 +558,12 @@ export default function AstroCareDashboard({
                 <button
                   key={astro.id}
                   type="button"
-                  onClick={() => setSelectedAstronautId(astro.id)}
+                  onClick={() => {
+                    setSelectedAstronautId(astro.id);
+                    setTrendSourceTab('iss');
+                  }}
                   className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                    selectedAstronautId === astro.id
+                    selectedAstronautId === astro.id && trendSourceTab === 'iss'
                       ? 'bg-[#0B1736] text-[#F7F4EE] font-bold shadow-sm'
                       : 'text-[#5A657D] hover:text-[#0B1736] hover:bg-white/50'
                   }`}
@@ -568,6 +573,19 @@ export default function AstroCareDashboard({
               ))}
             </div>
 
+            <button
+              type="button"
+              onClick={() => setTrendSourceTab('osd569')}
+              className={`px-3 py-1 rounded-xl text-xs font-mono font-bold transition-all border flex items-center gap-1.5 cursor-pointer ${
+                trendSourceTab === 'osd569'
+                  ? 'bg-[#0B1736] text-[#F5B82E] border-[#0B1736] shadow-sm'
+                  : 'bg-[#EDE8DE] text-[#0B1736] border-[#DCD5C7] hover:bg-white'
+              }`}
+            >
+              <span className={`w-2 h-2 rounded-full ${trendSourceTab === 'osd569' ? 'bg-[#F5B82E] animate-pulse' : 'bg-slate-400'}`} />
+              NASA OSD-569 (C001)
+            </button>
+
             <div className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-500/10 border border-emerald-400/20 text-emerald-700 text-xs font-mono font-semibold">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
               <span>Telemetry Lock</span>
@@ -576,8 +594,126 @@ export default function AstroCareDashboard({
         </div>
       </header>
 
-      {/* 2. TIMELINE SCRUBBER & SUBJECT CONTROLS BANNER */}
+      {/* 2. MAIN CONTENT STAGE */}
       <main className="max-w-7xl mx-auto p-4 sm:p-6 space-y-6 w-full">
+        {/* 1. CREW WELLBEING GAUGES - HORIZONTAL SECTION BELOW PROFILE RIBBON */}
+        <div className="bg-[#0B1736]/95 border border-blue-400/25 p-5 sm:p-6 rounded-2xl shadow-xl space-y-4 text-left">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-blue-900/40 pb-3">
+            <div>
+              <div className="flex items-center gap-2">
+                <h2 className="text-base sm:text-lg font-bold text-white tracking-wide">
+                  Crew Wellbeing Gauges
+                </h2>
+                <span className="text-[10px] font-mono text-[#FDE047] font-semibold px-2 py-0.5 rounded bg-[#FDE047]/10 border border-[#FDE047]/30">
+                  OAT YELLOW METRICS
+                </span>
+              </div>
+              <p className="text-xs text-slate-300 mt-0.5">
+                Restorative sleep, countermeasure exercise &amp; cognitive readiness across mission timeline.
+              </p>
+            </div>
+            <div className="text-xs font-mono text-slate-400">
+              Selected: <span className="text-[#FDE047] font-bold">Day {currentRecord.day} ({currentRecord.date})</span>
+            </div>
+          </div>
+
+          {/* 3 Gauges laid out horizontally side-by-side */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* 1. Daily Restorative Sleep */}
+            <SemiCircularGauge
+              label="DAILY RESTORATIVE SLEEP"
+              value={currentRecord.sleepHours}
+              max={10}
+              unit="h"
+              targetText="Target: 8.0h Rest Baseline"
+              colorHex="#F5B82E"
+              cardClassName="bg-[#0B152C]/90 border border-slate-700/40 rounded-xl p-4 sm:p-5 flex flex-col justify-between"
+            />
+
+            {/* 2. Daily Exercise Countermeasure */}
+            <SemiCircularGauge
+              label="DAILY EXERCISE COUNTERMEASURE"
+              value={effectiveExerciseMin}
+              max={150}
+              unit="min"
+              targetText="• Target: 150m ARED / T2 Baseline"
+              colorHex="#FACC15"
+              showGlowDot={true}
+              subtitle={`${Math.round((effectiveExerciseMin / 150) * 100)}% of Daily Target`}
+              headerAction={
+                <button
+                  type="button"
+                  onClick={() => setIsLogModalOpen(true)}
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[10px] font-mono font-bold bg-[#FACC15]/10 hover:bg-[#FACC15]/20 text-[#FACC15] border border-[#FACC15]/35 transition-all cursor-pointer active:scale-95 shadow-sm"
+                  title="Log ARED or T2 Workout Session"
+                >
+                  <Plus className="w-3 h-3" />
+                  <span>Log Session</span>
+                </button>
+              }
+              cardClassName="bg-[#0B152C]/90 border border-slate-700/40 rounded-xl p-4 sm:p-5 hover:border-[#FACC15]/50 transition-all flex flex-col justify-between"
+              footerContent={
+                <div className="flex items-center gap-2 mt-2 w-full justify-center flex-wrap pt-2 border-t border-slate-800/60">
+                  <div className="px-2.5 py-1 rounded-lg bg-[#060F28] border border-blue-400/20 font-mono text-[10px] text-slate-300 flex items-center gap-1.5 shadow-sm">
+                    <Dumbbell className="w-3 h-3 text-[#FACC15]" />
+                    <span className="text-slate-400">ARED LOAD:</span>
+                    <span className="font-bold text-[#FFFDF7]">
+                      {effectiveAredLoad.toLocaleString()} kg
+                    </span>
+                  </div>
+                  <div className="px-2.5 py-1 rounded-lg bg-[#060F28] border border-blue-400/20 font-mono text-[10px] text-slate-300 flex items-center gap-1.5 shadow-sm">
+                    <Activity className="w-3 h-3 text-cyan-400" />
+                    <span className="text-slate-400">T2 / CEVIS:</span>
+                    <span className="font-bold text-[#FFFDF7]">
+                      {currentRecord.cardioMinutes} min • {currentRecord.cardioBpm} bpm
+                    </span>
+                  </div>
+                </div>
+              }
+            />
+
+            {/* 3. Psychological Readiness Index */}
+            <SemiCircularGauge
+              label="PSYCHOLOGICAL READINESS INDEX"
+              value={currentRecord.moodScore}
+              max={10}
+              unit="/10"
+              targetText="Behavioral Stability Normal"
+              colorHex="#FDE047"
+              cardClassName="bg-[#0B152C]/90 border border-slate-700/40 rounded-xl p-4 sm:p-5 flex flex-col justify-between"
+            />
+          </div>
+
+          {/* Contextual Daily Flight Journal Entry */}
+          <div className="bg-[#060F28] border border-blue-400/15 rounded-xl p-3.5 text-left flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="flex-1">
+              <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-amber-300 mb-1">
+                <Radio className="w-3.5 h-3.5 text-[#F5B82E]" />
+                <span>Mission Journal Log: Day {currentRecord.day}</span>
+              </div>
+              <p className="text-xs text-slate-300 leading-relaxed italic">
+                {currentRecord.journal ||
+                  `Standard orbital shift. Physical countermeasure workout complete on ARED. Microgravity vitals logged in accordance with Flight Rule 4.2.`}
+              </p>
+            </div>
+            {currentRecord.alert && (
+              <div
+                className={`p-2 rounded-lg text-[11px] font-mono flex items-center gap-1.5 shrink-0 ${
+                  currentRecord.alert.type === 'critical'
+                    ? 'bg-rose-500/10 text-rose-300 border border-rose-500/30'
+                    : currentRecord.alert.type === 'advisory'
+                    ? 'bg-amber-500/10 text-[#FDE047] border border-amber-500/30'
+                    : 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/30'
+                }`}
+              >
+                <ShieldAlert className="w-3.5 h-3.5 shrink-0" />
+                <span>{currentRecord.alert.message}</span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* 2. TIMELINE SCRUBBER & SUBJECT CONTROLS BANNER */}
         <div className="bg-white border border-[#DCD5C7] rounded-2xl p-4 sm:p-5 shadow-sm flex flex-col lg:flex-row items-center justify-between gap-5 relative overflow-hidden">
           {/* Subject Badge & Current MET */}
           <div className="flex items-center gap-4 w-full lg:w-auto">
@@ -735,11 +871,51 @@ export default function AstroCareDashboard({
 
         </div>
 
-        {/* 4. CHARTS & WELLBEING GAUGES DUAL COLUMN GRID */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* 4. MULTI-METRIC TREND OBSERVATORY (NASA OSD-569 / ISS TELEMETRY) */}
+        <div className="space-y-4">
+          <div className="flex flex-wrap items-center justify-between gap-3 bg-[#FCFBF7] p-2.5 rounded-2xl border border-[#DCD5C7]">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#0B1736] px-2">
+                Trajectory Data Source:
+              </span>
+              <div className="flex items-center bg-[#EDE8DE] p-1 rounded-xl border border-[#DCD5C7] text-xs font-mono">
+                <button
+                  type="button"
+                  onClick={() => setTrendSourceTab('osd569')}
+                  className={`px-3.5 py-1.5 rounded-lg font-bold transition-all cursor-pointer flex items-center gap-2 ${
+                    trendSourceTab === 'osd569'
+                      ? 'bg-[#0B1736] text-[#F5B82E] shadow-sm'
+                      : 'text-[#5A657D] hover:text-[#0B1736]'
+                  }`}
+                >
+                  <span className={`w-2 h-2 rounded-full ${trendSourceTab === 'osd569' ? 'bg-[#F5B82E] animate-pulse' : 'bg-slate-400'}`} />
+                  NASA OSD-569: Astronaut C001 (Live API)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setTrendSourceTab('iss')}
+                  className={`px-3.5 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
+                    trendSourceTab === 'iss'
+                      ? 'bg-[#0B1736] text-[#F5B82E] shadow-sm'
+                      : 'text-[#5A657D] hover:text-[#0B1736]'
+                  }`}
+                >
+                  ISS Expedition 75 (180-Day Telemetry)
+                </button>
+              </div>
+            </div>
 
-          {/* Multi-Metric Trend Chart (Spans 2 columns) */}
-          <div className="lg:col-span-2 bg-white border border-[#DCD5C7] p-5 rounded-2xl shadow-sm flex flex-col justify-between">
+            <span className="text-[11px] font-mono text-[#5A657D] px-2 hidden sm:inline-block">
+              {trendSourceTab === 'osd569'
+                ? 'NASA OSDR Study 569 // Subject C001 (HR, BP, Temp, Blood Sugar)'
+                : '180-Day Microgravity Cardiovascular Model'}
+            </span>
+          </div>
+
+          {trendSourceTab === 'osd569' ? (
+            <NasaOsd569TrendChart />
+          ) : (
+            <div className="w-full bg-white border border-[#DCD5C7] p-5 rounded-2xl shadow-sm flex flex-col justify-between">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
               <div>
                 <div className="flex items-center gap-2">
@@ -972,118 +1148,7 @@ export default function AstroCareDashboard({
               </div>
             </div>
           </div>
-
-          {/* Oat Yellow Wellbeing Gauges & Mission Journal (Spans 1 column) */}
-          <div className="bg-[#0B1736]/90 border border-blue-400/20 p-5 rounded-2xl shadow-xl flex flex-col justify-between space-y-4">
-            <div>
-              <div className="flex items-center justify-between">
-                <h2 className="text-sm sm:text-base font-bold text-white tracking-wide">
-                  Crew Wellbeing Gauges
-                </h2>
-                <span className="text-[10px] font-mono text-[#FDE047] font-semibold">
-                  OAT YELLOW METRICS
-                </span>
-              </div>
-              <p className="text-xs text-slate-300 mt-0.5">
-                Restorative sleep, countermeasure exercise & cognitive readiness.
-              </p>
-            </div>
-
-            {/* 3 Semi-Circular Gauges: Sleep, Exercise, and Mood */}
-            <div className="flex flex-col gap-3.5">
-              
-              {/* 1. Daily Restorative Sleep */}
-              <SemiCircularGauge
-                label="DAILY RESTORATIVE SLEEP"
-                value={currentRecord.sleepHours}
-                max={10}
-                unit="h"
-                targetText="Target: 8.0h Rest Baseline"
-                colorHex="#F5B82E"
-                cardClassName="bg-[#0B152C]/90 border border-slate-700/40 rounded-xl p-4 sm:p-5"
-              />
-
-              {/* 2. NEW: Daily Exercise Countermeasure (Directly Below Sleep) */}
-              <SemiCircularGauge
-                label="DAILY EXERCISE COUNTERMEASURE"
-                value={effectiveExerciseMin}
-                max={150}
-                unit="min"
-                targetText="• Target: 150m ARED / T2 Baseline"
-                colorHex="#FACC15"
-                showGlowDot={true}
-                subtitle={`${Math.round((effectiveExerciseMin / 150) * 100)}% of Daily Target`}
-                headerAction={
-                  <button
-                    type="button"
-                    onClick={() => setIsLogModalOpen(true)}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[10px] font-mono font-bold bg-[#FACC15]/10 hover:bg-[#FACC15]/20 text-[#FACC15] border border-[#FACC15]/35 transition-all cursor-pointer active:scale-95 shadow-sm"
-                    title="Log ARED or T2 Workout Session"
-                  >
-                    <Plus className="w-3 h-3" />
-                    <span>Log Session</span>
-                  </button>
-                }
-                cardClassName="bg-[#0B152C]/90 border border-slate-700/40 rounded-xl p-4 sm:p-5 hover:border-[#FACC15]/50 transition-all"
-                footerContent={
-                  <div className="flex items-center gap-2 mt-2 w-full justify-center flex-wrap pt-2 border-t border-slate-800/60">
-                    <div className="px-2.5 py-1 rounded-lg bg-[#060F28] border border-blue-400/20 font-mono text-[10px] text-slate-300 flex items-center gap-1.5 shadow-sm">
-                      <Dumbbell className="w-3 h-3 text-[#FACC15]" />
-                      <span className="text-slate-400">ARED LOAD:</span>
-                      <span className="font-bold text-[#FFFDF7]">
-                        {effectiveAredLoad.toLocaleString()} kg
-                      </span>
-                    </div>
-                    <div className="px-2.5 py-1 rounded-lg bg-[#060F28] border border-blue-400/20 font-mono text-[10px] text-slate-300 flex items-center gap-1.5 shadow-sm">
-                      <Activity className="w-3 h-3 text-cyan-400" />
-                      <span className="text-slate-400">T2 / CEVIS:</span>
-                      <span className="font-bold text-[#FFFDF7]">
-                        {currentRecord.cardioMinutes} min • {currentRecord.cardioBpm} bpm
-                      </span>
-                    </div>
-                  </div>
-                }
-              />
-
-              {/* 3. Psychological Readiness Index */}
-              <SemiCircularGauge
-                label="PSYCHOLOGICAL READINESS INDEX"
-                value={currentRecord.moodScore}
-                max={10}
-                unit="/10"
-                targetText="Behavioral Stability Normal"
-                colorHex="#FDE047"
-                cardClassName="bg-[#0B152C]/90 border border-slate-700/40 rounded-xl p-4 sm:p-5"
-              />
-            </div>
-
-            {/* 4. Contextual Daily Flight Journal Entry */}
-            <div className="bg-[#060F28] border border-blue-400/15 rounded-xl p-3.5 text-left">
-              <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-amber-300 mb-1">
-                <Radio className="w-3.5 h-3.5 text-[#F5B82E]" />
-                <span>Mission Journal Log: Day {currentRecord.day}</span>
-              </div>
-              <p className="text-xs text-slate-300 leading-relaxed italic">
-                {currentRecord.journal ||
-                  `Standard orbital shift. Physical countermeasure workout complete on ARED. Microgravity vitals logged in accordance with Flight Rule 4.2.`}
-              </p>
-              {currentRecord.alert && (
-                <div
-                  className={`mt-2.5 p-2 rounded-lg text-[11px] font-mono flex items-center gap-1.5 ${
-                    currentRecord.alert.type === 'critical'
-                      ? 'bg-rose-500/10 text-rose-300 border border-rose-500/30'
-                      : currentRecord.alert.type === 'advisory'
-                      ? 'bg-amber-500/10 text-[#FDE047] border border-amber-500/30'
-                      : 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/30'
-                  }`}
-                >
-                  <ShieldAlert className="w-3.5 h-3.5 shrink-0" />
-                  <span>{currentRecord.alert.message}</span>
-                </div>
-              )}
-            </div>
-          </div>
-
+          )}
         </div>
       </main>
 

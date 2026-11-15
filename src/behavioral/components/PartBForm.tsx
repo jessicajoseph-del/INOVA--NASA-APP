@@ -14,6 +14,7 @@ import {
   ListFilter,
   CheckCircle2,
   Sparkles,
+  FileBarChart2,
 } from 'lucide-react';
 import {
   CREW_OBSERVATION_OPTIONS,
@@ -30,6 +31,7 @@ interface PartBFormProps {
   onChange: (updated: PartBEntry) => void;
   onSubmit: () => void;
   justSavedDay: number | null;
+  onOpenReport?: (day: number) => void;
   onOpenExpressionModal?: () => void;
   expressionStatus?: 'idle' | 'starting' | 'active' | 'error' | 'skipped';
 }
@@ -39,6 +41,7 @@ export const PartBForm: React.FC<PartBFormProps> = ({
   onChange,
   onSubmit,
   justSavedDay,
+  onOpenReport,
   onOpenExpressionModal,
   expressionStatus,
 }) => {
@@ -220,6 +223,36 @@ export const PartBForm: React.FC<PartBFormProps> = ({
               ? 'Answer each question one by one to complete today&apos;s behavioral assessment.'
               : 'Tap a circle or drag the slider for each statement over the last 24 hours.'}
           </p>
+
+          {/* Assessment Done Banner with Click to Open Report Button */}
+          {justSavedDay && (
+            <div className="mt-4 p-4 rounded-2xl bg-emerald-600/10 border-2 border-emerald-600/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-[#06132B]">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-full bg-emerald-600 text-white flex items-center justify-center shrink-0">
+                  <Check className="w-5 h-5 stroke-[2.5]" />
+                </div>
+                <div>
+                  <div className="font-bold text-sm text-[#06132B]">
+                    Flight Day {justSavedDay} Assessment Done!
+                  </div>
+                  <div className="text-xs text-[#365073]">
+                    All answers have been recorded in your mission ledger.
+                  </div>
+                </div>
+              </div>
+              {onOpenReport && (
+                <button
+                  type="button"
+                  onClick={() => onOpenReport(justSavedDay)}
+                  className="w-full sm:w-auto px-5 py-2.5 rounded-full bg-[#145252] hover:bg-[#0F3F3F] text-white text-xs sm:text-sm font-semibold inline-flex items-center justify-center gap-2 shadow-md cursor-pointer transition-all active:scale-95 shrink-0"
+                >
+                  <FileBarChart2 className="w-4 h-4 text-[#FDE047]" />
+                  <span>Click to Open Report</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+          )}
         </div>
 
         {/* ───────────────────────────────────────────────────────────── */}
@@ -619,6 +652,21 @@ export const PartBForm: React.FC<PartBFormProps> = ({
                     </button>
                   </div>
                 )}
+
+                {/* Direct Action inside completion card */}
+                {onOpenReport && (
+                  <div className="pt-2">
+                    <button
+                      type="button"
+                      onClick={() => onOpenReport(draft.day)}
+                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white hover:bg-[#FCF9F0] border border-[#12233B]/20 text-[#12233B] text-xs font-bold transition-all cursor-pointer shadow-sm active:scale-95"
+                    >
+                      <FileBarChart2 className="w-4 h-4 text-[#145252]" />
+                      <span>Click to Open Report (Preview)</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                )}
               </div>
             )}
 
@@ -648,22 +696,35 @@ export const PartBForm: React.FC<PartBFormProps> = ({
                   <ArrowRight className="w-4 h-4" />
                 </button>
               ) : (
-                <button
-                  type="submit"
-                  className="min-h-[48px] px-7 py-3 rounded-full bg-[#145252] hover:bg-[#0F3F3F] text-[#FCF9F0] font-display font-semibold text-sm sm:text-base inline-flex items-center gap-2 shadow-lg shadow-[#145252]/25 transition-all cursor-pointer active:scale-95"
-                >
-                  {justSavedDay === draft.day ? (
-                    <>
-                      <span>Day {draft.day} Logged</span>
-                      <Check className="w-5 h-5" />
-                    </>
-                  ) : (
-                    <>
-                      <span>Submit &amp; View Assessment</span>
-                      <Sparkles className="w-5 h-5" />
-                    </>
+                <div className="flex flex-wrap items-center gap-2.5">
+                  <button
+                    type="submit"
+                    className="min-h-[48px] px-7 py-3 rounded-full bg-[#145252] hover:bg-[#0F3F3F] text-[#FCF9F0] font-display font-semibold text-sm sm:text-base inline-flex items-center gap-2 shadow-lg shadow-[#145252]/25 transition-all cursor-pointer active:scale-95"
+                  >
+                    {justSavedDay === draft.day ? (
+                      <>
+                        <span>Day {draft.day} Logged</span>
+                        <Check className="w-5 h-5" />
+                      </>
+                    ) : (
+                      <>
+                        <span>Submit &amp; Open Report</span>
+                        <FileBarChart2 className="w-5 h-5 text-[#FDE047]" />
+                      </>
+                    )}
+                  </button>
+                  {onOpenReport && (
+                    <button
+                      type="button"
+                      onClick={() => onOpenReport(draft.day)}
+                      className="min-h-[48px] px-5 py-3 rounded-full bg-white hover:bg-[#FCF9F0] border border-[#12233B]/20 text-[#12233B] font-semibold text-sm inline-flex items-center gap-2 transition-all cursor-pointer shadow-sm active:scale-95"
+                    >
+                      <FileBarChart2 className="w-4 h-4 text-[#145252]" />
+                      <span>Click to Open Report</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </button>
                   )}
-                </button>
+                </div>
               )}
             </div>
           </div>
@@ -975,7 +1036,7 @@ export const PartBForm: React.FC<PartBFormProps> = ({
             </div>
 
             {/* Submit button on All Questions mode */}
-            <div className="mt-8 space-y-2">
+            <div className="mt-8 space-y-3">
               <button
                 type="submit"
                 className="w-full min-h-[52px] px-6 py-3.5 rounded-full bg-[#145252] hover:bg-[#0F3F3F] active:scale-[0.99] text-[#FCF9F0] font-display font-semibold text-base flex items-center justify-center gap-2 shadow-lg shadow-[#145252]/25 transition-all cursor-pointer focus-visible:outline-none"
@@ -987,11 +1048,22 @@ export const PartBForm: React.FC<PartBFormProps> = ({
                   </>
                 ) : (
                   <>
-                    <span>Submit &amp; View Assessment (Day {draft.day})</span>
-                    <Plus className="w-5 h-5" />
+                    <span>Submit &amp; Open Report (Day {draft.day})</span>
+                    <FileBarChart2 className="w-5 h-5 text-[#FDE047]" />
                   </>
                 )}
               </button>
+              {onOpenReport && (
+                <button
+                  type="button"
+                  onClick={() => onOpenReport(draft.day)}
+                  className="w-full min-h-[46px] px-5 py-2.5 rounded-full bg-white hover:bg-[#FCF9F0] border border-[#12233B]/20 text-[#12233B] font-semibold text-sm flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm active:scale-95"
+                >
+                  <FileBarChart2 className="w-4 h-4 text-[#145252]" />
+                  <span>Click to Open Report (Day {draft.day})</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              )}
             </div>
           </div>
         )}
